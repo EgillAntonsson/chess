@@ -1,11 +1,11 @@
 public class King
 {
-	public Position Position { get; }
-	
-	public King(Position position)
-	{
-		Position = position;
-	}
+	// public Position Position { get; }
+	//
+	// public King(Position position)
+	// {
+	// 	Position = position;
+	// }
 	
 	// public Position[] GetMoveDefinitione()
 	// {

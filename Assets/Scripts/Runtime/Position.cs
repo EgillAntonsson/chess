@@ -1,6 +1,6 @@
 using System;
 
-public struct Position : IEquatable<Position>
+public readonly struct Position
 {
 	public int Row { get; }
 	public int Column { get; }
@@ -9,30 +9,21 @@ public struct Position : IEquatable<Position>
 	{
 		Row = row;
 		Column = column;
+		Validate();
 	}
 
-	public bool Equals(Position other)
+	private void Validate()
 	{
-		return Row == other.Row && Column == other.Column;
+		ValidateCoord(Row);
+		ValidateCoord(Column);
 	}
 
-	public override bool Equals(object obj)
+	private static void ValidateCoord(int coord)
 	{
-		return obj is Position other && Equals(other);
-	}
-
-	public override int GetHashCode()
-	{
-		return HashCode.Combine(Row, Column);
-	}
-
-	public static bool operator ==(Position left, Position right)
-	{
-		return left.Equals(right);
-	}
-
-	public static bool operator !=(Position left, Position right)
-	{
-		return !left.Equals(right);
+		const int lowestValidValue = 0;
+		if (coord < lowestValidValue)
+		{
+			throw new ArgumentOutOfRangeException(nameof(coord), $"Value {coord} is invalid, it should be equal or higher than {lowestValidValue}");
+		}
 	}
 }

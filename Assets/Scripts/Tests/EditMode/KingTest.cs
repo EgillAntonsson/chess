@@ -4,12 +4,12 @@ public class KingTest
 {
 	public class Constructor
 	{
-		[Test]
-		public void Position_IsSet()
-		{
-			var king = new King(new Position(2, 3));
-			Assert.That(king.Position, Is.EqualTo(new Position(2, 3)));
-		}
+		// [Test]
+		// public void Position_IsSet()
+		// {
+		// 	var king = new King(new Position(2, 3));
+		// 	Assert.That(king.Position, Is.EqualTo(new Position(2, 3)));
+		// }
 	}
 
 	// public class GetMoveDefinition
