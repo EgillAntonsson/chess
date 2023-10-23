@@ -1,7 +1,7 @@
 using System;
 
-public readonly struct Position : IEquatable<Position> {
-	
+public readonly struct Position
+{
 	public int Row { get; }
 	public int Column { get; }
 
@@ -17,7 +17,7 @@ public readonly struct Position : IEquatable<Position> {
 		ValidateCoord(Row);
 		ValidateCoord(Column);
 	}
-	
+
 	private static void ValidateCoord(int coord)
 	{
 		const int lowestValidValue = 0;
@@ -26,30 +26,5 @@ public readonly struct Position : IEquatable<Position> {
 			throw new ArgumentOutOfRangeException(nameof(coord),
 				$"Value {coord} is invalid, it should be equal or higher than {lowestValidValue}");
 		}
-	}
-
-	public bool Equals(Position other)
-	{
-		return Row == other.Row && Column == other.Column;
-	}
-
-	public override bool Equals(object obj)
-	{
-		return obj is Position other && Equals(other);
-	}
-
-	public override int GetHashCode()
-	{
-		return HashCode.Combine(Row, Column);
-	}
-
-	public static bool operator ==(Position left, Position right)
-	{
-		return left.Equals(right);
-	}
-
-	public static bool operator !=(Position left, Position right)
-	{
-		return !left.Equals(right);
 	}
 }
