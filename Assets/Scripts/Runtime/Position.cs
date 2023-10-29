@@ -1,30 +1,38 @@
 using System;
 
-public readonly struct Position
+public readonly struct Position : IEquatable<Position>
 {
-	public int Row { get; }
 	public int Column { get; }
+	public int Row { get; }
 
-	public Position(int row, int column)
+	public Position(int column, int row)
 	{
-		Row = row;
 		Column = column;
-		Validate();
+		Row = row;
 	}
 
-	private void Validate()
+	public bool Equals(Position other)
 	{
-		ValidateCoord(Row);
-		ValidateCoord(Column);
+		return Column == other.Column && Row == other.Row;
 	}
 
-	private static void ValidateCoord(int coord)
+	public override bool Equals(object obj)
 	{
-		const int lowestValidValue = 0;
-		if (coord < lowestValidValue)
-		{
-			throw new ArgumentOutOfRangeException(nameof(coord),
-				$"Value {coord} is invalid, it should be equal or higher than {lowestValidValue}");
-		}
+		return obj is Position other && Equals(other);
+	}
+
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(Column, Row);
+	}
+
+	public static bool operator ==(Position left, Position right)
+	{
+		return left.Equals(right);
+	}
+
+	public static bool operator !=(Position left, Position right)
+	{
+		return !left.Equals(right);
 	}
 }

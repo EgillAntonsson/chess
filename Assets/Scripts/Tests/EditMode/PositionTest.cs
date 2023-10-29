@@ -1,38 +1,50 @@
-using System;
 using NUnit.Framework;
 
-public abstract class PositionTest
+namespace PositionTest
 {
 	public class Constructor
 	{
 		[Test]
-		public void RowAndColumn_AreInitialized()
+		public void ColumnAndRow_AreInitialized()
 		{
 			var position = new Position(0, 1);
-			Assert.That(position.Row, Is.EqualTo(0));
-			Assert.That(position.Column, Is.EqualTo(1));
+			Assert.That(position.Column, Is.EqualTo(0));
+			Assert.That(position.Row, Is.EqualTo(1));
 		}
-
+	}
+	
+	public class Equals
+	{
 		[Test]
-		public void Error_WhenRowParamIsInvalid()
+		public void AreEqual_WhenWithSameRowAndSameColumn()
 		{
-			var exception = Assert.Throws(Is.TypeOf<ArgumentOutOfRangeException>(), delegate
-			{
-				new Position(-1, 0);
-			});
-			Assert.That((exception as ArgumentException)?.ParamName, Does.Match("coord").IgnoreCase);
-			Assert.That(exception.Message, Does.Match("invalid").IgnoreCase);
+			var pos1 = new Position(0, 0);
+			var pos2 = new Position(0, 0);
+			Assert.That(pos1.Equals(pos2), Is.True);
 		}
-
+		
 		[Test]
-		public void Error_WhenColumnParamIsInvalid()
+		public void NotEqual_WhenNotWithSameRowAndSameColumn()
 		{
-			var exception = Assert.Throws(Is.TypeOf<ArgumentOutOfRangeException>(), delegate
-			{
-				new Position(0, -1);
-			});
-			Assert.That((exception as ArgumentException)?.ParamName, Does.Match("coord").IgnoreCase);
-			Assert.That(exception.Message, Does.Match("invalid").IgnoreCase);
+			var pos1 = new Position(1, 0);
+			var pos2 = new Position(0, 0);
+			Assert.That(pos1.Equals(pos2), Is.False);
+		}
+		
+		[Test]
+		public void AreEqual_WhenWithSameRowAndSameColumn_UsingOperator()
+		{
+			var pos1 = new Position(0, 0);
+			var pos2 = new Position(0, 0);
+			Assert.That(pos1 == pos2, Is.True);
+		}
+		
+		[Test]
+		public void AreNotEqual_WhenNotWithSameRowAndSameColumn_UsingOperator()
+		{
+			var pos1 = new Position(1, 0);
+			var pos2 = new Position(0, 0);
+			Assert.That(pos1 != pos2, Is.True);
 		}
 	}
 }
