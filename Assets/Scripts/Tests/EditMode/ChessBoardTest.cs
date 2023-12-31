@@ -4,11 +4,9 @@ using NUnit.Framework;
 public class ChessBoardTest
 {
 	[Test]
-	public void A_piece_is_updated_on_the_board()
+	public void board_is_constructed()
 	{
-
-		var board = new ChessBoard().PopulateAtStart();
-		
+		var board = new ChessBoard(VariantFactory.Create(VariantType.Standard));
 		Assert.That(1, Is.EqualTo(1));
 	}
 }

@@ -1,3 +1,4 @@
+using Chess;
 using NUnit.Framework;
 
 namespace PositionTest

@@ -6,31 +6,33 @@ namespace Chess
 {
 	public class Board : IEquatable<Board>
 	{
-		private readonly Piece[,] squares;
+		private readonly Tile[,] tiles;
 
-		public Board(int size = 8)
+		public Board(IEnumerable<Tile> variantTileSetupSequence)
 		{
-			squares = new Piece[size, size];
+			var size = (int)Math.Sqrt(variantTileSetupSequence.Count());
+			tiles = new Tile[size, size];
 			for (var col = 0; col < size; col++)
 			{
 				for (var row = 0; row < size; row++)
 				{
-					squares[col, row] = new NonePiece();
+					tiles[col, row] = new Tile(new Position(col, row));
 				}
 			}
+			UpdatePieces(variantTileSetupSequence);
 		}
 
-		public Board UpdatePiece(Piece piece, Position position)
+		public Board UpdatePiece(Tile tile)
 		{
-			squares[position.Column, position.Row] = piece;
+			tiles[tile.Position.Column, tile.Position.Row] = tile;
 			return this;
 		}
 
-		public Board UpdatePieces(IEnumerable<(Piece, Position)> pieces)
+		public Board UpdatePieces(IEnumerable<Tile> tileSequence)
 		{
-			foreach (var (piece, position) in pieces)
+			foreach (var tile in tileSequence)
 			{
-				UpdatePiece(piece, position);
+				UpdatePiece(tile);
 			}
 			return this;
 		}
@@ -39,7 +41,7 @@ namespace Chess
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return squares.Cast<Piece>().SequenceEqual(other.squares.Cast<Piece>());
+			return tiles.Cast<Tile>().SequenceEqual(other.tiles.Cast<Tile>());
 		}
 
 		public override bool Equals(object obj)
@@ -51,7 +53,7 @@ namespace Chess
 
 		public override int GetHashCode()
 		{
-			return squares != null ? squares.GetHashCode() : 0;
+			return tiles != null ? tiles.GetHashCode() : 0;
 		}
 
 		public static bool operator ==(Board left, Board right)
