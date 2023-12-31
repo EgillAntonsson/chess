@@ -8,10 +8,10 @@ public class BoardTest
 	public void A_piece_is_updated_on_the_board()
 	{
 
-		var tile = new Tile(new Position(0, 0), new Piece(PieceType.Rook, Color.White));
+		var tile = new Tile(new Position(0, 0), new Piece(PieceType.Rook, 1));
 		var tileSequence = new List<Tile> { tile };
 		var board = new Board(tileSequence);
-		var anotherTile = new Tile(new Position(0, 0), new Piece(PieceType.Knight, Color.White)); 
+		var anotherTile = new Tile(new Position(0, 0), new Piece(PieceType.Knight, 2)); 
 		
 			var retBoard = board.UpdatePiece(anotherTile);
 
@@ -21,10 +21,10 @@ public class BoardTest
 	[Test]
 	public void Pieces_are_updated_on_the_board_in_one_call()
 	{
-		var tile = new Tile(new Position(0, 0), new Piece(PieceType.Rook, Color.White));
+		var tile = new Tile(new Position(0, 0), new Piece(PieceType.Rook, 1));
 		var tileSequence = new List<Tile> { tile };
 		var board = new Board(tileSequence);
-		var anotherTile = new Tile(new Position(0, 0), new Piece(PieceType.Knight, Color.White)); 
+		var anotherTile = new Tile(new Position(0, 0), new Piece(PieceType.Knight, 2)); 
 		
 		var anotherList = new List<Tile> { anotherTile };
 		var retBoard = board.UpdatePieces(anotherList);

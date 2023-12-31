@@ -20,7 +20,7 @@ namespace Chess
 		
 		public static Variant Create(IEnumerable<Tile> tileSetupSequence, IEnumerable<Func<ChessBoard, bool>> endConditions)
 		{
-			return new Variant(tileSetupSequence, endConditions);
+			return new CustomVariant(tileSetupSequence, endConditions);
 		}
 	}
 }

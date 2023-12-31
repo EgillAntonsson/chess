@@ -2,44 +2,40 @@ using System;
 
 namespace Chess
 {
-	public class Piece : IEquatable<Piece>
+	public readonly struct Piece : IEquatable<Piece>
 	{
 		public PieceType Type { get; }
-		public Color Color { get; }
+		public int PlayerId { get; }
 
-		public Piece(PieceType type, Color color)
+		public Piece(PieceType type, int playerId)
 		{
 			Type = type;
-			Color = color;
+			PlayerId = playerId;
 		}
 
 		public bool Equals(Piece other)
 		{
-			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
-			return Type == other.Type && Color == other.Color;
+			return Type == other.Type && PlayerId == other.PlayerId;
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == GetType() && Equals((Piece)obj);
+			return obj is Piece other && Equals(other);
 		}
 
 		public override int GetHashCode()
 		{
-			return HashCode.Combine((int)Type, (int)Color);
+			return HashCode.Combine((int)Type, PlayerId);
 		}
 
 		public static bool operator ==(Piece left, Piece right)
 		{
-			return Equals(left, right);
+			return left.Equals(right);
 		}
 
 		public static bool operator !=(Piece left, Piece right)
 		{
-			return !Equals(left, right);
+			return !left.Equals(right);
 		}
 	}
 }

@@ -13,6 +13,6 @@ public enum VariantType {
 		Horde = 7,
 		CrazyHouse = 8,
 		BugHouse = 9,
-		FourPlayer = 10,
+		FourPlayer = 10
 	}
 }

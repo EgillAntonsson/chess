@@ -6,10 +6,5 @@ namespace Chess
 		{
 			return false;
 		}
-
-		public static object CheckMate()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }
