@@ -12,6 +12,11 @@ namespace Chess
 			Type = type;
 			PlayerId = playerId;
 		}
+		
+		public override string ToString()
+		{
+			return $"Piece: {Type}, {PlayerId}";
+		}
 
 		public bool Equals(Piece other)
 		{

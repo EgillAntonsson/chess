@@ -13,7 +13,7 @@ public class BoardTest
 		var board = new Board(tileSequence);
 		var anotherTile = new Tile(new Position(0, 0), new Piece(PieceType.Knight, 2)); 
 		
-			var retBoard = board.UpdatePiece(anotherTile);
+			var retBoard = board.UpdateTile(anotherTile);
 
 			Assert.That(retBoard, Is.EqualTo(new Board(new List<Tile> { anotherTile })));
 	}
@@ -27,7 +27,7 @@ public class BoardTest
 		var anotherTile = new Tile(new Position(0, 0), new Piece(PieceType.Knight, 2)); 
 		
 		var anotherList = new List<Tile> { anotherTile };
-		var retBoard = board.UpdatePieces(anotherList);
+		var retBoard = board.UpdateTiles(anotherList);
 
 		Assert.That(retBoard, Is.EqualTo(new Board(anotherList)));
 	}

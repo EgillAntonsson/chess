@@ -1,10 +1,10 @@
 {
-    "name": "EditMode",
+    "name": "Chess.Test.EditMode",
     "rootNamespace": "",
     "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Runtime"
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:453908e39747538489f60956436c32b8"
     ],
     "includePlatforms": [
         "Editor"

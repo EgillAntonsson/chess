@@ -1,38 +1,50 @@
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo(Chess.AssemblyName.TestEditMode)]
 
 namespace Chess
 {
 	public class Board : IEquatable<Board>
 	{
 		private readonly Tile[,] tiles;
-
+		public Tile[,] Tiles => (Tile[,])tiles.Clone();
+		public int Size { get; }
+		
 		public Board(IEnumerable<Tile> variantTileSetupSequence)
 		{
-			var size = (int)Math.Sqrt(variantTileSetupSequence.Count());
-			tiles = new Tile[size, size];
-			for (var col = 0; col < size; col++)
+			Size = (int)Math.Sqrt(variantTileSetupSequence.Count());
+			tiles = new Tile[Size, Size];
+			for (var row = 0; row < Size; row++)
 			{
-				for (var row = 0; row < size; row++)
+				for (var col = 0; col < Size; col++)
 				{
 					tiles[col, row] = new Tile(new Position(col, row));
 				}
 			}
-			UpdatePieces(variantTileSetupSequence);
+			UpdateTiles(variantTileSetupSequence);
 		}
 
-		public Board UpdatePiece(Tile tile)
+		// public Tile[,] GetTiles()
+		// {
+		// 	return tiles;
+		// }
+		
+
+		internal Board UpdateTile(Tile tile)
 		{
 			tiles[tile.Position.Column, tile.Position.Row] = tile;
 			return this;
 		}
 
-		public Board UpdatePieces(IEnumerable<Tile> tileSequence)
+		internal Board UpdateTiles(IEnumerable<Tile> tileSequence)
 		{
 			foreach (var tile in tileSequence)
 			{
-				UpdatePiece(tile);
+				UpdateTile(tile);
 			}
 			return this;
 		}
@@ -40,8 +52,7 @@ namespace Chess
 		public bool Equals(Board other)
 		{
 			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
-			return tiles.Cast<Tile>().SequenceEqual(other.tiles.Cast<Tile>());
+			return ReferenceEquals(this, other) || tiles.Cast<Tile>().SequenceEqual(other.tiles.Cast<Tile>());
 		}
 
 		public override bool Equals(object obj)

@@ -5,16 +5,16 @@ namespace Chess
 {
 	public class StandardVariant : Variant
 	{
-		public override IEnumerable<Tile> TileSetupSequence => TileSetup();
-		public override IEnumerable<Func<ChessBoard, bool>> EndConditions => EndConditionsImpl();
-		public override int NumberOfPlayers => 2;
+		public override VariantType VariantType => VariantType.Standard;
+		public override IEnumerable<Tile> TileSetupSequence => TileSetupStandard();
+		public override IEnumerable<Func<ChessBoard, bool>> EndConditions => EndConditionsStandard();
 
-		private static IEnumerable<Func<ChessBoard, bool>> EndConditionsImpl()
+		public static IEnumerable<Func<ChessBoard, bool>> EndConditionsStandard()
 		{
 			return new List<Func<ChessBoard, bool>> { EndCondition.CheckMate };
 		}
 
-		private static IEnumerable<Tile> TileSetup()
+		public static IEnumerable<Tile> TileSetupStandard()
 		{
 			return new List<Tile>
 			{

@@ -4,12 +4,11 @@ namespace Chess
 {
 	public class ChessBoard
 	{
-		public const int BoardSize = 8;
-		private Board board;
+		public Board Board { get;  }
 
 		public ChessBoard(Variant variant)
 		{
-			board = new Board(variant.TileSetupSequence);
+			Board = new Board(variant.TileSetupSequence);
 		}
 		
 		public bool HasGameEnded(Variant variant)

@@ -12,6 +12,11 @@ namespace Chess
 			Column = column;
 			Row = row;
 		}
+		
+		public override string ToString()
+		{
+			return $"Position: {Column}, {Row}";
+		}
 
 		public bool Equals(Position other)
 		{
