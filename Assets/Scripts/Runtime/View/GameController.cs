@@ -1,23 +1,21 @@
-
 using System;
 using UnityEngine;
 
 namespace Chess.View
 {
-	public class GameController: MonoBehaviour
+	public class GameController : MonoBehaviour
 	{
-		[SerializeField]
-		private ChessBoardView chessBoardView;
+		[SerializeField] private ChessBoardView chessBoardView;
 
 		private Game game;
 		private bool playerHasSelectedPiece;
-		
+
 		private void Start()
 		{
 			game = new Game(VariantFactory.Create(VariantType.Standard));
-			chessBoardView.Create(game.ChessBoard.Board, OnTileClicked);
-
+			chessBoardView.Create(game.ChessBoard, OnTileClicked);
 		}
+
 		private void OnTileClicked(Tile tile)
 		{
 			Debug.Log(tile);
@@ -30,10 +28,10 @@ namespace Chess.View
 				}
 				if (game.PlayerIdToMove == tile.Piece.PlayerId)
 				{
-					game.ShowValidMoves(tile);
+					// TODO: highlight piece  tile
+					var validMoves = game.FindValidMoves(tile);
 				}
 			}
-		
 		}
 	}
 }

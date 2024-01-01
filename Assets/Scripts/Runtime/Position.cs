@@ -42,5 +42,10 @@ namespace Chess
 		{
 			return !left.Equals(right);
 		}
+		
+		public static Position operator +(Position left, Position right)
+		{
+			return new Position(left.Column + right.Column, left.Row + right.Row);
+		}
 	}
 }

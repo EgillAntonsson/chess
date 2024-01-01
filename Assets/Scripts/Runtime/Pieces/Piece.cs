@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Chess
 {
@@ -6,11 +7,13 @@ namespace Chess
 	{
 		public PieceType Type { get; }
 		public int PlayerId { get; }
+		public Func<IEnumerable<Position>> ValidMoves { get; }
 
-		public Piece(PieceType type, int playerId)
+		public Piece(PieceType type, int playerId, Func<IEnumerable<Position>> validMoves = null)
 		{
 			Type = type;
 			PlayerId = playerId;
+			ValidMoves = validMoves;
 		}
 		
 		public override string ToString()
@@ -20,7 +23,7 @@ namespace Chess
 
 		public bool Equals(Piece other)
 		{
-			return Type == other.Type && PlayerId == other.PlayerId;
+			return Type == other.Type && PlayerId == other.PlayerId && Equals(ValidMoves, other.ValidMoves);
 		}
 
 		public override bool Equals(object obj)
@@ -30,7 +33,7 @@ namespace Chess
 
 		public override int GetHashCode()
 		{
-			return HashCode.Combine((int)Type, PlayerId);
+			return HashCode.Combine((int)Type, PlayerId, ValidMoves);
 		}
 
 		public static bool operator ==(Piece left, Piece right)

@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Chess.View
 {
@@ -25,7 +24,7 @@ namespace Chess.View
 			color.a = 0.1f;
 			rend.material.color = color;
 		}
-		
+
 		private void OnMouseDown()
 		{
 			onTileClicked?.Invoke(Tile);

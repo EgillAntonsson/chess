@@ -18,9 +18,9 @@ namespace Chess
 			};
 		}
 		
-		public static Variant Create(IEnumerable<Tile> tileSetupSequence, IEnumerable<Func<ChessBoard, bool>> endConditions, int numberOfPlayers)
-		{
-			return new CustomVariant(tileSetupSequence, endConditions, numberOfPlayers);
-		}
+		// public static Variant Create(IEnumerable<Tile> tileSetupSequence, IEnumerable<Func<Board, bool>> endConditions, int numberOfPlayers)
+		// {
+		// 	return new CustomVariant(tileSetupSequence, endConditions, numberOfPlayers);
+		// }
 	}
 }

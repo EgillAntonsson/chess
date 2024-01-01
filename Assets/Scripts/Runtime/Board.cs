@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +7,15 @@ using System.Runtime.CompilerServices;
 
 namespace Chess
 {
-	public class Board : IEquatable<Board>
+	public class Board
 	{
 		private readonly Tile[,] tiles;
 		public Tile[,] Tiles => (Tile[,])tiles.Clone();
 		public int Size { get; }
 		
-		public Board(IEnumerable<Tile> variantTileSetupSequence)
+		public Board(IEnumerable<Tile> tilesSetup)
 		{
-			Size = (int)Math.Sqrt(variantTileSetupSequence.Count());
+			Size = (int)Math.Sqrt(tilesSetup.Count());
 			tiles = new Tile[Size, Size];
 			for (var row = 0; row < Size; row++)
 			{
@@ -25,22 +24,16 @@ namespace Chess
 					tiles[col, row] = new Tile(new Position(col, row));
 				}
 			}
-			UpdateTiles(variantTileSetupSequence);
+			UpdateTiles(tilesSetup);
 		}
 
-		// public Tile[,] GetTiles()
-		// {
-		// 	return tiles;
-		// }
-		
-
-		internal Board UpdateTile(Tile tile)
+		private Board UpdateTile(Tile tile)
 		{
 			tiles[tile.Position.Column, tile.Position.Row] = tile;
 			return this;
 		}
 
-		internal Board UpdateTiles(IEnumerable<Tile> tileSequence)
+		private Board UpdateTiles(IEnumerable<Tile> tileSequence)
 		{
 			foreach (var tile in tileSequence)
 			{
@@ -48,33 +41,22 @@ namespace Chess
 			}
 			return this;
 		}
-
-		public bool Equals(Board other)
+		
+		public IEnumerable<Position> FindValidMoves(Tile tile, Func<PieceType, IEnumerable<Position>> validMovesByType, int playerIdToMove)
 		{
-			if (ReferenceEquals(null, other)) return false;
-			return ReferenceEquals(this, other) || tiles.Cast<Tile>().SequenceEqual(other.tiles.Cast<Tile>());
+			if (!tile.HasPiece)
+			{
+				return Enumerable.Empty<Position>();
+			}
+			var validMoves = validMovesByType(tile.Piece.Type);
+			return validMoves.Select(pos => pos + tile.Position).Where(pos =>
+				IsOnBoard(pos, Size)).Where(pos => !tiles[pos.Column, pos.Row].HasPiece || tiles[pos.Column, pos.Row].Piece.PlayerId != playerIdToMove);
 		}
-
-		public override bool Equals(object obj)
+		
+		// TODO: could move to a separate util class
+		public static bool IsOnBoard(Position position, int size)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == GetType() && Equals((Board)obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return tiles != null ? tiles.GetHashCode() : 0;
-		}
-
-		public static bool operator ==(Board left, Board right)
-		{
-			return Equals(left, right);
-		}
-
-		public static bool operator !=(Board left, Board right)
-		{
-			return !Equals(left, right);
+			return position.Column >= 0 && position.Column < size && position.Row >= 0 && position.Row < size;
 		}
 	}
 }
