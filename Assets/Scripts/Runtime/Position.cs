@@ -2,7 +2,7 @@ using System;
 
 namespace Chess
 {
-	public readonly struct Position : IEquatable<Position>
+	public readonly struct Position : IEquatable<Position>, IComparable<Position>
 	{
 		public int Column { get; }
 		public int Row { get; }
@@ -12,10 +12,16 @@ namespace Chess
 			Column = column;
 			Row = row;
 		}
-		
+
 		public override string ToString()
 		{
 			return $"Position: {Column}, {Row}";
+		}
+
+		public int CompareTo(Position other)
+		{
+			var columnComparison = Column.CompareTo(other.Column);
+			return columnComparison != 0 ? columnComparison : Row.CompareTo(other.Row);
 		}
 
 		public bool Equals(Position other)
@@ -42,7 +48,7 @@ namespace Chess
 		{
 			return !left.Equals(right);
 		}
-		
+
 		public static Position operator +(Position left, Position right)
 		{
 			return new Position(left.Column + right.Column, left.Row + right.Row);
