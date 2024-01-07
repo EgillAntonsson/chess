@@ -2,7 +2,6 @@ namespace Chess
 {
 	public enum PieceType
 	{
-		None = -1,
 		Pawn = 0,
 		Knight = 1,
 		Bishop = 2,

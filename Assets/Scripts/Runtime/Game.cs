@@ -20,10 +20,9 @@ namespace Chess
 		public bool HasGameEnded()
 		{
 			return variant.EndConditions.Any(endCondition => endCondition(ChessBoard));
-			// return ChessBoard.HasGameEnded(variant);
 		}
 
-		public IEnumerable<Position> FindValidMoves(Tile tile)
+		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
 			return ChessBoard.FindValidMoves(tile, variant.ValidMovesByType, PlayerIdToMove);
 		}

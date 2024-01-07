@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Chess
 {
@@ -21,7 +20,7 @@ namespace Chess
 			var col = 0;
 			foreach (var pieceType in pieceTypes)
 			{
-				tiles.Add(new Tile(new Position(col, row), new Piece(pieceType, playerId)));
+				tiles.Add(new TileWithPiece(new Position(col, row), new Piece(pieceType, playerId)));
 				col++;
 			}
 

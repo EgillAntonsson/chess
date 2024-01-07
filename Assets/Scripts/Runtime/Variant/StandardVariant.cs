@@ -22,7 +22,6 @@ namespace Chess
 			return type switch
 			{
 				PieceType.Knight => ValidMoves.Knight(),
-				PieceType.None => new Position[] { },
 				PieceType.Pawn => new Position[] { },
 				PieceType.Bishop => new Position[] { },
 				PieceType.Rook => new Position[] { },

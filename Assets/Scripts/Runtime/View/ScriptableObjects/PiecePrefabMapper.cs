@@ -11,15 +11,19 @@ namespace Chess.View
 
 		public (bool, GameObject) TryGetPiecePrefab(Tile tile)
 		{
-			if (!tile.HasPiece)
+			return tile switch
 			{
-				return (false, null);
-			}
+				TileWithPiece twp => TryGetPiecePrefab(twp),
+				_ => (false, null)
+			};
+		}
 
-			var prefabsForPlayer = tile.Piece.PlayerId == 1 ? piecePrefabsPlayer1 : piecePrefabsPlayer2;
+		private (bool, GameObject) TryGetPiecePrefab(TileWithPiece tileWithPiece)
+		{
+			var prefabsForPlayer = tileWithPiece.Piece.PlayerId == 1 ? piecePrefabsPlayer1 : piecePrefabsPlayer2;
 			for (var i = 0; i < pieceTypes.Length; i++)
 			{
-				if (pieceTypes[i] == tile.Piece.Type)
+				if (pieceTypes[i] == tileWithPiece.Piece.Type)
 				{
 					return (true, prefabsForPlayer[i]);
 				}

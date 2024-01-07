@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Chess.View
@@ -21,16 +22,12 @@ namespace Chess.View
 			Debug.Log(tile);
 			if (!playerHasSelectedPiece)
 			{
-				if (!tile.HasPiece)
+				var validMoves = tile switch
 				{
-					// TODO: tell view tiles to de-highlight
-					return;
-				}
-				if (game.PlayerIdToMove == tile.Piece.PlayerId)
-				{
-					// TODO: highlight piece  tile
-					var validMoves = game.FindValidMoves(tile);
-				}
+					TileWithPiece twp when twp.Piece.PlayerId == game.PlayerIdToMove => game.FindValidMoves(twp),
+					_ => Array.Empty<Position>()
+					// TODO: highlight valid moves Piece tiles
+				};
 			}
 		}
 	}
