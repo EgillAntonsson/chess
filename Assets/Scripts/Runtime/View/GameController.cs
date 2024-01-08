@@ -10,6 +10,9 @@ namespace Chess.View
 
 		private Game game;
 		private bool playerHasSelectedPiece;
+		private IEnumerable<Position> validMoves;
+		private TileView tileViewLastClicked;
+		
 
 		private void Start()
 		{
@@ -17,18 +20,26 @@ namespace Chess.View
 			chessBoardView.Create(game.ChessBoard, OnTileClicked);
 		}
 
-		private void OnTileClicked(Tile tile)
+		private void OnTileClicked(TileView tileView)
 		{
-			Debug.Log(tile);
+			Debug.Log(tileView.Tile);
 			if (!playerHasSelectedPiece)
 			{
-				var validMoves = tile switch
+				playerHasSelectedPiece = true;
+				tileView.MarkAsSelected(doMark: true);
+				validMoves = tileView.Tile switch
 				{
 					TileWithPiece twp when twp.Piece.PlayerId == game.PlayerIdToMove => game.FindValidMoves(twp),
 					_ => Array.Empty<Position>()
-					// TODO: highlight valid moves Piece tiles
 				};
+				chessBoardView.MarkTilesWithValidMoves(validMoves, doMark: true);
 			}
+			else
+			{
+				tileViewLastClicked.MarkAsSelected(doMark: false);
+				chessBoardView.MarkTilesWithValidMoves(validMoves, doMark: false);
+			}
+			tileViewLastClicked = tileView;
 		}
 	}
 }
