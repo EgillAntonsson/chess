@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Chess.View
@@ -9,10 +10,10 @@ namespace Chess.View
 		[SerializeField] private ChessBoardView chessBoardView;
 
 		private Game game;
-		private bool playerHasSelectedPiece;
+		private Action deSelectFunc;
 		private IEnumerable<Position> validMoves;
-		private TileView tileViewLastClicked;
-		
+		private TileWithPiece selectedTilePiece;
+		private PlayerAction playerAction = PlayerAction.SelectPiece;
 
 		private void Start()
 		{
@@ -23,23 +24,44 @@ namespace Chess.View
 		private void OnTileClicked(TileView tileView)
 		{
 			Debug.Log(tileView.Tile);
-			if (!playerHasSelectedPiece)
+			var tile = tileView.Tile;
+			
+			deSelectFunc?.Invoke();
+
+			
+			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-				playerHasSelectedPiece = true;
-				tileView.MarkAsSelected(doMark: true);
-				validMoves = tileView.Tile switch
-				{
-					TileWithPiece twp when twp.Piece.PlayerId == game.PlayerIdToMove => game.FindValidMoves(twp),
-					_ => Array.Empty<Position>()
-				};
-				chessBoardView.MarkTilesWithValidMoves(validMoves, doMark: true);
+					game.MovePiece(selectedTilePiece, tile.Position);
+					playerAction = PlayerAction.SelectPiece;
+					return;
 			}
-			else
+
+			if (tile is not TileWithPiece twp || twp.Piece.PlayerId != game.PlayerIdToMove && playerAction == PlayerAction.SelectPiece)
 			{
-				tileViewLastClicked.MarkAsSelected(doMark: false);
-				chessBoardView.MarkTilesWithValidMoves(validMoves, doMark: false);
+				return;
 			}
-			tileViewLastClicked = tileView;
+			
+			tileView.MarkAsSelected(doMark: true);
+			selectedTilePiece = twp;
+			;
+			validMoves = game.FindValidMoves(twp);
+			
+			var validMovesArr = validMoves as Position[] ?? validMoves.ToArray();
+			chessBoardView.MarkTilesWithValidMoves(validMovesArr, doMark: true);
+			deSelectFunc = () =>
+			{
+				tileView.MarkAsSelected(doMark: false);
+				chessBoardView.MarkTilesWithValidMoves(validMovesArr, doMark: false);
+			};
+			
+			playerAction = PlayerAction.MovePiece;
+			
 		}
+	}
+
+	public enum PlayerAction
+	{
+		SelectPiece = 0,
+		MovePiece = 1
 	}
 }

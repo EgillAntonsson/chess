@@ -15,19 +15,19 @@ namespace Chess
 			return new List<Func<Board, bool>> { Chess.EndConditions.CheckMate };
 		}
 
-		public override IEnumerable<Position> ValidMovesByType(PieceType type) => ValidMovesByTypeStandard(type);
+		public override IEnumerable<Move> ValidMovesByType(PieceType type, int playerId) => ValidMovesByTypeStandard(type, playerId);
 
-		public static IEnumerable<Position> ValidMovesByTypeStandard(PieceType type)
+		public static IEnumerable<Move> ValidMovesByTypeStandard(PieceType type, int playerId)
 		{
 			return type switch
 			{
-				PieceType.Knight => ValidMoves.Knight(),
-				PieceType.Pawn => new Position[] { },
-				PieceType.Bishop => new Position[] { },
-				PieceType.Rook => new Position[] { },
-				PieceType.Queen => new Position[] { },
-				PieceType.King => new Position[] { },
-				_ => throw new ArgumentOutOfRangeException(nameof(type), type, ($"PieceType {type} not handled."))
+				PieceType.Knight => ValidMovesStandard.Knight(),
+				PieceType.Pawn => ValidMovesStandard.Pawn(playerId),
+				PieceType.Bishop => ValidMovesStandard.Knight(),
+				PieceType.Rook => ValidMovesStandard.Knight(),
+				PieceType.Queen => ValidMovesStandard.Knight(),
+				PieceType.King => ValidMovesStandard.Knight(),
+				_ => throw new ArgumentOutOfRangeException(nameof(type), type, $"PieceType {type} not handled.")
 			};
 		}
 

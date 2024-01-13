@@ -11,7 +11,7 @@ namespace Chess
 		public virtual int NumberOfPlayers => 2;
 		public virtual int PlayerIdToStart => 1;
 
-		public abstract IEnumerable<Position> ValidMovesByType(PieceType type);
+		public abstract IEnumerable<Move> ValidMovesByType(PieceType type, int playerId);
 
 		// below functions could be moved to util class
 		protected static IEnumerable<Tile> CreatePieceRow(int row, int playerId, IEnumerable<PieceType> pieceTypes)
