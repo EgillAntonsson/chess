@@ -7,23 +7,37 @@ namespace Chess.View
 	{
 		public Tile Tile { get; private set; }
 		private Action<TileView> onTileClicked;
-		private Color defaultColor;
+		private readonly Color defaultColor = new Color(0f, 0f, 1f, 0.1f);
+		private readonly Color selectedColor = new Color(0f, 1f, 0f, 0.5f);
+		private readonly Color validMoveColor = new Color(1f, 1f, 0f, 0.5f);
+		private GameObject piece;
 
 		public void Create(Tile tile, PiecePrefabMapper mapper, Action<TileView> tileClicked)
 		{
-			Tile = tile;
+			InjectTile(tile, mapper);
+			Draw(tile, mapper);
 			onTileClicked = tileClicked;
+		}
 
+		public void InjectTile(Tile tile, PiecePrefabMapper mapper)
+		{
+			Tile = tile;
+			Draw(tile, mapper);
+		}
+
+		private void Draw(Tile tile, PiecePrefabMapper mapper)
+		{
+			if (piece != null)
+			{
+				Destroy(piece);
+			}
 			var (success, prefab) = mapper.TryGetPiecePrefab(tile);
 			if (success)
 			{
-				var piece = Instantiate(prefab, transform);
+				piece = Instantiate(prefab, transform);
 			}
 			
-			var rend = GetComponent<Renderer>();
-			defaultColor = UnityEngine.Color.blue;
-			defaultColor.a = 0.1f;
-			rend.material.color = defaultColor;
+			GetComponent<Renderer>().material.color = defaultColor;	
 		}
 
 		private void OnMouseDown()
@@ -33,18 +47,12 @@ namespace Chess.View
 		
 		public void MarkAsSelected(bool doMark)
 		{
-			var markColor = Color.green;
-			markColor.a = 0.5f;
-			var rend = GetComponent<Renderer>();
-			rend.material.color = doMark ? markColor : defaultColor;
+			GetComponent<Renderer>().material.color = doMark ? selectedColor : defaultColor;
 		}
 		
 		public void MarkWithValidMove(bool doMark)
 		{
-			var markColor = Color.yellow;
-			markColor.a = 0.5f;
-			var rend = GetComponent<Renderer>();
-			rend.material.color = doMark ? markColor : defaultColor;
+			GetComponent<Renderer>().material.color = doMark ? validMoveColor : defaultColor;
 		}
 	}
 }

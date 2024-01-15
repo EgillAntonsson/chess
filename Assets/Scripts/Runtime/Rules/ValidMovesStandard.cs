@@ -42,9 +42,4 @@ namespace Chess
 		MoveOnly = 2,
 		FirstMoveAddition = 3
 	}
-
-	// public record Moves(IEnumerable<Position> TheMoves);
-	//
-	// public record MovesWithNonCaptureAndFirstMove
-	// 	(Position FirstMoveAddition, IEnumerable<Position> NonCaptureMoves, IEnumerable<Position> TheMoves) : Moves(TheMoves);
 }

@@ -7,7 +7,7 @@ namespace Chess
 	public class StandardVariant : Variant
 	{
 		public override VariantType VariantType => VariantType.Standard;
-		public override IEnumerable<IEnumerable<Tile>> TileSetupSequence => TileSetup();
+		public override string Tiles => TilesStandard();
 		public override IEnumerable<Func<Board, bool>> EndConditions => EndConditionsStandard();
 
 		public static IEnumerable<Func<Board, bool>> EndConditionsStandard()
@@ -31,39 +31,19 @@ namespace Chess
 			};
 		}
 
-		public static IEnumerable<IEnumerable<Tile>> TileSetup()
+		public static string TilesStandard()
 		{
-			var player1 = 1;
-			var player2 = 2;
-			var t = new List<IEnumerable<Tile>>();
-			t.Add(
-		CreatePieceRow(0, player1,
-				new[]
-				{
-					PieceType.Rook, PieceType.Knight, PieceType.Bishop, PieceType.Queen, PieceType.King, PieceType.Bishop, PieceType.Knight, PieceType.Rook
-				}));
-			t.Add(CreatePieceRow(1, player1,
-				new[]
-				{
-					PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn
-				}));
-			t.Add(CreateEmptyRow(2, 8));
-			t.Add(CreateEmptyRow(3, 8));
-			t.Add(CreateEmptyRow(4, 8));
-			t.Add(CreateEmptyRow(5, 8));
-			t.Add(CreatePieceRow(6, player2,
-				new[]
-				{
-					PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn
-				}));
-			t.Add(CreatePieceRow(7, player2,
-				new[]
-				{
-					PieceType.Rook, PieceType.Knight, PieceType.Bishop, PieceType.Queen, PieceType.King, PieceType.Bishop, PieceType.Knight, PieceType.Rook
-				}));
-
-			return t;
+			return @"
+R2 N2 B2 Q2 K2 B2 N2 R2
+P2 P2 P2 P2 P2 P2 P2 P2
+__ __ __ __ __ __ __ __
+__ __ __ __ __ __ __ __
+__ __ __ __ __ __ __ __
+__ __ __ __ __ __ __ __
+P1 P1 P1 P1 P1 P1 P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
 		}
-
+		
 	}
 }

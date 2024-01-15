@@ -29,6 +29,14 @@ namespace Chess.View
 			
 		}
 		
+		public void InjectTiles(IEnumerable<Tile> tiles)
+		{
+			foreach (var t in tiles)
+			{
+				tileViewByPosition[t.Position].InjectTile(t, piecePrefabMapper);
+			}
+		}
+		
 		public void MarkTilesWithValidMoves(IEnumerable<Position> validMoves, bool doMark)
 		{
 			foreach (var position in validMoves)

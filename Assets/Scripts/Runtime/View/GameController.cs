@@ -27,16 +27,16 @@ namespace Chess.View
 			var tile = tileView.Tile;
 			
 			deSelectFunc?.Invoke();
-
 			
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-					game.MovePiece(selectedTilePiece, tile.Position);
+					var (beforeMoveTile, afterMoveTile) = game.MovePiece(selectedTilePiece, tile.Position);
+					chessBoardView.InjectTiles(new [] {beforeMoveTile, afterMoveTile});
 					playerAction = PlayerAction.SelectPiece;
 					return;
 			}
 
-			if (tile is not TileWithPiece twp || twp.Piece.PlayerId != game.PlayerIdToMove && playerAction == PlayerAction.SelectPiece)
+			if (tile is not TileWithPiece twp || twp.Piece.PlayerId != game.PlayerIdToMove)
 			{
 				return;
 			}

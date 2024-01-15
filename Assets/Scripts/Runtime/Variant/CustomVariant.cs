@@ -8,7 +8,7 @@ namespace Chess
 		// public CustomVariant(IEnumerable<IEnumerable<Tile>> tileSetupSequence, IEnumerable<Func<Board, bool>> endConditions, int numberOfPlayers,
 		// 	Func<PieceType, IEnumerable<Position>> validMovesByType)
 		// {
-		// 	TileSetupSequence = tileSetupSequence;
+		// 	Tiles = tileSetupSequence;
 		// 	EndConditions = endConditions;
 		// 	NumberOfPlayers = numberOfPlayers;
 		// 	validMoves = validMovesByType;
@@ -17,7 +17,7 @@ namespace Chess
 		// private readonly Func<PieceType, IEnumerable<Position>> validMoves;
 		//
 		// public override VariantType VariantType => VariantType.Custom;
-		// public override IEnumerable<IEnumerable<Tile>> TileSetupSequence { get; }
+		// public override IEnumerable<IEnumerable<Tile>> Tiles { get; }
 		// public override IEnumerable<Func<Board, bool>> EndConditions { get; }
 		// public override int NumberOfPlayers { get; }
 		//
