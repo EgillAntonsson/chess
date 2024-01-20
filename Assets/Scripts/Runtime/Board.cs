@@ -10,21 +10,20 @@ namespace Chess
 		private readonly Dictionary<Position, PieceType> pieceTypeByStartPositions;
 		public Tile[,] Tiles => (Tile[,])tiles.Clone();
 		public int Size => (int)Math.Sqrt(tiles.Length);
-		
+
 		public Board(string tilePositions)
 		{
 			pieceTypeByStartPositions = new Dictionary<Position, PieceType>();
 			tiles = ConvertToTileArray(tilePositions, pieceTypeByStartPositions);
-			
 		}
 
 		public static Tile[,] ConvertToTileArray(string tiles, Dictionary<Position, PieceType> typeByStartPositions = null)
 		{
-			var rows  = tiles.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+			var rows = tiles.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
 			var t = new Tile[rows.Length, rows.Length];
 			for (var row = rows.Length - 1; row >= 0; row--)
 			{
-				var columns = rows[row].Split(' ',  StringSplitOptions.RemoveEmptyEntries);
+				var columns = rows[row].Split(' ', StringSplitOptions.RemoveEmptyEntries);
 				var r = Math.Abs(row - (rows.Length - 1));
 				for (var c = 0; c < columns.Length; c++)
 				{
@@ -40,9 +39,10 @@ namespace Chess
 					}
 				}
 			}
+
 			return t;
 		}
-		
+
 		public static PieceType GetPieceTypeFromChar(char c)
 		{
 			c = char.ToUpper(c);
@@ -60,22 +60,23 @@ namespace Chess
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tileWithPiece,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceType,
-			int playerIdToMove, Position moveAdditionPosLastPlayed, string tilePositions = null)
+			int playerIdToMove,
+			string tilePositions = null)
 		{
-			var movesForPt = movesForPieceType(tileWithPiece.Piece.Type, playerIdToMove);
-			return movesForPt
+			return movesForPieceType(tileWithPiece.Piece.Type, playerIdToMove)
 				.Select(m => m with { Position = m.Position + tileWithPiece.Position })
 				.Where(m => IsOnBoard(m.Position, Size))
 				.Where(m =>
 				{
-
-					var isFirstMoveAddition = m.MoveType is MoveType.FirstMoveAddition &&
-					                          pieceTypeByStartPositions.ContainsKey(tileWithPiece.Position) &&
-					                          pieceTypeByStartPositions[tileWithPiece.Position] == tileWithPiece.Piece.Type;
 					var bTile = tilePositions == null ? GetTile(m.Position) : GetTile(m.Position, tilePositions);
-					
-					return bTile is not TileWithPiece && m.MoveType is MoveType.CaptureOrMove or MoveType.MoveOnly || isFirstMoveAddition
-					       || bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveType is MoveType.CaptureOrMove or MoveType.CaptureOnly;
+
+					var canMove = m.MoveConstraint == MoveConstraint.None
+						|| m.MoveConstraint is MoveConstraint.FirstMoveOnly
+						&& pieceTypeByStartPositions.ContainsKey(tileWithPiece.Position)
+						&& pieceTypeByStartPositions[tileWithPiece.Position] == tileWithPiece.Piece.Type;
+
+					return bTile is not TileWithPiece && m.MoveType.HasFlag(MoveType.Move) && canMove
+						|| bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveType.HasFlag(MoveType.Capture);
 				})
 				.Select(m => m.Position);
 		}
@@ -84,7 +85,7 @@ namespace Chess
 		{
 			return tiles[position.Column, position.Row];
 		}
-		
+
 		public static Tile GetTile(Position position, string tilePositions)
 		{
 			return ConvertToTileArray(tilePositions)[position.Column, position.Row];
@@ -95,19 +96,11 @@ namespace Chess
 			return position.Column >= 0 && position.Column < size && position.Row >= 0 && position.Row < size;
 		}
 
-		public (Tile beforeMoveTile, Tile afterMoveTile, bool isFirstMoveAddition) MovePiece(TileWithPiece twp, Position pos, Func<PieceType, int, IEnumerable<Move>> movesForPieceType, int playerIdToMove)
+		public (Tile beforeMoveTile, Tile afterMoveTile) MovePiece(TileWithPiece twp, Position pos)
 		{
-			var firstMoveAdditions = movesForPieceType(twp.Piece.Type, playerIdToMove)
-				.Where(m => m.MoveType is MoveType.FirstMoveAddition &&
-				       pieceTypeByStartPositions.ContainsKey(twp.Position) &&
-				       pieceTypeByStartPositions[twp.Position] == twp.Piece.Type);
-			var isFirstMoveAddition = firstMoveAdditions.Select(move => move.Position + twp.Position).Any(movePos => movePos == pos);
-
-			var beforeMoveTile = tiles[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);;
-			
+			var beforeMoveTile = tiles[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
 			var afterMoveTile = tiles[pos.Column, pos.Row] = twp with { Position = pos };
-			
-			return (beforeMoveTile, afterMoveTile, isFirstMoveAddition);
+			return (beforeMoveTile, afterMoveTile);
 		}
 	}
 }

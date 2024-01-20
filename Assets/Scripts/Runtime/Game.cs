@@ -10,7 +10,6 @@ namespace Chess
 		private readonly Variant variant;
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
-		private Position moveAdditionPosLastPlayed;
 
 		public Game(Variant variant)
 		{
@@ -27,14 +26,13 @@ namespace Chess
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
-			return ChessBoard.FindValidMoves(tile, variant.ValidMovesByType, PlayerIdToMove, moveAdditionPosLastPlayed);
+			return ChessBoard.FindValidMoves(tile, variant.ValidMovesByType, PlayerIdToMove);
 		}
 		
 		public (Tile beforeMoveTile, Tile afterMoveTile) MovePiece(TileWithPiece tile, Position position)
 		{
-			var (beforeMoveTile, afterMoveTile, isFirstMoveAddition) = ChessBoard.MovePiece(tile, position, variant.ValidMovesByType, PlayerIdToMove);
+			var (beforeMoveTile, afterMoveTile) = ChessBoard.MovePiece(tile, position);
 			PlayerTurnEnded();
-			moveAdditionPosLastPlayed = isFirstMoveAddition ? afterMoveTile.Position : Position.None;
 			return (beforeMoveTile, afterMoveTile);
 		}
 
