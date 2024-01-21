@@ -7,45 +7,49 @@ namespace Chess
 	{
 		public static IEnumerable<Move> Knight()
 		{
-			var moves = new Move[]
+			const MoveType moveType = MoveType.Basic;
+			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			return new Move[]
 			{
-				new(new Position(1, 2), MoveType.Move | MoveType.Capture),
-				new(new Position(2, 1), MoveType.Move | MoveType.Capture),
-				new(new Position(2, -1), MoveType.Move | MoveType.Capture),
-				new(new Position(1, -2), MoveType.Move | MoveType.Capture),
-				new(new Position(-1, -2), MoveType.Move | MoveType.Capture),
-				new(new Position(-2, -1), MoveType.Move | MoveType.Capture),
-				new(new Position(-2, 1), MoveType.Move | MoveType.Capture),
-				new(new Position(-1, 2), MoveType.Move | MoveType.Capture)
+				new(new Position(1, 2), moveType, moveAndCaptureFlagSet),
+				new(new Position(2, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(2, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, -2), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, -2), moveType, moveAndCaptureFlagSet),
+				new(new Position(-2, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-2, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 2), moveType, moveAndCaptureFlagSet)
 			};
-			return moves;
 		}
 
 		public static IEnumerable<Move> Pawn(int playerId)
 		{
 			var row = playerId == 1 ? 1 : -1;
+			const MoveType moveType = MoveType.Basic;
 			return new Move[]
 			{
-				new(new Position(0, row), MoveType.Move),
-				new(new Position(0, row * 2), MoveType.Move, MoveConstraint.FirstMoveOnly),
-				new(new Position(1, row), MoveType.Capture),
-				new(new Position(-1, row), MoveType.Capture)
+				new(new Position(0, row), moveType, MoveCaptureFlag.Move),
+				new(new Position(0, row * 2), moveType, MoveCaptureFlag.Move, MoveConstraints.FirstMoveOnly),
+				new(new Position(1, row), moveType, MoveCaptureFlag.Capture),
+				new(new Position(-1, row), moveType, MoveCaptureFlag.Capture)
 			};
 		}
-	}
 
-	public record Move(Position Position, MoveType MoveType, MoveConstraint MoveConstraint = MoveConstraint.None);
-
-	[Flags]
-	public enum MoveType
-	{
-		Move = 1 << 0,
-		Capture = 2 << 1
-	}
-
-	public enum MoveConstraint
-	{
-		None = 0,
-		FirstMoveOnly = 1,
+		public static IEnumerable<Move> Queen()
+		{
+			const MoveType moveType = MoveType.Infinite;
+			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			return new Move[]
+			{
+				new(new Position(0, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(0, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
+			};
+		}
 	}
 }

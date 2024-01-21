@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Chess;
@@ -9,59 +10,92 @@ public class BoardTest
 	{
 		get
 		{
-			const string standardBoardStart = "when Standard board in start position.";
 			var pos = new Position(1, 0);
-			const int playerIdToMove = 1;
-			yield return new TestCaseData(pos,
-				StandardVariant.TilesStandard(),
-				playerIdToMove,
-				new List<Position>
-				{
-					new(0, 2),
-					new(2, 2)
-				}).SetName($"{nameof(Find_valid_moves_on_board_for)} Knight on {pos} {standardBoardStart}");
+			var playerIdToMove = 1;
+			Func<string> currentBoardFunc = StandardVariant.BoardAtStart;
+			IEnumerable<Position> expectedMoves = new Position[] { new(0, 2), new(2, 2) };
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Knight} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(0, 1);
-			yield return new TestCaseData(pos,
-				StandardVariant.TilesStandard(),
-				playerIdToMove,
-				new List<Position>
-				{
-					new(0, 2),
-					new(0, 3)
-				}).SetName($"{nameof(Find_valid_moves_on_board_for)} Pawn on {pos} {standardBoardStart}");
+			expectedMoves = new Position[] { new(0, 2), new(0, 3) };
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+
+			currentBoardFunc = Notation_1_e4_c5;
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(4, 3);
-			yield return new TestCaseData(pos,
-				Tiles_Kings_Opening(),
-				playerIdToMove,
-				new List<Position>
-				{
-					new(4, 4)
-				}).SetName($"{nameof(Find_valid_moves_on_board_for)} Pawn on {pos} when {nameof(Tiles_Kings_Opening)}");
+			expectedMoves = new Position[] { new(4, 4) };
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+			
+			pos = new Position(4, 3);
+			currentBoardFunc = Notation_1_e4_e5;
+			expectedMoves = Enumerable.Empty<Position>();
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
-			pos = new Position(0, 1);
-			yield return new TestCaseData(pos,
-				Tiles_Kings_Opening(),
-				playerIdToMove,
-				new List<Position>
-				{
-					new(0, 2),
-					new(0, 3)
-				}).SetName($"{nameof(Find_valid_moves_on_board_for)} Pawn on {pos} when {nameof(Tiles_Kings_Opening)}");
+			playerIdToMove = 1;
+			pos = new Position(3, 0);
+			currentBoardFunc = StandardVariant.BoardAtStart;
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
+
+			playerIdToMove = 2;
+			pos = new Position(3, 7);
+			currentBoardFunc = Quickest_Win__Player2_To_Move;
+			expectedMoves = new Position[]
+			{
+				new(4, 6),
+				new(5, 5),
+				new(6, 4),
+				new(7, 3)
+			};
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
 		}
 	}
 
-	public static string Tiles_Kings_Opening()
+	public static string Notation_1_e4_c5()
 	{
 		return @"
 R2 N2 B2 Q2 K2 B2 N2 R2
-P2 P2 P2 __ P2 P2 P2 P2
-__ __ __ P2 __ __ __ __
-__ __ __ __ __ __ __ __
-__ __ __ __ P1 __ __ __
-__ __ __ __ __ __ __ __
-P1 P1 P1 P1 __ P1 P1 P1
+P2 P2 -- P2 P2 P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- P2 -- -- -- -- --
+-- -- -- -- P1 -- -- --
+-- -- -- -- -- -- -- --
+P1 P1 P1 P1 -- P1 P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
+	
+	public static string Notation_1_e4_e5()
+	{
+		return @"
+R2 N2 B2 Q2 K2 B2 N2 R2
+P2 P2 P2 P2 -- P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- -- P2 -- -- --
+-- -- -- -- P1 -- -- --
+-- -- -- -- -- -- -- --
+P1 P1 P1 P1 -- P1 P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
+
+	public static string Quickest_Win__Player2_To_Move()
+	{
+		return @"
+R2 N2 B2 Q2 K2 B2 N2 R2
+P2 P2 P2 P2 -- P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- -- P2 -- -- --
+-- -- -- -- -- -- P1 --
+-- -- -- -- -- P1 -- --
+P1 P1 P1 P1 P1 -- -- P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 	}
@@ -69,7 +103,7 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 	[TestCaseSource(nameof(ValidMoveCases))]
 	public void Find_valid_moves_on_board_for(Position piecePos, string tilesAtCurrent, int playerIdToMove, IEnumerable<Position> expectedMoves)
 	{
-		var board = new Board(StandardVariant.TilesStandard());
+		var board = new Board(StandardVariant.BoardAtStart());
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tilesAtCurrent);
 
 		var validMoves = board.FindValidMoves(twp, StandardVariant.ValidMovesByTypeStandard, playerIdToMove, tilesAtCurrent);
@@ -83,19 +117,19 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 		{
 			var beforePos = new Position(0, 1);
 			var afterPos = new Position(0, 2);
-			yield return new TestCaseData(beforePos, afterPos, StandardVariant.TilesStandard()).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(StandardVariant.TilesStandard)}");
+			yield return new TestCaseData(beforePos, afterPos, StandardVariant.BoardAtStart()).SetName(
+				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(StandardVariant.BoardAtStart)}");
 
 			afterPos = new Position(0, 3);
-			yield return new TestCaseData(beforePos, afterPos, StandardVariant.TilesStandard()).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(StandardVariant.TilesStandard)}");
+			yield return new TestCaseData(beforePos, afterPos, StandardVariant.BoardAtStart()).SetName(
+				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(StandardVariant.BoardAtStart)}");
 		}
 	}
 
 	[TestCaseSource(nameof(MovePieceCases))]
 	public void Move_piece_on_board(Position beforePos, Position afterPos, string tilesAtCurrent)
 	{
-		var board = new Board(StandardVariant.TilesStandard());
+		var board = new Board(StandardVariant.BoardAtStart());
 		var twp = (TileWithPiece)Board.GetTile(beforePos, tilesAtCurrent);
 
 		var (beforeMoveTile, afterMoveTile) = board.MovePiece(twp, afterPos);
