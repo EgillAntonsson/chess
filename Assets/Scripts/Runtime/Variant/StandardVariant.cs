@@ -37,10 +37,10 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 			{
 				PieceType.Knight => ValidMovesStandard.Knight(),
 				PieceType.Pawn => ValidMovesStandard.Pawn(playerId),
-				PieceType.Bishop => ValidMovesStandard.Knight(),
-				PieceType.Rook => ValidMovesStandard.Knight(),
+				PieceType.Bishop => ValidMovesStandard.Bishop(),
+				PieceType.Rook => ValidMovesStandard.Rook(),
 				PieceType.Queen => ValidMovesStandard.Queen(),
-				PieceType.King => ValidMovesStandard.Knight(),
+				PieceType.King => ValidMovesStandard.King(),
 				_ => new Move[] { }
 			};
 		}

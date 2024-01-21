@@ -67,24 +67,28 @@ namespace Chess
 			{
 				moves.AddRange(Enumerable.Range(1, move.MoveType == MoveType.Infinite ? boardSize - 1 : 1).Select(i => move with { Position = move.Position * i }));
 			}
-
 			var hasInBetweenPieceByPosition = new Dictionary<Position, bool>();
 
-			var sel = moves.Select(m => m with { Position = tileWithPiece.Position + m.Position });
-			var w = sel.Where(m => IsOnBoard(m.Position, boardSize)).OrderBy(m => Position.GridDistance(tileWithPiece.Position, m.Position));
-			var w2 = w.Where(m =>
-			{
-				var bTile = GetTile(m.Position, boardTiles);
-
-				var canMove = m.MoveConstraints == MoveConstraints.None
-					|| m.MoveConstraints is MoveConstraints.FirstMoveOnly
-					&& pieceTypeByStartPositions.ContainsKey(tileWithPiece.Position)
-					&& pieceTypeByStartPositions[tileWithPiece.Position] == tileWithPiece.Piece.Type;
-
-				var gridDistance = Position.GridDistance(tileWithPiece.Position, m.Position);
-
-				if (m.MoveType == MoveType.Infinite && gridDistance > 1)
+			return moves.Select(m => m with { Position = tileWithPiece.Position + m.Position })
+				.Where(m => IsOnBoard(m.Position, boardSize))
+				.OrderBy(m => Position.GridDistance(tileWithPiece.Position, m.Position))
+				.Where(m =>
 				{
+					var bTile = GetTile(m.Position, boardTiles);
+
+					var canMove = m.MoveConstraints == MoveConstraints.None
+						|| m.MoveConstraints is MoveConstraints.FirstMoveOnly
+						&& pieceTypeByStartPositions.ContainsKey(tileWithPiece.Position)
+						&& pieceTypeByStartPositions[tileWithPiece.Position] == tileWithPiece.Piece.Type;
+
+					var gridDistance = Position.GridDistance(tileWithPiece.Position, m.Position);
+
+					if (m.MoveType != MoveType.Infinite || gridDistance <= 1)
+					{
+						return bTile is not TileWithPiece && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move) && canMove
+							|| bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
+					}
+
 					var posNormal = Position.GridNormal(m.Position, tileWithPiece.Position);
 					if (hasInBetweenPieceByPosition.ContainsKey(posNormal))
 					{
@@ -92,18 +96,13 @@ namespace Chess
 					}
 
 					var inBetweenPos = m.Position + posNormal;
-					if (GetTile(inBetweenPos, boardTiles) is TileWithPiece)
-					{
-						hasInBetweenPieceByPosition[posNormal] = true;
-						return false;
-					}
-				}
-
-				return bTile is not TileWithPiece && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move) && canMove
-					|| bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
-			});
-
-			return w2.Select(m => m.Position);
+					if (GetTile(inBetweenPos, boardTiles) is not TileWithPiece)
+						return bTile is not TileWithPiece && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move) && canMove
+							|| bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
+					hasInBetweenPieceByPosition[posNormal] = true;
+					return false;
+				})
+				.Select(m => m.Position);
 		}
 
 		/// <summary>

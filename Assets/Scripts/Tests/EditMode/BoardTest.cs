@@ -36,8 +36,22 @@ public class BoardTest
 			expectedMoves = Enumerable.Empty<Position>();
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
-
-			playerIdToMove = 1;
+			
+			pos = new Position(4, 0);
+			currentBoardFunc = StandardVariant.BoardAtStart;
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+			
+			pos = new Position(5, 0);
+			currentBoardFunc = StandardVariant.BoardAtStart;
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Bishop} on {pos} when {currentBoardFunc.Method.Name}");
+			
+			pos = new Position(0, 0);
+			currentBoardFunc = StandardVariant.BoardAtStart;
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
+				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Rook} on {pos} when {currentBoardFunc.Method.Name}");
+			
 			pos = new Position(3, 0);
 			currentBoardFunc = StandardVariant.BoardAtStart;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(

@@ -51,5 +51,48 @@ namespace Chess
 				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
 			};
 		}
+		
+		public static IEnumerable<Move> King()
+		{
+			const MoveType moveType = MoveType.Basic;
+			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			return new Move[]
+			{
+				new(new Position(0, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(0, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
+			};
+		}
+		
+		public static IEnumerable<Move> Bishop()
+		{
+			const MoveType moveType = MoveType.Infinite;
+			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			return new Move[]
+			{
+				new(new Position(1, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
+			};
+		}
+		
+		public static IEnumerable<Move> Rook()
+		{
+			const MoveType moveType = MoveType.Infinite;
+			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			return new Move[]
+			{
+				new(new Position(0, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(0, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet),
+			};
+		}
 	}
 }

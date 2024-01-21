@@ -24,12 +24,6 @@ namespace Chess
 			return ChessBoard.Create(variant.Tiles);
 		}
 
-		public bool HasGameEnded()
-		{
-			return false;
-			// return variant.EndConditions.Any(endCondition => endCondition(ChessBoard));
-		}
-
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
 			return ChessBoard.FindValidMoves(tile, variant.ValidMovesByType, PlayerIdToMove);
@@ -41,6 +35,11 @@ namespace Chess
 			PlayerTurnEnded();
 			return (beforeMoveTile, afterMoveTile);
 		}
+		
+		// private bool IsGameOver()
+		// { 
+		// 	variant.EndConditions.
+		// }
 
 		private void PlayerTurnEnded()
 		{
