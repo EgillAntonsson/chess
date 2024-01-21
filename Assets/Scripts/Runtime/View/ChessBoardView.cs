@@ -11,10 +11,9 @@ namespace Chess.View
 		[SerializeField] private PiecePrefabMapper piecePrefabMapper;
 
 		private Dictionary<Position, TileView> tileViewByPosition;
-		public void Create(Board board, Action<TileView> onTileClicked)
+		public void Create(Tile[,] boardTiles, Action<TileView> onTileClicked)
 		{
-			var tiles = board.Tiles;
-			var boardSize = board.Size;
+			var boardSize = Board.GetSize(boardTiles);
 			tileViewByPosition = new Dictionary<Position, TileView>(boardSize * boardSize);
 			for (var row = 0; row < boardSize; row++)
 			{
@@ -22,7 +21,7 @@ namespace Chess.View
 				{
 					var t = Instantiate(tile, new Vector3(col, 0, row), Quaternion.identity, transform);
 					var tileView = t.GetComponent<TileView>();
-					tileView.Create(tiles[col, row], piecePrefabMapper, onTileClicked);
+					tileView.Create(boardTiles[col, row], piecePrefabMapper, onTileClicked);
 					tileViewByPosition.Add(new Position(col, row), tileView);
 				}
 			}

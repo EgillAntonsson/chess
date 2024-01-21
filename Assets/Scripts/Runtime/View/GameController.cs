@@ -18,7 +18,7 @@ namespace Chess.View
 		private void Start()
 		{
 			game = new Game(VariantFactory.Create(VariantType.Standard));
-			chessBoardView.Create(game.ChessBoard, OnTileClicked);
+			chessBoardView.Create(game.Create(), OnTileClicked);
 		}
 
 		private void OnTileClicked(TileView tileView)

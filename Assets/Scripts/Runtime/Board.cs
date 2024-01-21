@@ -6,18 +6,14 @@ namespace Chess
 {
 	public class Board
 	{
-		private readonly Tile[,] tiles;
-		private readonly Dictionary<Position, PieceType> pieceTypeByStartPositions;
-		public Tile[,] Tiles => (Tile[,])tiles.Clone();
-		public int Size => (int)Math.Sqrt(tiles.Length);
-
-		public Board(string tilePositions)
+		public static (Tile[,] boardTiles, Dictionary<Position, PieceType> pieceTypeByStartPositions) Create(string boardTiles)
 		{
-			pieceTypeByStartPositions = new Dictionary<Position, PieceType>();
-			tiles = ConvertToTileArray(tilePositions, pieceTypeByStartPositions);
+			var pieceTypeByStartPositions = new Dictionary<Position, PieceType>();
+			var tiles = ConvertToTile2dArray(boardTiles, pieceTypeByStartPositions);
+			return (tiles, pieceTypeByStartPositions);
 		}
 
-		public static Tile[,] ConvertToTileArray(string tiles, Dictionary<Position, PieceType> typeByStartPositions = null)
+		public static Tile[,] ConvertToTile2dArray(string tiles, Dictionary<Position, PieceType> typeByStartPositions = null)
 		{
 			var rows = tiles.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
 			var t = new Tile[rows.Length, rows.Length];
@@ -43,7 +39,7 @@ namespace Chess
 			return t;
 		}
 
-		public static PieceType GetPieceTypeFromChar(char c)
+		private static PieceType GetPieceTypeFromChar(char c)
 		{
 			c = char.ToUpper(c);
 			return c switch
@@ -58,32 +54,35 @@ namespace Chess
 			};
 		}
 
-		public IEnumerable<Position> FindValidMoves(TileWithPiece tileWithPiece,
+		public static IEnumerable<Position> FindValidMoves(TileWithPiece tileWithPiece,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 			int playerIdToMove,
-			string tilePositions = null)
+			Tile[,] boardTiles,
+			Dictionary<Position, PieceType> pieceTypeByStartPositions)
 		{
 			var movesForPieceType = movesForPieceTypeFunc(tileWithPiece.Piece.Type, playerIdToMove);
 			var moves = new List<Move>();
+			var boardSize = GetSize(boardTiles);
 			foreach (var move in movesForPieceType)
 			{
-				moves.AddRange(Enumerable.Range(1, move.MoveType == MoveType.Infinite ? Size - 1 : 1).Select(i => move with { Position = move.Position * i }));
+				moves.AddRange(Enumerable.Range(1, move.MoveType == MoveType.Infinite ? boardSize - 1 : 1).Select(i => move with { Position = move.Position * i }));
 			}
+
 			var hasInBetweenPieceByPosition = new Dictionary<Position, bool>();
 
 			var sel = moves.Select(m => m with { Position = tileWithPiece.Position + m.Position });
-			var w = sel.Where(m => IsOnBoard(m.Position, Size)).OrderBy(m => Position.GridDistance(tileWithPiece.Position, m.Position));
+			var w = sel.Where(m => IsOnBoard(m.Position, boardSize)).OrderBy(m => Position.GridDistance(tileWithPiece.Position, m.Position));
 			var w2 = w.Where(m =>
 			{
-				var bTile = tilePositions == null ? GetTile(m.Position) : GetTile(m.Position, tilePositions);
+				var bTile = GetTile(m.Position, boardTiles);
 
 				var canMove = m.MoveConstraints == MoveConstraints.None
 					|| m.MoveConstraints is MoveConstraints.FirstMoveOnly
 					&& pieceTypeByStartPositions.ContainsKey(tileWithPiece.Position)
 					&& pieceTypeByStartPositions[tileWithPiece.Position] == tileWithPiece.Piece.Type;
-				
+
 				var gridDistance = Position.GridDistance(tileWithPiece.Position, m.Position);
-				
+
 				if (m.MoveType == MoveType.Infinite && gridDistance > 1)
 				{
 					var posNormal = Position.GridNormal(m.Position, tileWithPiece.Position);
@@ -91,8 +90,9 @@ namespace Chess
 					{
 						return false;
 					}
+
 					var inBetweenPos = m.Position + posNormal;
-					if (tilePositions == null ? GetTile(inBetweenPos) is TileWithPiece : GetTile(inBetweenPos, tilePositions) is TileWithPiece)
+					if (GetTile(inBetweenPos, boardTiles) is TileWithPiece)
 					{
 						hasInBetweenPieceByPosition[posNormal] = true;
 						return false;
@@ -106,14 +106,18 @@ namespace Chess
 			return w2.Select(m => m.Position);
 		}
 
-		public Tile GetTile(Position position)
+		/// <summary>
+		/// For now we take it as given that it is a square board this we only need to get the length of one dimension.
+		/// </summary>
+		/// <param name="boardTiles"></param>
+		public static int GetSize(Tile[,] boardTiles)
 		{
-			return tiles[position.Column, position.Row];
+			return boardTiles.GetLength(0);
 		}
 
-		public static Tile GetTile(Position position, string tilePositions)
+		public static Tile GetTile(Position position, Tile[,] boardTiles)
 		{
-			return ConvertToTileArray(tilePositions)[position.Column, position.Row];
+			return boardTiles[position.Column, position.Row];
 		}
 
 		private static bool IsOnBoard(Position position, int size)
@@ -121,10 +125,10 @@ namespace Chess
 			return position.Column >= 0 && position.Column < size && position.Row >= 0 && position.Row < size;
 		}
 
-		public (Tile beforeMoveTile, Tile afterMoveTile) MovePiece(TileWithPiece twp, Position pos)
+		public static (Tile beforeMoveTile, Tile afterMoveTile) MovePiece(TileWithPiece twp, Position pos, Tile[,] boardTiles)
 		{
-			var beforeMoveTile = tiles[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
-			var afterMoveTile = tiles[pos.Column, pos.Row] = twp with { Position = pos };
+			var beforeMoveTile = boardTiles[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
+			var afterMoveTile = boardTiles[pos.Column, pos.Row] = twp with { Position = pos };
 			return (beforeMoveTile, afterMoveTile);
 		}
 	}

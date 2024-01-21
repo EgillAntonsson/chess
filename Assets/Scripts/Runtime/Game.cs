@@ -6,7 +6,7 @@ namespace Chess
 {
 	public class Game
 	{
-		public Board ChessBoard { get; }
+		public ChessBoard ChessBoard { get; }
 		private readonly Variant variant;
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
@@ -14,14 +14,20 @@ namespace Chess
 		public Game(Variant variant)
 		{
 			this.variant = variant;
-			ChessBoard = new Board(variant.Tiles);
+			ChessBoard = new ChessBoard();
 			PlayerIdToMove = variant.PlayerIdToStart;
 			TurnNumber = 1;
+		}
+		
+		public Tile[,] Create()
+		{
+			return ChessBoard.Create(variant.Tiles);
 		}
 
 		public bool HasGameEnded()
 		{
-			return variant.EndConditions.Any(endCondition => endCondition(ChessBoard));
+			return false;
+			// return variant.EndConditions.Any(endCondition => endCondition(ChessBoard));
 		}
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)

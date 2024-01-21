@@ -30,7 +30,7 @@ public class BoardTest
 			expectedMoves = new Position[] { new(4, 4) };
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
-			
+
 			pos = new Position(4, 3);
 			currentBoardFunc = Notation_1_e4_e5;
 			expectedMoves = Enumerable.Empty<Position>();
@@ -71,7 +71,7 @@ P1 P1 P1 P1 -- P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 	}
-	
+
 	public static string Notation_1_e4_e5()
 	{
 		return @"
@@ -103,10 +103,13 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 	[TestCaseSource(nameof(ValidMoveCases))]
 	public void Find_valid_moves_on_board_for(Position piecePos, string tilesAtCurrent, int playerIdToMove, IEnumerable<Position> expectedMoves)
 	{
-		var board = new Board(StandardVariant.BoardAtStart());
-		var twp = (TileWithPiece)Board.GetTile(piecePos, tilesAtCurrent);
+		var board = new Board();
+		var (_, pieceTypeByStartPositions) = Board.Create(StandardVariant.BoardAtStart());
+		var boardTiles = Board.ConvertToTile2dArray(tilesAtCurrent);
+		var twp = (TileWithPiece)Board.GetTile(piecePos, boardTiles);
 
-		var validMoves = board.FindValidMoves(twp, StandardVariant.ValidMovesByTypeStandard, playerIdToMove, tilesAtCurrent);
+
+		var validMoves = Board.FindValidMoves(twp, StandardVariant.ValidMovesByTypeStandard, playerIdToMove, boardTiles, pieceTypeByStartPositions);
 
 		AssertArraysAreEqual(validMoves, expectedMoves);
 	}
@@ -129,10 +132,13 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 	[TestCaseSource(nameof(MovePieceCases))]
 	public void Move_piece_on_board(Position beforePos, Position afterPos, string tilesAtCurrent)
 	{
-		var board = new Board(StandardVariant.BoardAtStart());
-		var twp = (TileWithPiece)Board.GetTile(beforePos, tilesAtCurrent);
+		
+		var board = new Board();
+		var (_, pieceTypeByStartPositions) = Board.Create(StandardVariant.BoardAtStart());
+		var boardTiles = Board.ConvertToTile2dArray(tilesAtCurrent);
+		var twp = (TileWithPiece)Board.GetTile(beforePos, boardTiles);
 
-		var (beforeMoveTile, afterMoveTile) = board.MovePiece(twp, afterPos);
+		var (beforeMoveTile, afterMoveTile) = Board.MovePiece(twp, afterPos, boardTiles);
 		Assert.That(beforeMoveTile, Is.EqualTo(new Tile(beforePos)));
 		Assert.That(afterMoveTile, Is.EqualTo(twp with { Position = afterPos }));
 	}
