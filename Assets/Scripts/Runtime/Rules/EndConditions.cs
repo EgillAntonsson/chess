@@ -1,11 +1,8 @@
 
 namespace Chess
 {
-	public static class EndConditions
+	public enum EndConditionType
 	{
-		public static bool CheckMate(Board board)
-		{
-			return false;
-		}
+		CheckMate
 	}
 }

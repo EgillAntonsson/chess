@@ -7,9 +7,10 @@ namespace Chess
 	{
 		public abstract VariantType VariantType { get; }
 		public abstract string Tiles { get; }
-		public abstract IEnumerable<Func<Board, bool>> EndConditions { get; }
+		public abstract HashSet<EndConditionType> EndConditions { get; }
 		public virtual int NumberOfPlayers => 2;
 		public virtual int PlayerIdToStart => 1;
+		public virtual bool CanCheck => true;
 		public abstract IEnumerable<Move> ValidMovesByType(PieceType type, int playerId);
 	}
 }

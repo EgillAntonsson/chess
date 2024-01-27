@@ -36,12 +36,17 @@ namespace Chess.View
 			}
 		}
 		
-		public void MarkTilesWithValidMoves(IEnumerable<Position> validMoves, bool doMark)
+		public void MarkTiles(IEnumerable<Position> tilePositions, TileMarkType tileMarkType)
 		{
-			foreach (var position in validMoves)
+			foreach (var position in tilePositions)
 			{
-				tileViewByPosition[position].MarkWithValidMove(doMark: doMark);
+				tileViewByPosition[position].MarkTile(tileMarkType);
 			}
+		}
+		
+		public void MarkTile(Position tilePosition, TileMarkType tileMarkType)
+		{
+			MarkTiles(new [] {tilePosition}, tileMarkType);
 		}
 	}
 }

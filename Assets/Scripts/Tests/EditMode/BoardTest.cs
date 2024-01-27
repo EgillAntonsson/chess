@@ -113,6 +113,20 @@ P1 P1 P1 P1 P1 -- -- P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 	}
+	
+	public static string Player1_CheckMate()
+	{
+		return @"
+R2 N2 B2 -- K2 B2 N2 R2
+P2 P2 P2 P2 -- P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- -- P2 -- -- --
+-- -- -- -- -- -- P1 Q2
+-- -- -- -- -- P1 -- --
+P1 P1 P1 P1 P1 -- -- P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
 
 	[TestCaseSource(nameof(ValidMoveCases))]
 	public void Find_valid_moves_on_board_for(Position piecePos, string tilesAtCurrent, int playerIdToMove, IEnumerable<Position> expectedMoves)
@@ -126,6 +140,20 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 		var validMoves = Board.FindValidMoves(twp, StandardVariant.ValidMovesByTypeStandard, playerIdToMove, boardTiles, pieceTypeByStartPositions);
 
 		AssertArraysAreEqual(validMoves, expectedMoves);
+	}
+	
+	[Test]
+	public void IsCheckMate()
+	{
+		var board = new Board();
+		var (_, pieceTypeByStartPositions) = Board.Create(StandardVariant.BoardAtStart());
+		var boardTiles = Board.ConvertToTile2dArray(Player1_CheckMate());
+
+		var (isCheck, isCheckMate, checkTile) = Board.IsCheck(1, boardTiles);
+
+		Assert.That(isCheckMate, Is.True);
+		Assert.That(isCheck, Is.True);
+		Assert.That(checkTile, Is.EqualTo(new Tile(new Position(0, 4))));
 	}
 
 	public static IEnumerable<TestCaseData> MovePieceCases

@@ -130,5 +130,11 @@ namespace Chess
 			var afterMoveTile = boardTiles[pos.Column, pos.Row] = twp with { Position = pos };
 			return (beforeMoveTile, afterMoveTile);
 		}
+
+		public static (bool isCheck, bool isCheckMate, Tile checkTile) IsCheck(int playerId, Tile[,] boardTiles)
+		{
+			// TODO: implement
+			return (false, false, null);
+		}
 	}
 }

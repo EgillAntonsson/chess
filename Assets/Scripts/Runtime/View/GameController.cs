@@ -30,8 +30,19 @@ namespace Chess.View
 			
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-					var (beforeMoveTile, afterMoveTile) = game.MovePiece(selectedTilePiece, tile.Position);
+					var (beforeMoveTile, afterMoveTile, tuples, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position);
 					chessBoardView.InjectTiles(new [] {beforeMoveTile, afterMoveTile});
+					foreach (var t in tuples)
+					{
+						if (t.isCheck)
+						{
+							chessBoardView.MarkTile(t.checkTile.Position, TileMarkType.Check);
+						}
+					}
+					if (hasGameEnded)
+					{
+						Debug.Log("Game has ended");
+					}
 					playerAction = PlayerAction.SelectPiece;
 					return;
 			}
@@ -41,17 +52,17 @@ namespace Chess.View
 				return;
 			}
 			
-			tileView.MarkAsSelected(doMark: true);
+			tileView.MarkTile(TileMarkType.Normal);
 			selectedTilePiece = twp;
 			;
 			validMoves = game.FindValidMoves(twp);
 			
 			var validMovesArr = validMoves as Position[] ?? validMoves.ToArray();
-			chessBoardView.MarkTilesWithValidMoves(validMovesArr, doMark: true);
+			chessBoardView.MarkTiles(validMovesArr, TileMarkType.ValidMove);
 			deSelectFunc = () =>
 			{
-				tileView.MarkAsSelected(doMark: false);
-				chessBoardView.MarkTilesWithValidMoves(validMovesArr, doMark: false);
+				tileView.MarkTile(TileMarkType.Normal);
+				chessBoardView.MarkTiles(validMovesArr, TileMarkType.ValidMove);
 			};
 			
 			playerAction = PlayerAction.MovePiece;

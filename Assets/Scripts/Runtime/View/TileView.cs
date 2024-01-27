@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Chess.View
@@ -7,9 +8,13 @@ namespace Chess.View
 	{
 		public Tile Tile { get; private set; }
 		private Action<TileView> onTileClicked;
-		private readonly Color defaultColor = new Color(0f, 0f, 1f, 0.1f);
-		private readonly Color selectedColor = new Color(0f, 1f, 0f, 0.5f);
-		private readonly Color validMoveColor = new Color(1f, 1f, 0f, 0.5f);
+		private readonly Dictionary<TileMarkType, Color> colorByTileMarkType = new()
+		{
+			{TileMarkType.Normal, new Color(0f, 0f, 1f, 0.1f)},
+			{TileMarkType.Selected, new Color(0f, 1f, 0f, 0.5f)},
+			{TileMarkType.ValidMove, new Color(1f, 1f, 0f, 0.5f)},
+			{TileMarkType.Check, new Color(1f, 0f, 0f, 0.5f)}
+		};
 		private GameObject piece;
 
 		public void Create(Tile tile, PiecePrefabMapper mapper, Action<TileView> tileClicked)
@@ -37,7 +42,7 @@ namespace Chess.View
 				piece = Instantiate(prefab, transform);
 			}
 			
-			GetComponent<Renderer>().material.color = defaultColor;	
+			MarkTile(TileMarkType.Normal);
 		}
 
 		private void OnMouseDown()
@@ -45,14 +50,9 @@ namespace Chess.View
 			onTileClicked?.Invoke(this);
 		}
 		
-		public void MarkAsSelected(bool doMark)
+		public void MarkTile(TileMarkType tileMarkType)
 		{
-			GetComponent<Renderer>().material.color = doMark ? selectedColor : defaultColor;
-		}
-		
-		public void MarkWithValidMove(bool doMark)
-		{
-			GetComponent<Renderer>().material.color = doMark ? validMoveColor : defaultColor;
+			GetComponent<Renderer>().material.color = colorByTileMarkType[tileMarkType];
 		}
 	}
 }

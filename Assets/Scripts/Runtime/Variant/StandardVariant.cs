@@ -22,11 +22,14 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 		}
 
-		public override IEnumerable<Func<Board, bool>> EndConditions => EndConditionsStandard();
+		public override HashSet<EndConditionType> EndConditions => EndConditionsStandard();
 
-		public static IEnumerable<Func<Board, bool>> EndConditionsStandard()
+		public static HashSet<EndConditionType> EndConditionsStandard()
 		{
-			return new List<Func<Board, bool>> { Chess.EndConditions.CheckMate };
+			return new HashSet<EndConditionType>
+			{
+				EndConditionType.CheckMate,
+			};
 		}
 
 		public override IEnumerable<Move> ValidMovesByType(PieceType type, int playerId) => ValidMovesByTypeStandard(type, playerId);
