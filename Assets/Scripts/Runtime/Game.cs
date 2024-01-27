@@ -29,28 +29,28 @@ namespace Chess
 			return ChessBoard.FindValidMoves(tile, variant.ValidMovesByType, PlayerIdToMove);
 		}
 		
-		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(bool isCheck, bool isCheckMate, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
+		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
 			var (beforeMoveTile, afterMoveTile) = ChessBoard.MovePiece(tile, position);
-			IEnumerable<(bool isCheck, bool isCheckMate, Tile checkTile)> checkTuples = null;
+			IEnumerable<(CheckType checktype, Tile checkTile)> opponentInCheckList = null;
 			if (variant.CanCheck)
 			{
-				checkTuples = GetOpponentsLeft().Select(playerId => ChessBoard.IsCheck(playerId));
+				opponentInCheckList = GetOpponentsLeft().Select(playerId => ChessBoard.IsCheck(playerId));
 			}
 
-			var gameHasEnded = CheckIfGameHasEnded(checkTuples);
+			var gameHasEnded = CheckIfGameHasEnded(opponentInCheckList);
 			
 			PlayerTurnEnded();
-			return (beforeMoveTile, afterMoveTile, checkTuples, gameHasEnded);
+			return (beforeMoveTile, afterMoveTile, opponentInCheckList, gameHasEnded);
 		}
 		
-		private bool CheckIfGameHasEnded(IEnumerable<(bool isCheck, bool isCheckMate, Tile checkTile)> checkTuples)
+		private bool CheckIfGameHasEnded(IEnumerable<(CheckType checktype, Tile checkTile)> opponentInCheckList)
 		{ 
 			if (variant.EndConditions.Contains(EndConditionType.CheckMate))
 			{
-				if (checkTuples != null)
+				if (opponentInCheckList != null)
 				{
-					return checkTuples.All(tuple => tuple.isCheckMate);
+					return opponentInCheckList.All(opponentInCheck => opponentInCheck.checktype == CheckType.CheckMate);
 				}
 			}
 			return false;

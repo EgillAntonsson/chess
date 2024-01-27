@@ -131,10 +131,19 @@ namespace Chess
 			return (beforeMoveTile, afterMoveTile);
 		}
 
-		public static (bool isCheck, bool isCheckMate, Tile checkTile) IsCheck(int playerId, Tile[,] boardTiles)
+		public static (CheckType checktype, Tile checkTile) IsInCheck(int playerId, Tile[,] boardTiles)
 		{
-			// TODO: implement
-			return (false, false, null);
+			// Get king position of player
+			// Get all opponent(s) pieces
+			// Check if any of the opponent pieces can move to the king position / capture the king
+			var kingPos = GetKingPosition(playerId, boardTiles);
+			
+			return (CheckType.NoCheck, null);
+		}
+
+		private static Position GetKingPosition(int playerId, Tile[,] boardTiles)
+		{
+			return new Position(0, 0);
 		}
 	}
 }

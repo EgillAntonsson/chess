@@ -26,9 +26,9 @@ namespace Chess
 			return Board.MovePiece(twp, pos, boardTiles);
 		}
 		
-		public (bool isCheck, bool isCheckMate, Tile checkTile) IsCheck(int playerId)
+		public (CheckType checktype, Tile checkTile) IsCheck(int playerId)
 		{
-			return Board.IsCheck(playerId, boardTiles);
+			return Board.IsInCheck(playerId, boardTiles);
 		}
 	}
 }

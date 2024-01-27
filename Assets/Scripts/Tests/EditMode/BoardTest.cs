@@ -145,15 +145,13 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 	[Test]
 	public void IsCheckMate()
 	{
-		var board = new Board();
-		var (_, pieceTypeByStartPositions) = Board.Create(StandardVariant.BoardAtStart());
+		Board.Create(StandardVariant.BoardAtStart());
 		var boardTiles = Board.ConvertToTile2dArray(Player1_CheckMate());
 
-		var (isCheck, isCheckMate, checkTile) = Board.IsCheck(1, boardTiles);
+		var opponentCheck = Board.IsInCheck(1, boardTiles);
 
-		Assert.That(isCheckMate, Is.True);
-		Assert.That(isCheck, Is.True);
-		Assert.That(checkTile, Is.EqualTo(new Tile(new Position(0, 4))));
+		Assert.That(opponentCheck.checktype, Is.EqualTo(CheckType.CheckMate));
+		Assert.That(opponentCheck.checkTile, Is.EqualTo(new Tile(new Position(0, 4))));
 	}
 
 	public static IEnumerable<TestCaseData> MovePieceCases

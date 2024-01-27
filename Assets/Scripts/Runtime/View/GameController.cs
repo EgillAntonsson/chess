@@ -30,11 +30,11 @@ namespace Chess.View
 			
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-					var (beforeMoveTile, afterMoveTile, tuples, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position);
+					var (beforeMoveTile, afterMoveTile, opponentInCheckList, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position);
 					chessBoardView.InjectTiles(new [] {beforeMoveTile, afterMoveTile});
-					foreach (var t in tuples)
+					foreach (var t in opponentInCheckList)
 					{
-						if (t.isCheck)
+						if (t.checktype != CheckType.NoCheck)
 						{
 							chessBoardView.MarkTile(t.checkTile.Position, TileMarkType.Check);
 						}
@@ -54,9 +54,8 @@ namespace Chess.View
 			
 			tileView.MarkTile(TileMarkType.Normal);
 			selectedTilePiece = twp;
-			;
-			validMoves = game.FindValidMoves(twp);
 			
+			validMoves = game.FindValidMoves(twp);
 			var validMovesArr = validMoves as Position[] ?? validMoves.ToArray();
 			chessBoardView.MarkTiles(validMovesArr, TileMarkType.ValidMove);
 			deSelectFunc = () =>
