@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Chess
 {
-	public class Board
+	public static class Board
 	{
 		public static (Tile[,] boardTiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
 			Create(string boardTiles)
@@ -65,12 +65,13 @@ namespace Chess
 			};
 		}
 
-		public static IEnumerable<Position> FindValidMoves(TileWithPiece tileWithPiece,
+		public static IEnumerable<Position> FindMoves(TileWithPiece tileWithPiece,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 			int playerIdToMove,
 			Tile[,] boardTiles,
 			Dictionary<Position, TileWithPiece> tileByStartPos,
-			Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
+			IEnumerable<TileWithPiece> opponentTiles,
+			bool recursive = true)
 		{
 			var movesForPieceType = movesForPieceTypeFunc(tileWithPiece.Piece.Type, playerIdToMove);
 			var moves = new List<Move>();
@@ -123,7 +124,8 @@ namespace Chess
 							&& tileByStartPos.ContainsKey(tileWithPiece.Position)
 							&& tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
 							|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture
-							&& IsInCheck(playerIdToMove, movesForPieceTypeFunc, tilesByPlayer, boardTiles, tileByStartPos).checktype == CheckType.NoCheck;
+							&& recursive
+							&& IsInCheck(new TileWithPiece(bTile.Position, tileWithPiece.Piece), movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos) == CheckType.NoCheck;
 						return canMove;
 					}
 				})
@@ -156,29 +158,26 @@ namespace Chess
 			return (beforeMoveTile, afterMoveTile);
 		}
 
-		public static (CheckType checktype, Tile checkTile) IsInCheck(int playerId,
+		public static CheckType IsInCheck(TileWithPiece checkableTilePiece,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
-			Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer,
+			IEnumerable<TileWithPiece> opponentTiles,
 			Tile[,] boardTiles,
 			Dictionary<Position, TileWithPiece> tileByStartPos)
 		{
-			// Get king position of player
-			// Get all opponent(s) pieces
-			// Check if any of the opponent pieces can move to the king position / capture the king
-			var kingPos = tilesByPlayer[playerId].First(twp => twp.Piece.Type == PieceType.King).Position;
+			;
+			var oppTiles = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
+			var c = oppTiles.SelectMany(twp => FindMoves(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, oppTiles));
+			var d = c.Where(pos => pos == checkableTilePiece.Position);
 
-			var a = tilesByPlayer.Where(kvp => kvp.Key != playerId);
-			var b = a.SelectMany(kvp => kvp.Value);
-			var c = b.SelectMany(twp => FindValidMoves(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, tilesByPlayer));
-			var d = c.Where(pos => pos == kingPos);
+			if (!d.Any()) return CheckType.NoCheck;
 
-			if (d.Any())
+			var moves = FindMoves(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, oppTiles, false);
+			if (moves.Any())
 			{
-				// check if king can move to a position that is not in check
-				return (CheckType.Check, GetTile(kingPos, boardTiles));
+				return CheckType.Check;
 			}
 
-			return (CheckType.NoCheck, null);
+			return CheckType.CheckMate;
 		}
 	}
 }

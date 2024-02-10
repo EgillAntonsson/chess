@@ -119,7 +119,12 @@ public class BoardTest
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tiles);
 
 
-		var validMoves = Board.FindValidMoves(twp, StandardVariant.ValidMovesByTypeStandard, playerIdToMove, tiles, pieceTypeByStartPositions, tilesByPlayer);
+		var validMoves = Board.FindMoves(twp,
+			StandardVariant.ValidMovesByTypeStandard,
+			playerIdToMove,
+			tiles,
+			pieceTypeByStartPositions,
+			ChessBoard.GetOpponentTiles(tilesByPlayer, playerIdToMove));
 
 		AssertArraysAreEqual(validMoves, expectedMoves);
 	}
@@ -128,10 +133,12 @@ public class BoardTest
 	public void Is_not_in_check_at_start()
 	{
 		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(StandardVariant.BoardAtStart());
+		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		const int playerId = 1;
+		
+		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos);
 
-		var opponentCheck = Board.IsInCheck(1, StandardVariant.ValidMovesByTypeStandard, tilesByPlayer, tiles, tilesByStartPos);
-
-		Assert.That(opponentCheck.checktype, Is.EqualTo(CheckType.NoCheck));
+		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
 
 	[Test]
@@ -139,11 +146,12 @@ public class BoardTest
 	{
 		Board.Create(StandardVariant.BoardAtStart());
 		var (tiles, tilesByStartPos, tilesByPlayer) = Board.ConvertBoardStringToTiles(Player1_CheckMate());
+		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		const int playerId = 1;
+		
+		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos);
 
-		var opponentCheck = Board.IsInCheck(1, StandardVariant.ValidMovesByTypeStandard, tilesByPlayer, tiles, tilesByStartPos);
-
-		Assert.That(opponentCheck.checktype, Is.EqualTo(CheckType.CheckMate));
-		Assert.That(opponentCheck.checkTile, Is.EqualTo(new Tile(new Position(0, 4))));
+		Assert.That(opponentCheck, Is.EqualTo(CheckType.CheckMate));
 	}
 
 	public static IEnumerable<TestCaseData> MovePieceCases

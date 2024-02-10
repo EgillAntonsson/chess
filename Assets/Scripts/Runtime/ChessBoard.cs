@@ -21,7 +21,13 @@ namespace Chess
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 			int playerIdToMove)
 		{
-			return Board.FindValidMoves(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, tilesByPlayer);
+			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerIdToMove);
+			return Board.FindMoves(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, opponentTiles);
+		}
+
+		public static IEnumerable<TileWithPiece> GetOpponentTiles(Dictionary<int, IEnumerable<TileWithPiece>> tbp, int playerId)
+		{
+			return tbp.Where(kvp => kvp.Key != playerId).SelectMany(kvp => kvp.Value);
 		}
 
 		public (Tile beforeMoveTile, TileWithPiece afterMoveTile) MovePiece(TileWithPiece twp, Position pos)
@@ -34,8 +40,11 @@ namespace Chess
 		}
 		
 		public (CheckType checktype, Tile checkTile) IsCheck(int playerId, Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
-		{	
-			return Board.IsInCheck(playerId, movesForPieceTypeFunc, tilesByPlayer, boardTiles, tileByStartPos);
+		{
+			var kingTile = tilesByPlayer[playerId].First(twp => twp.Piece.Type == PieceType.King);
+			
+			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
+			return (Board.IsInCheck(kingTile, movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos), kingTile);
 		}
 	}
 }
