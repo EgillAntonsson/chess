@@ -29,7 +29,7 @@ namespace Chess
 			return new Move[]
 			{
 				new(new Position(0, row), moveType, MoveCaptureFlag.Move),
-				new(new Position(0, row * 2), moveType, MoveCaptureFlag.Move, MoveConstraints.FirstMoveOnly),
+				new(new Position(0, row * 2), moveType, MoveCaptureFlag.Move, MoveConstraint.FirstMoveOnly),
 				new(new Position(1, row), moveType, MoveCaptureFlag.Capture),
 				new(new Position(-1, row), moveType, MoveCaptureFlag.Capture)
 			};
@@ -55,17 +55,18 @@ namespace Chess
 		public static IEnumerable<Move> King()
 		{
 			const MoveType moveType = MoveType.Basic;
+			const MoveConstraint moveConstraint = MoveConstraint.CanMoveIfNotThreatenedCapture;
 			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			return new Move[]
 			{
-				new(new Position(0, 1), moveType, moveAndCaptureFlagSet),
-				new(new Position(1, 1), moveType, moveAndCaptureFlagSet),
-				new(new Position(1, 0), moveType, moveAndCaptureFlagSet),
-				new(new Position(1, -1), moveType, moveAndCaptureFlagSet),
-				new(new Position(0, -1), moveType, moveAndCaptureFlagSet),
-				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet),
-				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet),
-				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
+				new(new Position(0, 1), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(1, 1), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(1, 0), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(1, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(0, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet, moveConstraint),
+				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet, moveConstraint)
 			};
 		}
 		

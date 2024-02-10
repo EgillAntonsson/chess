@@ -35,7 +35,7 @@ namespace Chess
 			IEnumerable<(CheckType checktype, Tile checkTile)> opponentInCheckList = null;
 			if (variant.CanCheck)
 			{
-				opponentInCheckList = GetOpponentsLeft().Select(playerId => ChessBoard.IsCheck(playerId));
+				opponentInCheckList = GetOpponentsLeft().Select(playerId => ChessBoard.IsCheck(playerId, variant.ValidMovesByType));
 			}
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentInCheckList);

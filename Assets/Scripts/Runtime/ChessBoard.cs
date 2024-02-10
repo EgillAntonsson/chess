@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace Chess
 {
 	public class ChessBoard
 	{
 		private Tile[,] boardTiles;
-		private Dictionary<Position, PieceType> pieceTypeByStartPositions;
+		private Dictionary<Position, TileWithPiece> tileByStartPos;
+		private Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer;
 
 		public Tile[,] Create(string tiles)
 		{
-			(boardTiles, pieceTypeByStartPositions) = Board.Create(tiles);
+			(boardTiles, tileByStartPos, tilesByPlayer) = Board.Create(tiles);
 			return boardTiles;
 		}
 
@@ -18,17 +21,21 @@ namespace Chess
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 			int playerIdToMove)
 		{
-			return Board.FindValidMoves(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, pieceTypeByStartPositions);
+			return Board.FindValidMoves(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, tilesByPlayer);
 		}
 
-		public (Tile beforeMoveTile, Tile afterMoveTile) MovePiece(TileWithPiece twp, Position pos)
+		public (Tile beforeMoveTile, TileWithPiece afterMoveTile) MovePiece(TileWithPiece twp, Position pos)
 		{
-			return Board.MovePiece(twp, pos, boardTiles);
+			var (beforeMoveTile, afterMoveTile) = Board.MovePiece(twp, pos, boardTiles);
+			var playerId = twp.Piece.PlayerId;
+			var tiles = tilesByPlayer[playerId].Where(t => t != beforeMoveTile);
+			tilesByPlayer[playerId] = tiles.Append(afterMoveTile);
+			return (beforeMoveTile, afterMoveTile);
 		}
 		
-		public (CheckType checktype, Tile checkTile) IsCheck(int playerId)
-		{
-			return Board.IsInCheck(playerId, boardTiles);
+		public (CheckType checktype, Tile checkTile) IsCheck(int playerId, Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
+		{	
+			return Board.IsInCheck(playerId, movesForPieceTypeFunc, tilesByPlayer, boardTiles, tileByStartPos);
 		}
 	}
 }

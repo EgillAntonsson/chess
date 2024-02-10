@@ -6,17 +6,20 @@ namespace Chess
 {
 	public class Board
 	{
-		public static (Tile[,] boardTiles, Dictionary<Position, PieceType> pieceTypeByStartPositions) Create(string boardTiles)
+		public static (Tile[,] boardTiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
+			Create(string boardTiles)
 		{
-			var pieceTypeByStartPositions = new Dictionary<Position, PieceType>();
-			var tiles = ConvertToTile2dArray(boardTiles, pieceTypeByStartPositions);
-			return (tiles, pieceTypeByStartPositions);
+			return ConvertBoardStringToTiles(boardTiles);
 		}
 
-		public static Tile[,] ConvertToTile2dArray(string tiles, Dictionary<Position, PieceType> typeByStartPositions = null)
+		public static (Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
+			ConvertBoardStringToTiles(string tiles)
 		{
+			var tilesByPlayer = new Dictionary<int, List<TileWithPiece>>();
+			var tileByStartPos = new Dictionary<Position, TileWithPiece>();
 			var rows = tiles.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
-			var t = new Tile[rows.Length, rows.Length];
+			var theTiles = new Tile[rows.Length, rows.Length];
+
 			for (var row = rows.Length - 1; row >= 0; row--)
 			{
 				var columns = rows[row].Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -25,18 +28,26 @@ namespace Chess
 				{
 					var posString = columns[c].Trim();
 					if (posString == "--")
-						t[c, r] = new Tile(new Position(c, r));
+						theTiles[c, r] = new Tile(new Position(c, r));
 					else
 					{
 						var pieceType = GetPieceTypeFromChar(posString[0]);
 						var playerId = int.Parse(posString[1].ToString());
-						t[c, r] = new TileWithPiece(new Position(c, r), new Piece(pieceType, playerId));
-						typeByStartPositions?.Add(new Position(c, r), pieceType);
+						var twp = new TileWithPiece(new Position(c, r), new Piece(pieceType, playerId));
+						theTiles[c, r] = twp;
+
+						tilesByPlayer.TryGetValue(playerId, out var tileByType);
+						tilesByPlayer[playerId] = tileByType ?? new List<TileWithPiece>();
+						tilesByPlayer[playerId].Add(twp);
+
+						tileByStartPos.Add(new Position(c, r), twp);
 					}
 				}
 			}
 
-			return t;
+			var tilesByPlayerRet = tilesByPlayer.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<TileWithPiece>)kvp.Value);
+
+			return (theTiles, tileByStartPos, tilesByPlayerRet);
 		}
 
 		private static PieceType GetPieceTypeFromChar(char c)
@@ -58,7 +69,8 @@ namespace Chess
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 			int playerIdToMove,
 			Tile[,] boardTiles,
-			Dictionary<Position, PieceType> pieceTypeByStartPositions)
+			Dictionary<Position, TileWithPiece> tileByStartPos,
+			Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
 		{
 			var movesForPieceType = movesForPieceTypeFunc(tileWithPiece.Piece.Type, playerIdToMove);
 			var moves = new List<Move>();
@@ -67,6 +79,7 @@ namespace Chess
 			{
 				moves.AddRange(Enumerable.Range(1, move.MoveType == MoveType.Infinite ? boardSize - 1 : 1).Select(i => move with { Position = move.Position * i }));
 			}
+
 			var hasInBetweenPieceByPosition = new Dictionary<Position, bool>();
 
 			return moves.Select(m => m with { Position = tileWithPiece.Position + m.Position })
@@ -76,17 +89,11 @@ namespace Chess
 				{
 					var bTile = GetTile(m.Position, boardTiles);
 
-					var canMove = m.MoveConstraints == MoveConstraints.None
-						|| m.MoveConstraints is MoveConstraints.FirstMoveOnly
-						&& pieceTypeByStartPositions.ContainsKey(tileWithPiece.Position)
-						&& pieceTypeByStartPositions[tileWithPiece.Position] == tileWithPiece.Piece.Type;
-
 					var gridDistance = Position.GridDistance(tileWithPiece.Position, m.Position);
 
 					if (m.MoveType != MoveType.Infinite || gridDistance <= 1)
 					{
-						return bTile is not TileWithPiece && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move) && canMove
-							|| bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
+						return CanMoveOrCapture();
 					}
 
 					var posNormal = Position.GridNormal(m.Position, tileWithPiece.Position);
@@ -97,10 +104,28 @@ namespace Chess
 
 					var inBetweenPos = m.Position + posNormal;
 					if (GetTile(inBetweenPos, boardTiles) is not TileWithPiece)
-						return bTile is not TileWithPiece && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move) && canMove
-							|| bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
+					{
+						return CanMoveOrCapture();
+					}
+
 					hasInBetweenPieceByPosition[posNormal] = true;
 					return false;
+
+					bool CanMoveOrCapture() =>
+						bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture)
+						|| bTile is not TileWithPiece && CanMove();
+
+					bool CanMove()
+					{
+						var canMove = m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move);
+						canMove = canMove && m.MoveConstraint is MoveConstraint.None
+							|| m.MoveConstraint is MoveConstraint.FirstMoveOnly
+							&& tileByStartPos.ContainsKey(tileWithPiece.Position)
+							&& tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
+							|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture
+							&& IsInCheck(playerIdToMove, movesForPieceTypeFunc, tilesByPlayer, boardTiles, tileByStartPos).checktype == CheckType.NoCheck;
+						return canMove;
+					}
 				})
 				.Select(m => m.Position);
 		}
@@ -124,26 +149,36 @@ namespace Chess
 			return position.Column >= 0 && position.Column < size && position.Row >= 0 && position.Row < size;
 		}
 
-		public static (Tile beforeMoveTile, Tile afterMoveTile) MovePiece(TileWithPiece twp, Position pos, Tile[,] boardTiles)
+		public static (Tile beforeMoveTile, TileWithPiece afterMoveTile) MovePiece(TileWithPiece twp, Position pos, Tile[,] boardTiles)
 		{
 			var beforeMoveTile = boardTiles[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
-			var afterMoveTile = boardTiles[pos.Column, pos.Row] = twp with { Position = pos };
+			var afterMoveTile = (TileWithPiece)(boardTiles[pos.Column, pos.Row] = twp with { Position = pos });
 			return (beforeMoveTile, afterMoveTile);
 		}
 
-		public static (CheckType checktype, Tile checkTile) IsInCheck(int playerId, Tile[,] boardTiles)
+		public static (CheckType checktype, Tile checkTile) IsInCheck(int playerId,
+			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
+			Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer,
+			Tile[,] boardTiles,
+			Dictionary<Position, TileWithPiece> tileByStartPos)
 		{
 			// Get king position of player
 			// Get all opponent(s) pieces
 			// Check if any of the opponent pieces can move to the king position / capture the king
-			var kingPos = GetKingPosition(playerId, boardTiles);
-			
-			return (CheckType.NoCheck, null);
-		}
+			var kingPos = tilesByPlayer[playerId].First(twp => twp.Piece.Type == PieceType.King).Position;
 
-		private static Position GetKingPosition(int playerId, Tile[,] boardTiles)
-		{
-			return new Position(0, 0);
+			var a = tilesByPlayer.Where(kvp => kvp.Key != playerId);
+			var b = a.SelectMany(kvp => kvp.Value);
+			var c = b.SelectMany(twp => FindValidMoves(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, tilesByPlayer));
+			var d = c.Where(pos => pos == kingPos);
+
+			if (d.Any())
+			{
+				// check if king can move to a position that is not in check
+				return (CheckType.Check, GetTile(kingPos, boardTiles));
+			}
+
+			return (CheckType.NoCheck, null);
 		}
 	}
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace Chess
 {
-	public record Move(Position Position, MoveType MoveType, MoveCaptureFlag MoveCaptureFlag, MoveConstraints MoveConstraints = MoveConstraints.None);
+	public record Move(Position Position, MoveType MoveType, MoveCaptureFlag MoveCaptureFlag, MoveConstraint MoveConstraint = MoveConstraint.None);
 
 	[Flags]
 	public enum MoveCaptureFlag
@@ -18,9 +18,10 @@ namespace Chess
 		// Jump = 2
 	}
 
-	public enum MoveConstraints
+	public enum MoveConstraint
 	{
 		None = 0,
-		FirstMoveOnly = 1
+		FirstMoveOnly = 1,
+		CanMoveIfNotThreatenedCapture = 2
 	}
 }
