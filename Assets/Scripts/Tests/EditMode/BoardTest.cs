@@ -140,6 +140,18 @@ public class BoardTest
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
+	
+	[Test]
+	public void Is_in_check_but_king_can_move()
+	{
+		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(Check_but_king_can_move());
+		const int playerId = 1;
+		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
+		
+		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos);
+
+		Assert.That(opponentCheck, Is.EqualTo(CheckType.Check));
+	}
 
 	[Test]
 	public void Is_check_mate()
