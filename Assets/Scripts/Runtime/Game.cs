@@ -26,7 +26,8 @@ namespace Chess
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
-			return ChessBoard.FindValidMoves(tile, variant.ValidMovesByType, PlayerIdToMove);
+			var isCheckableTile = tile.Piece.Type == variant.CheckablePieceType;
+			return ChessBoard.FindMoves(tile, isCheckableTile, variant.ValidMovesByType, PlayerIdToMove);
 		}
 		
 		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
@@ -35,7 +36,7 @@ namespace Chess
 			IEnumerable<(CheckType checktype, Tile checkTile)> opponentInCheckList = null;
 			if (variant.CanCheck)
 			{
-				opponentInCheckList = GetOpponentsLeft().Select(playerId => ChessBoard.IsCheck(playerId, variant.ValidMovesByType));
+				opponentInCheckList = GetOpponentsLeft().Select(playerId => ChessBoard.IsPlayerInCheck(playerId, variant.CheckablePieceType, variant.ValidMovesByType));
 			}
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentInCheckList);

@@ -61,7 +61,7 @@ namespace Chess.View
 			deSelectFunc = () =>
 			{
 				tileView.MarkTile(TileMarkType.Normal);
-				chessBoardView.MarkTiles(validMovesArr, TileMarkType.ValidMove);
+				chessBoardView.MarkTiles(validMovesArr, TileMarkType.Normal);
 			};
 			
 			playerAction = PlayerAction.MovePiece;

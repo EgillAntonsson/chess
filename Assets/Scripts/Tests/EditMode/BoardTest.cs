@@ -94,20 +94,6 @@ public class BoardTest
 			};
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
-
-			playerIdToMove = 1;
-			pos = new Position(4, 0);
-			currentBoardFunc = Player1_CheckMate;
-			expectedMoves = new Position[] { };
-			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
-			
-			playerIdToMove = 1;
-			pos = new Position(4, 0);
-			currentBoardFunc = Check_but_king_can_move;
-			expectedMoves = new Position[] { new (5, 1) };
-			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 		}
 	}
 
@@ -117,15 +103,35 @@ public class BoardTest
 		var (_, pieceTypeByStartPositions, _) = Board.Create(StandardVariant.BoardAtStart());
 		var (tiles, _, tilesByPlayer) = Board.ConvertBoardStringToTiles(tilesAtCurrent);
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tiles);
-
-
-		var validMoves = Board.FindMoves(twp,
+		
+		var validMoves = Board.FindMovesPos(twp,
 			StandardVariant.ValidMovesByTypeStandard,
 			playerIdToMove,
 			tiles,
 			pieceTypeByStartPositions,
-			ChessBoard.GetOpponentTiles(tilesByPlayer, playerIdToMove));
+			MoveCaptureFlag.Move | MoveCaptureFlag.Capture);
 
+		AssertArraysAreEqual(validMoves, expectedMoves);
+	}
+
+	[Test]
+	public void Find_moves_when_king_in_check_but_can_move()
+	{
+		const int playerIdToMove = 1;
+		var pos = new Position(4, 0);
+		var expectedMoves = new Position[] { new(5, 1) };
+
+		var chessboard = new ChessBoard();
+		chessboard.Create(StandardVariant.BoardAtStart());
+		var (tiles, pieceTypeByStartPositions, tilesByPlayer) = chessboard.InjectBoard(Check_but_king_can_move());
+		var twp = (TileWithPiece)Board.GetTile(pos, tiles);
+		const bool isCheckablePiece = true;
+		
+		var validMoves = chessboard.FindMoves(twp,
+				isCheckablePiece,
+				StandardVariant.ValidMovesByTypeStandard,
+				playerIdToMove);
+		
 		AssertArraysAreEqual(validMoves, expectedMoves);
 	}
 
@@ -136,7 +142,7 @@ public class BoardTest
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 		
-		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos);
+		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
@@ -148,7 +154,7 @@ public class BoardTest
 		const int playerId = 1;
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
 		
-		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos);
+		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.Check));
 	}
@@ -161,7 +167,7 @@ public class BoardTest
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 		
-		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos);
+		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.CheckMate));
 	}
@@ -170,27 +176,27 @@ public class BoardTest
 	{
 		get
 		{
-			var beforePos = new Position(0, 1);
-			var afterPos = new Position(0, 2);
-			yield return new TestCaseData(beforePos, afterPos, StandardVariant.BoardAtStart()).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(StandardVariant.BoardAtStart)}");
-
-			afterPos = new Position(0, 3);
-			yield return new TestCaseData(beforePos, afterPos, StandardVariant.BoardAtStart()).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(StandardVariant.BoardAtStart)}");
+			const int playerId = 1;
+			var beforePos = new Position(4, 1);
+			var afterPos = new Position(4, 3);
+			Func<string> currentBoardFunc = Notation_1_e4;
+			yield return new TestCaseData(beforePos, afterPos, currentBoardFunc(), playerId).SetName(
+				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(currentBoardFunc)}");
 		}
 	}
 
 	[TestCaseSource(nameof(MovePieceCases))]
-	public void Move_piece_on_board(Position beforePos, Position afterPos, string tilesAtCurrent)
+	public void Move_piece_on_board(Position beforePos, Position afterPos, string tilesAtCurrent, int playerId)
 	{
-		var (_, pieceTypeByStartPositions, _) = Board.Create(StandardVariant.BoardAtStart());
-		var (tiles, _, _) = Board.ConvertBoardStringToTiles(tilesAtCurrent);
-		var twp = (TileWithPiece)Board.GetTile(beforePos, tiles);
+		var (tilesBefore, _, tilesByPlayerBefore) = Board.Create(StandardVariant.BoardAtStart());
+		var twp = (TileWithPiece)Board.GetTile(beforePos, tilesBefore);
 
-		var (beforeMoveTile, afterMoveTile) = Board.MovePiece(twp, afterPos, tiles);
+		var (beforeMoveTile, afterMoveTile, tilesAfterMove, tilesByPlayerAfterMove) = Board.MovePiece(twp, afterPos, tilesBefore, tilesByPlayerBefore[playerId]);
 		Assert.That(beforeMoveTile, Is.EqualTo(new Tile(beforePos)));
 		Assert.That(afterMoveTile, Is.EqualTo(twp with { Position = afterPos }));
+		var (expTiles, _, expTilesByPlayer)  = Board.ConvertBoardStringToTiles(tilesAtCurrent);
+		Assert.That(tilesAfterMove, Is.EqualTo(expTiles));
+		Assert.That(tilesByPlayerAfterMove.Last(), Is.EqualTo(afterMoveTile));
 	}
 
 	public static void AssertArraysAreEqual<T>(IEnumerable<T> actual, IEnumerable<T> expected)
@@ -214,6 +220,20 @@ public class BoardTest
 
 	// Notation names are 1 based.
 
+	public static string Notation_1_e4()
+	{
+		return @"
+R2 N2 B2 Q2 K2 B2 N2 R2
+P2 P2 P2 P2 P2 P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- P1 -- -- --
+-- -- -- -- -- -- -- --
+P1 P1 P1 P1 -- P1 P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
+	
 	public static string Notation_1_e4_c5()
 	{
 		return @"

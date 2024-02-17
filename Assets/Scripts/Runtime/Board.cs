@@ -65,12 +65,12 @@ namespace Chess
 			};
 		}
 
-		public static IEnumerable<Position> FindMoves(TileWithPiece tileWithPiece,
-			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
-			int playerIdToMove,
-			Tile[,] boardTiles,
-			Dictionary<Position, TileWithPiece> tileByStartPos,
-			IEnumerable<TileWithPiece> opponentTiles)
+		public static IEnumerable<Position> FindMovesPos(TileWithPiece tileWithPiece,
+				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
+				int playerIdToMove,
+				Tile[,] boardTiles,
+				Dictionary<Position, TileWithPiece> tileByStartPos,
+				MoveCaptureFlag moveFilter)
 		{
 			var movesForPieceType = movesForPieceTypeFunc(tileWithPiece.Piece.Type, playerIdToMove);
 			var moves = new List<Move>();
@@ -93,7 +93,7 @@ namespace Chess
 
 					if (m.MoveType != MoveType.Infinite || gridDistance <= 1)
 					{
-						return CanMoveOrCapture();
+						return ProcessMovePosFilters();
 					}
 
 					var posNormal = Position.GridNormal(m.Position, tileWithPiece.Position);
@@ -105,29 +105,45 @@ namespace Chess
 					var inBetweenPos = m.Position + posNormal;
 					if (GetTile(inBetweenPos, boardTiles) is not TileWithPiece)
 					{
-						return CanMoveOrCapture();
+						return ProcessMovePosFilters();
 					}
 
 					hasInBetweenPieceByPosition[posNormal] = true;
 					return false;
 
-					bool CanMoveOrCapture() =>
-						bTile is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture)
-						|| bTile is not TileWithPiece && CanMove();
+					// bool ProcessMovePosFilters() =>
+					// 		CapturePredicate(bTile, playerIdToMove, m)
+					// 	|| MovePredicate(tileWithPiece, bTile, m);
 
-					bool CanMove()
+					bool ProcessMovePosFilters()
 					{
-						var canMove = m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move);
-						canMove = canMove && m.MoveConstraint is MoveConstraint.None
-							|| m.MoveConstraint is MoveConstraint.FirstMoveOnly
-							&& tileByStartPos.ContainsKey(tileWithPiece.Position)
-							&& tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
-							|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture
-							&& !IsTilePieceInCheck(new TileWithPiece(bTile.Position, tileWithPiece.Piece), movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos);
-						return canMove;
+						return moveFilter switch
+						{
+								MoveCaptureFlag.Move => MovePredicate(tileWithPiece, bTile, m, tileByStartPos),
+								MoveCaptureFlag.Capture => CapturePredicate(bTile, playerIdToMove, m),
+								MoveCaptureFlag.Move | MoveCaptureFlag.Capture => MovePredicate(tileWithPiece, bTile, m, tileByStartPos) || CapturePredicate(bTile, playerIdToMove, m),
+								_ => throw new ArgumentOutOfRangeException(nameof(moveFilter), moveFilter, null)
+						};
 					}
+					
 				})
 				.Select(m => m.Position);
+		}
+
+		public static bool CapturePredicate(Tile tileToCapture, int playerIdToMove, Move m)
+		{
+			return tileToCapture is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
+		}
+		
+		public static bool MovePredicate(TileWithPiece tileWithPiece, Tile tileToMoveTo, Move m, Dictionary<Position, TileWithPiece> tileByStartPos)
+		{
+			var canMove = m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move);
+			canMove = canMove && m.MoveConstraint is MoveConstraint.None
+					|| m.MoveConstraint is MoveConstraint.FirstMoveOnly
+					&& tileByStartPos.ContainsKey(tileWithPiece.Position)
+					&& tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
+					|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture;
+			return tileToMoveTo is not TileWithPiece && canMove;
 		}
 
 		/// <summary>
@@ -149,37 +165,54 @@ namespace Chess
 			return position.Column >= 0 && position.Column < size && position.Row >= 0 && position.Row < size;
 		}
 
-		public static (Tile beforeMoveTile, TileWithPiece afterMoveTile) MovePiece(TileWithPiece twp, Position pos, Tile[,] boardTiles)
+		public static (Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tilesAfterMove, IEnumerable<TileWithPiece> playerTilePiecesAfterMove)
+				MovePiece(TileWithPiece twp,
+						Position pos,
+						Tile[,] boardTiles,
+						IEnumerable<TileWithPiece> playerTilePieces)
 		{
-			var beforeMoveTile = boardTiles[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
-			var afterMoveTile = (TileWithPiece)(boardTiles[pos.Column, pos.Row] = twp with { Position = pos });
-			return (beforeMoveTile, afterMoveTile);
+			var boardTilesAfterMove = (Tile[,])boardTiles.Clone();
+			var bmt = boardTilesAfterMove[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
+			var amt = (TileWithPiece)(boardTilesAfterMove[pos.Column, pos.Row] = twp with { Position = pos });
+			
+			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != bmt).Append(amt);
+			
+			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);
 		}
 		
-		private static bool IsTilePieceInCheck(TileWithPiece checkableTilePiece,
+		public static bool IsTilePieceInCheck(TileWithPiece checkableTilePiece,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 				IEnumerable<TileWithPiece> opponentTiles,
 				Tile[,] boardTiles,
 				Dictionary<Position, TileWithPiece> tileByStartPos)
 		{
-			var oppTiles = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
-			return oppTiles.SelectMany(twp => FindMoves(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, oppTiles))
-					.Any(pos => pos == checkableTilePiece.Position);
+			var oppMovePosLists = opponentTiles.Select(twp => FindMovesPos(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, MoveCaptureFlag.Capture));
+			var oppMovePosList = oppMovePosLists.SelectMany(posList => posList);
+			return oppMovePosList.Any(pos => pos == checkableTilePiece.Position);
 		}
 
 		public static CheckType IsInCheck(TileWithPiece checkableTilePiece,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 			IEnumerable<TileWithPiece> opponentTiles,
 			Tile[,] boardTiles,
-			Dictionary<Position, TileWithPiece> tileByStartPos)
+			Dictionary<Position, TileWithPiece> tileByStartPos,
+			IEnumerable<TileWithPiece> playerTilePieces)
 		{
 			var oppTiles = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
 			var isTilePieceInCheck = IsTilePieceInCheck(checkableTilePiece, movesForPieceTypeFunc, oppTiles, boardTiles, tileByStartPos);
 
 			if (!isTilePieceInCheck) return CheckType.NoCheck;
 
-			var moves = FindMoves(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, oppTiles);
-			return moves.Any() ? CheckType.Check : CheckType.CheckMate;
+			const MoveCaptureFlag moveFilter = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			var movePoses = FindMovesPos(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, moveFilter);
+			
+			// TODO: extract this into a function as Chessboard.FindMoves also uses this logic.
+			var poses = movePoses.Where(pos =>
+			{
+				var ret = MovePiece(checkableTilePiece, pos, boardTiles, playerTilePieces);
+				return !IsTilePieceInCheck(ret.afterMoveTile, movesForPieceTypeFunc, oppTiles, ret.tilesAfterMove, tileByStartPos);
+			});
+			return poses.Any() ? CheckType.Check : CheckType.CheckMate;
 		}
 	}
 }

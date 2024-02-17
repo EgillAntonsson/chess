@@ -10,7 +10,12 @@ namespace Chess
 		public abstract HashSet<EndConditionType> EndConditions { get; }
 		public virtual int NumberOfPlayers => 2;
 		public virtual int PlayerIdToStart => 1;
-		public virtual bool CanCheck => true;
 		public abstract IEnumerable<Move> ValidMovesByType(PieceType type, int playerId);
+		public virtual bool CanCheck => true;
+		/// <summary>
+		/// Not made virtual because it should be the behavior for all variants.
+		/// </summary>
+		public PieceType CheckablePieceType => PieceType.King;
+		
 	}
 }
