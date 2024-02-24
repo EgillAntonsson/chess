@@ -123,7 +123,7 @@ public class BoardTest
 
 		var chessboard = new ChessBoard();
 		chessboard.Create(StandardVariant.BoardAtStart());
-		var (tiles, pieceTypeByStartPositions, tilesByPlayer) = chessboard.InjectBoard(Check_but_king_can_move());
+		var (tiles, _, _) = chessboard.InjectBoard(Check_but_king_can_move());
 		var twp = (TileWithPiece)Board.GetTile(pos, tiles);
 		const bool isCheckablePiece = true;
 		
@@ -147,12 +147,22 @@ public class BoardTest
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
 	
-	[Test]
-	public void Is_in_check_but_king_can_move()
+	public static IEnumerable<TestCaseData> IsInCheckCases
+	{
+		get
+		{
+			const int playerId = 1;
+			var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
+			Func<string> currentBoardFunc = Check_but_king_can_move;
+			yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
+					$"{nameof(Is_in_check_returns_check)} when {nameof(currentBoardFunc)}");
+		}
+	}
+
+	[TestCaseSource(nameof(IsInCheckCases))]
+	public void Is_in_check_returns_check(string tilesAtCurrent, int playerId, TileWithPiece kingTile)
 	{
 		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(Check_but_king_can_move());
-		const int playerId = 1;
-		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
 		
 		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
@@ -261,20 +271,32 @@ P1 P1 P1 P1 -- P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 	}
-
-	public static string Check_but_king_can_move()
+	public static string Check_but_piece_can_defend()
 	{
 		return @"
 R2 N2 B2 -- K2 B2 N2 R2
 P2 P2 P2 -- Q2 P2 P2 P2
 -- -- -- -- -- -- -- --
 -- -- -- P1 -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+P1 P1 P1 P1 -- P1 P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
+
+	public static string Check_but_king_can_move()
+	{
+		return @"
+R2 N2 B2 -- K2 B2 N2 R2
+P2 P2 -- -- Q2 P2 P2 P2
+-- -- P2 -- -- -- -- --
+-- -- -- P1 -- -- -- --
 -- -- -- -- -- P1 -- --
 -- -- -- -- -- -- -- --
 P1 P1 P1 P1 -- -- P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
+"; }
 
 	public static string Quickest_Win__Player2_To_Move()
 	{
