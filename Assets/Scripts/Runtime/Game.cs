@@ -1,13 +1,18 @@
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PlasticGui.WorkspaceWindow.Open;
+using UnityEngine;
 
 namespace Chess
 {
 	public class Game
 	{
-		public ChessBoard ChessBoard { get; }
 		private readonly Variant variant;
+		private IEnumerable<(int, CheckType)> players; 
+		public ChessBoard ChessBoard { get; }
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
 
@@ -17,6 +22,12 @@ namespace Chess
 			ChessBoard = new ChessBoard();
 			PlayerIdToMove = variant.PlayerIdToStart;
 			TurnNumber = 1;
+
+			players = new List<(int, CheckType)>();
+			for (var i = 1; i <= variant.NumberOfPlayers; i++)
+			{
+				players = players.Append((i, CheckType.NoCheck));
+			}
 		}
 		
 		public Tile[,] Create()
@@ -27,57 +38,60 @@ namespace Chess
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
 			var isCheckableTile = tile.Piece.Type == variant.CheckablePieceType;
-			return ChessBoard.FindMoves(tile, isCheckableTile, variant.ValidMovesByType, PlayerIdToMove);
+			var player = players.First(p => p.Item1 == PlayerIdToMove);
+			return ChessBoard.FindMoves(tile, player.Item2 == CheckType.Check, isCheckableTile, variant.ValidMovesByType, PlayerIdToMove);
 		}
 		
-		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
+		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
 			var (beforeMoveTile, afterMoveTile) = ChessBoard.MovePiece(tile, position);
-			IEnumerable<(CheckType checktype, Tile checkTile)> opponentInCheckList = null;
+			var opponents = Enumerable.Empty<(int, CheckType, Tile)>();
 			if (variant.CanCheck)
 			{
-				opponentInCheckList = GetOpponentsLeft().Select(playerId => ChessBoard.IsPlayerInCheck(playerId, variant.CheckablePieceType, variant.ValidMovesByType));
+				opponents = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
+						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, variant.CheckablePieceType, variant.ValidMovesByType));
 			}
 
-			var gameHasEnded = CheckIfGameHasEnded(opponentInCheckList);
-			
-			PlayerTurnEnded();
-			return (beforeMoveTile, afterMoveTile, opponentInCheckList, gameHasEnded);
+			var gameHasEnded = CheckIfGameHasEnded(opponents, variant);
+
+			players = UpdatePlayers(PlayerIdToMove, players, opponents);
+			PlayerIdToMove = UpdatePlayerTurn(PlayerIdToMove, players);
+			Debug.Log(PlayerIdToMove);
+			return (beforeMoveTile, afterMoveTile, opponents, gameHasEnded);
 		}
 		
-		private bool CheckIfGameHasEnded(IEnumerable<(CheckType checktype, Tile checkTile)> opponentInCheckList)
-		{ 
-			if (variant.EndConditions.Contains(EndConditionType.CheckMate))
-			{
-				if (opponentInCheckList != null)
-				{
-					return opponentInCheckList.All(opponentInCheck => opponentInCheck.checktype == CheckType.CheckMate);
-				}
-			}
-			return false;
+		private bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentInCheckList, Variant v)
+		{
+			return v.EndConditions.Contains(EndConditionType.CheckMate)
+					&& opponentInCheckList.All(opponentInCheck => opponentInCheck.checktype == CheckType.CheckMate);
 		}
 
-		private IEnumerable<int> GetOpponentsLeft()
+		private IEnumerable<(int, CheckType)> UpdatePlayers(int pIdToMove, IEnumerable<(int, CheckType)> pl, IEnumerable<(int, CheckType, Tile)> opponents)
 		{
-			var opponents = new List<int>();
-			for (var i = 1; i <= variant.NumberOfPlayers; i++)
-			{
-				if (i == PlayerIdToMove)
-				{
-					continue;
-				}
-				opponents.Add(i);
-			}
-			return opponents;
+			var pla = (from p in pl from opp in opponents
+					where opp.Item1 == p.Item1
+					select new ValueTuple<int, CheckType>(opp.Item1, opp.Item2)).ToList();
+			pla.Add(pl.First(t => t.Item1 == PlayerIdToMove));
+			return pla;
 		}
 		
-		private void PlayerTurnEnded()
+		private static int UpdatePlayerTurn(int pIdToMove, IEnumerable<(int, CheckType)> pl)
 		{
-			PlayerIdToMove = PlayerIdToMove == variant.NumberOfPlayers ? 1 : PlayerIdToMove + 1;
-			if (PlayerIdToMove == variant.PlayerIdToStart)
-			{
-				TurnNumber++;
-			}
+			return pIdToMove == pl.Count() ? 1 : pIdToMove + 1;
 		}
+		
+		// private IEnumerable<int> GetOpponentsLeft()
+		// {
+		// 	var opponents = new List<int>();
+		// 	for (var i = 1; i <= variant.NumberOfPlayers; i++)
+		// 	{
+		// 		if (i == PlayerIdToMove)
+		// 		{
+		// 			continue;
+		// 		}
+		// 		opponents.Add(i);
+		// 	}
+		// 	return opponents;
+		// }
 	}
 }

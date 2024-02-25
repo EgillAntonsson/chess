@@ -37,7 +37,7 @@ public class BoardTest
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
-			currentBoardFunc = Notation_1_e4_c5;
+			currentBoardFunc = BoardTileString.Notation_1_e4_c5;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
@@ -47,7 +47,7 @@ public class BoardTest
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(4, 3);
-			currentBoardFunc = Notation_1_e4_e5;
+			currentBoardFunc = BoardTileString.Notation_1_e4_e5;
 			expectedMoves = Enumerable.Empty<Position>();
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
@@ -74,7 +74,7 @@ public class BoardTest
 
 			playerIdToMove = 2;
 			pos = new Position(3, 7);
-			currentBoardFunc = Quickest_Win__Player2_To_Move;
+			currentBoardFunc = BoardTileString.Quickest_Win__Player2_To_Move;
 			expectedMoves = new Position[]
 			{
 				new(4, 6),
@@ -87,7 +87,7 @@ public class BoardTest
 
 			playerIdToMove = 1;
 			pos = new Position(4, 0);
-			currentBoardFunc = Notation_1_e4_c5;
+			currentBoardFunc = BoardTileString.Notation_1_e4_c5;
 			expectedMoves = new Position[]
 			{
 				new(4, 1),
@@ -111,28 +111,7 @@ public class BoardTest
 			pieceTypeByStartPositions,
 			MoveCaptureFlag.Move | MoveCaptureFlag.Capture);
 
-		AssertArraysAreEqual(validMoves, expectedMoves);
-	}
-
-	[Test]
-	public void Find_moves_when_king_in_check_but_can_move()
-	{
-		const int playerIdToMove = 1;
-		var pos = new Position(4, 0);
-		var expectedMoves = new Position[] { new(5, 1) };
-
-		var chessboard = new ChessBoard();
-		chessboard.Create(StandardVariant.BoardAtStart());
-		var (tiles, _, _) = chessboard.InjectBoard(Check_but_king_can_move());
-		var twp = (TileWithPiece)Board.GetTile(pos, tiles);
-		const bool isCheckablePiece = true;
-		
-		var validMoves = chessboard.FindMoves(twp,
-				isCheckablePiece,
-				StandardVariant.ValidMovesByTypeStandard,
-				playerIdToMove);
-		
-		AssertArraysAreEqual(validMoves, expectedMoves);
+		TestUtil.AssertArraysAreEqual(validMoves, expectedMoves);
 	}
 
 	[Test]
@@ -151,18 +130,24 @@ public class BoardTest
 	{
 		get
 		{
-			const int playerId = 1;
+			var playerId = 1;
 			var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
-			Func<string> currentBoardFunc = Check_but_king_can_move;
+			Func<string> currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
 			yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
-					$"{nameof(Is_in_check_returns_check)} when {nameof(currentBoardFunc)}");
+					$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
+			
+			playerId = 1;
+			kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
+			currentBoardFunc = BoardTileString.Check_but_king_can_move;
+			yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
+					$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
 		}
 	}
 
 	[TestCaseSource(nameof(IsInCheckCases))]
 	public void Is_in_check_returns_check(string tilesAtCurrent, int playerId, TileWithPiece kingTile)
 	{
-		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(Check_but_king_can_move());
+		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(BoardTileString.Check_but_king_can_move());
 		
 		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
@@ -173,7 +158,7 @@ public class BoardTest
 	public void Is_check_mate()
 	{
 		Board.Create(StandardVariant.BoardAtStart());
-		var (tiles, tilesByStartPos, tilesByPlayer) = Board.ConvertBoardStringToTiles(Player1_CheckMate());
+		var (tiles, tilesByStartPos, tilesByPlayer) = Board.ConvertBoardStringToTiles(BoardTileString.Player1_CheckMate());
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 		
@@ -189,7 +174,7 @@ public class BoardTest
 			const int playerId = 1;
 			var beforePos = new Position(4, 1);
 			var afterPos = new Position(4, 3);
-			Func<string> currentBoardFunc = Notation_1_e4;
+			Func<string> currentBoardFunc = BoardTileString.Notation_1_e4;
 			yield return new TestCaseData(beforePos, afterPos, currentBoardFunc(), playerId).SetName(
 				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(currentBoardFunc)}");
 		}
@@ -208,121 +193,5 @@ public class BoardTest
 		Assert.That(tilesAfterMove, Is.EqualTo(expTiles));
 		Assert.That(tilesByPlayerAfterMove.Last(), Is.EqualTo(afterMoveTile));
 	}
-
-	public static void AssertArraysAreEqual<T>(IEnumerable<T> actual, IEnumerable<T> expected)
-	{
-		var expectedArr = expected as T[] ?? expected.OrderBy(x => x).ToArray();
-		var actualArr = actual as T[] ?? actual.OrderBy(x => x).ToArray();
-		if (expectedArr.Length != actualArr.Length)
-		{
-			Assert.Fail(
-				$"Arrays have different lengths. Expected array length: {expectedArr.Length}, Actual array length: {actualArr.Length}.\nExpected array: {string.Join(", ", expectedArr)}.\nActual array: {string.Join(", ", actualArr)}");
-		}
-
-		for (int i = 0; i < expectedArr.Length; i++)
-		{
-			if (!expectedArr[i].Equals(actualArr[i]))
-			{
-				Assert.Fail($"Arrays differ at index {i}. Expected value: {expectedArr[i]}, Actual value: {actualArr[i]}");
-			}
-		}
-	}
-
-	// Notation names are 1 based.
-
-	public static string Notation_1_e4()
-	{
-		return @"
-R2 N2 B2 Q2 K2 B2 N2 R2
-P2 P2 P2 P2 P2 P2 P2 P2
--- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --
--- -- -- -- P1 -- -- --
--- -- -- -- -- -- -- --
-P1 P1 P1 P1 -- P1 P1 P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
 	
-	public static string Notation_1_e4_c5()
-	{
-		return @"
-R2 N2 B2 Q2 K2 B2 N2 R2
-P2 P2 -- P2 P2 P2 P2 P2
--- -- -- -- -- -- -- --
--- -- P2 -- -- -- -- --
--- -- -- -- P1 -- -- --
--- -- -- -- -- -- -- --
-P1 P1 P1 P1 -- P1 P1 P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
-
-	public static string Notation_1_e4_e5()
-	{
-		return @"
-R2 N2 B2 Q2 K2 B2 N2 R2
-P2 P2 P2 P2 -- P2 P2 P2
--- -- -- -- -- -- -- --
--- -- -- -- P2 -- -- --
--- -- -- -- P1 -- -- --
--- -- -- -- -- -- -- --
-P1 P1 P1 P1 -- P1 P1 P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
-	public static string Check_but_piece_can_defend()
-	{
-		return @"
-R2 N2 B2 -- K2 B2 N2 R2
-P2 P2 P2 -- Q2 P2 P2 P2
--- -- -- -- -- -- -- --
--- -- -- P1 -- -- -- --
--- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --
-P1 P1 P1 P1 -- P1 P1 P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
-
-	public static string Check_but_king_can_move()
-	{
-		return @"
-R2 N2 B2 -- K2 B2 N2 R2
-P2 P2 -- -- Q2 P2 P2 P2
--- -- P2 -- -- -- -- --
--- -- -- P1 -- -- -- --
--- -- -- -- -- P1 -- --
--- -- -- -- -- -- -- --
-P1 P1 P1 P1 -- -- P1 P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-"; }
-
-	public static string Quickest_Win__Player2_To_Move()
-	{
-		return @"
-R2 N2 B2 Q2 K2 B2 N2 R2
-P2 P2 P2 P2 -- P2 P2 P2
--- -- -- -- -- -- -- --
--- -- -- -- P2 -- -- --
--- -- -- -- -- -- P1 --
--- -- -- -- -- P1 -- --
-P1 P1 P1 P1 P1 -- -- P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
-
-	public static string Player1_CheckMate()
-	{
-		return @"
-R2 N2 B2 -- K2 B2 N2 R2
-P2 P2 P2 P2 -- P2 P2 P2
--- -- -- -- -- -- -- --
--- -- -- -- P2 -- -- --
--- -- -- -- -- -- P1 Q2
--- -- -- -- -- P1 -- --
-P1 P1 P1 P1 P1 -- -- P1
-R1 N1 B1 Q1 K1 B1 N1 R1
-";
-	}
 }
