@@ -68,7 +68,7 @@ P2 P2 -- -- Q2 -- -- P2
 -- -- P1 -- -- -- P1 --
 -- Q1 -- P1 -- P1 -- N1
 P1 P1 -- -- -- -- B1 P1
-R1 N1 B1 -- K1 -- -- R1
+R1 N1 -- -- K1 -- -- R1
 "; }
 
 		public static string Quickest_Win__Player2_To_Move()

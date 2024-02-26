@@ -22,6 +22,10 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 		}
 
+		public override PieceType CheckablePieceType => CheckablePieceTypeStandard;
+
+		public static PieceType CheckablePieceTypeStandard => PieceType.King;
+
 		public override HashSet<EndConditionType> EndConditions => EndConditionsStandard();
 
 		public static HashSet<EndConditionType> EndConditionsStandard()

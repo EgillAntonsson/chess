@@ -1,9 +1,7 @@
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using PlasticGui.WorkspaceWindow.Open;
 using UnityEngine;
 
 namespace Chess
@@ -37,9 +35,9 @@ namespace Chess
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
-			var isCheckableTile = tile.Piece.Type == variant.CheckablePieceType;
 			var player = players.First(p => p.Item1 == PlayerIdToMove);
-			return ChessBoard.FindMoves(tile, player.Item2 == CheckType.Check, isCheckableTile, variant.ValidMovesByType, PlayerIdToMove);
+			var isInCheck = player.Item2 == CheckType.Check;
+			return ChessBoard.FindMoves(tile, isInCheck, StandardVariant.CheckablePieceTypeStandard, variant.ValidMovesByType, PlayerIdToMove);
 		}
 		
 		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
@@ -49,7 +47,7 @@ namespace Chess
 			if (variant.CanCheck)
 			{
 				opponents = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
-						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, variant.CheckablePieceType, variant.ValidMovesByType));
+						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardVariant.CheckablePieceTypeStandard, variant.ValidMovesByType));
 			}
 
 			var gameHasEnded = CheckIfGameHasEnded(opponents, variant);
@@ -79,19 +77,5 @@ namespace Chess
 		{
 			return pIdToMove == pl.Count() ? 1 : pIdToMove + 1;
 		}
-		
-		// private IEnumerable<int> GetOpponentsLeft()
-		// {
-		// 	var opponents = new List<int>();
-		// 	for (var i = 1; i <= variant.NumberOfPlayers; i++)
-		// 	{
-		// 		if (i == PlayerIdToMove)
-		// 		{
-		// 			continue;
-		// 		}
-		// 		opponents.Add(i);
-		// 	}
-		// 	return opponents;
-		// }
 	}
 }

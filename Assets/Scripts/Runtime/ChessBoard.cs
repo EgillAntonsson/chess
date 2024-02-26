@@ -28,28 +28,30 @@ namespace Chess
 		}
 
 		public IEnumerable<Position> FindMoves(TileWithPiece tileWithPiece,
-				bool isInCheck, bool isCheckableTile,
+				bool isInCheck,
+				PieceType checkablePieceType,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 				int playerIdToMove)
 		{
-			if (isInCheck && !isCheckableTile)
+			var checkableTwp = GetCheckableTileWithPiece(playerIdToMove, checkablePieceType);
+			var isCheckableTwp = tileWithPiece == checkableTwp;
+			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			var playerTilePieces = tilesByPlayer[playerIdToMove];
+			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerIdToMove);
+			IEnumerable<Position> poses;
+			if (isInCheck && !isCheckableTwp)
 			{
-				return Enumerable.Empty<Position>();
-			}
-			
-			const MoveCaptureFlag moveFilter = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
-			var poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveFilter);
-			if (!isCheckableTile)
-			{
-				return poses;
+				poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
+				return IsInCheckAfterMoveSimulation(poses);
 			}
 
-			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerIdToMove);
-			return poses.Where(pos =>
+			poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
+			return !isCheckableTwp ? poses : IsInCheckAfterMoveSimulation(poses);
+
+			IEnumerable<Position> IsInCheckAfterMoveSimulation(IEnumerable<Position> positions)
 			{
-				var ret = Board.MovePiece(tileWithPiece, pos, boardTiles, tilesByPlayer[playerIdToMove]);
-				return !Board.IsTilePieceInCheck(ret.afterMoveTile, movesForPieceTypeFunc, opponentTiles, ret.tilesAfterMove, tileByStartPos);
-			});
+				return positions.Where(pos => !Board.IsInCheckAfterMove(checkableTwp, tileWithPiece, pos, boardTiles, playerTilePieces, tileByStartPos, opponentTiles, movesForPieceTypeFunc));
+			}
 		}
 
 		public static IEnumerable<TileWithPiece> GetOpponentTiles(Dictionary<int, IEnumerable<TileWithPiece>> tbp, int playerId)
@@ -71,10 +73,15 @@ namespace Chess
 				PieceType checkablePieceType,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
-			var checkablePieceTile = tilesByPlayer[playerId].First(twp => twp.Piece.Type == checkablePieceType);
+			var checkablePieceTile = GetCheckableTileWithPiece(playerId, checkablePieceType);
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
 			var checkType = Board.IsInCheck(checkablePieceTile, movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos, tilesByPlayer[playerId]);
 			return (playerId, checkType, checkablePieceTile);
+		}
+
+		private TileWithPiece GetCheckableTileWithPiece(int playerId, PieceType checkablePieceType)
+		{
+			return tilesByPlayer[playerId].First(twp => twp.Piece.Type == checkablePieceType);
 		}
 	}
 }

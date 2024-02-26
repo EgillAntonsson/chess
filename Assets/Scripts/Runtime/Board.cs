@@ -111,10 +111,6 @@ namespace Chess
 					hasInBetweenPieceByPosition[posNormal] = true;
 					return false;
 
-					// bool ProcessMovePosFilters() =>
-					// 		CapturePredicate(bTile, playerIdToMove, m)
-					// 	|| MovePredicate(tileWithPiece, bTile, m);
-
 					bool ProcessMovePosFilters()
 					{
 						return moveFilter switch
@@ -205,14 +201,24 @@ namespace Chess
 
 			const MoveCaptureFlag moveFilter = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			var movePoses = FindMovesPos(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, moveFilter);
+
+			var posesNotInCheck = movePoses.Where(pos => !IsInCheckAfterMove(checkableTilePiece, checkableTilePiece, pos, boardTiles, playerTilePieces, tileByStartPos, oppTiles, movesForPieceTypeFunc));
+			return posesNotInCheck.Any() ? CheckType.Check : CheckType.CheckMate;
+		}
+
+		public static bool IsInCheckAfterMove(TileWithPiece checkableTilePiece,
+				TileWithPiece moveTilePiece,
+				Position pos,
+				Tile[,] boardTiles,
+				IEnumerable<TileWithPiece> playerTilePieces,
+				Dictionary<Position, TileWithPiece> tileByStartPos,
+				IEnumerable<TileWithPiece> opponentTiles,
+				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
+		{
+			var checkableIsMoved = checkableTilePiece == moveTilePiece;
+			var movedTuple = MovePiece(moveTilePiece, pos, boardTiles, playerTilePieces);
 			
-			// TODO: extract this into a function as Chessboard.FindMoves also uses this logic.
-			var poses = movePoses.Where(pos =>
-			{
-				var ret = MovePiece(checkableTilePiece, pos, boardTiles, playerTilePieces);
-				return !IsTilePieceInCheck(ret.afterMoveTile, movesForPieceTypeFunc, oppTiles, ret.tilesAfterMove, tileByStartPos);
-			});
-			return poses.Any() ? CheckType.Check : CheckType.CheckMate;
+			return IsTilePieceInCheck(checkableIsMoved ? movedTuple.afterMoveTile : checkableTilePiece, movesForPieceTypeFunc, opponentTiles, movedTuple.tilesAfterMove, tileByStartPos);
 		}
 	}
 }

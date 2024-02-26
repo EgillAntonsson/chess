@@ -15,7 +15,7 @@ namespace Chess
 		/// <summary>
 		/// Not made virtual because it should be the behavior for all variants.
 		/// </summary>
-		public PieceType CheckablePieceType => PieceType.King;
+		public virtual PieceType CheckablePieceType => PieceType.King;
 		
 	}
 }
