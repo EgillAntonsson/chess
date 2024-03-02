@@ -171,7 +171,7 @@ namespace Chess
 			var bmt = boardTilesAfterMove[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
 			var amt = (TileWithPiece)(boardTilesAfterMove[pos.Column, pos.Row] = twp with { Position = pos });
 			
-			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != bmt).Append(amt);
+			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
 			
 			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);
 		}

@@ -9,19 +9,16 @@ public class BoardTest
 	[Test]
 	public void Create_board()
 	{
-		var (tiles, tileByStartPos, posByTileByPlayer) = Board.Create(StandardVariant.BoardAtStart());
+		var (tiles, tileByStartPos, _) = Board.Create(StandardVariant.BoardAtStart());
 
 		Assert.That(tiles.Length, Is.EqualTo(64));
 		Assert.That(tiles[0, 0], Is.EqualTo(new TileWithPiece(new Position(0, 0), new Piece(PieceType.Rook, 1))));
 
 		Assert.That(tileByStartPos[new Position(0, 0)], Is.EqualTo(new TileWithPiece(new Position(0, 0), new Piece(PieceType.Rook, 1))));
 		Assert.That(tileByStartPos[new Position(0, 1)], Is.EqualTo(new TileWithPiece(new Position(0, 1), new Piece(PieceType.Pawn, 1))));
-
-		// Assert.That(posByTileByPlayer[1][new TileWithPiece(new Position(0, 0), new Piece(PieceType.Rook, 1))], Is.EqualTo(new Position(0, 0)));
-		// Assert.That(posByTileByPlayer[2][new TileWithPiece(new Position(0, 7), new Piece(PieceType.Rook, 2))], Is.EqualTo(new Position(0, 7)));
 	}
 
-	public static IEnumerable<TestCaseData> ValidMoveCases
+	public static IEnumerable<TestCaseData> FoundMoveCases
 	{
 		get
 		{
@@ -30,47 +27,47 @@ public class BoardTest
 			Func<string> currentBoardFunc = StandardVariant.BoardAtStart;
 			IEnumerable<Position> expectedMoves = new Position[] { new(0, 2), new(2, 2) };
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Knight} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Knight} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(0, 1);
 			expectedMoves = new Position[] { new(0, 2), new(0, 3) };
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 			currentBoardFunc = BoardTileString.Notation_1_e4_c5;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(4, 3);
 			expectedMoves = new Position[] { new(4, 4) };
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(4, 3);
 			currentBoardFunc = BoardTileString.Notation_1_e4_e5;
 			expectedMoves = Enumerable.Empty<Position>();
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(4, 0);
 			currentBoardFunc = StandardVariant.BoardAtStart;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(5, 0);
 			currentBoardFunc = StandardVariant.BoardAtStart;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Bishop} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Bishop} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(0, 0);
 			currentBoardFunc = StandardVariant.BoardAtStart;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Rook} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Rook} on {pos} when {currentBoardFunc.Method.Name}");
 
 			pos = new Position(3, 0);
 			currentBoardFunc = StandardVariant.BoardAtStart;
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
 
 			playerIdToMove = 2;
 			pos = new Position(3, 7);
@@ -83,7 +80,7 @@ public class BoardTest
 				new(7, 3)
 			};
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
 
 			playerIdToMove = 1;
 			pos = new Position(4, 0);
@@ -93,12 +90,12 @@ public class BoardTest
 				new(4, 1),
 			};
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_valid_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+				$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 		}
 	}
 
-	[TestCaseSource(nameof(ValidMoveCases))]
-	public void Find_valid_moves_on_board_for(Position piecePos, string tilesAtCurrent, int playerIdToMove, IEnumerable<Position> expectedMoves)
+	[TestCaseSource(nameof(FoundMoveCases))]
+	public void Find_moves_on_board_for(Position piecePos, string tilesAtCurrent, int playerIdToMove, IEnumerable<Position> expectedMoves)
 	{
 		var (_, pieceTypeByStartPositions, _) = Board.Create(StandardVariant.BoardAtStart());
 		var (tiles, _, tilesByPlayer) = Board.ConvertBoardStringToTiles(tilesAtCurrent);
@@ -174,14 +171,14 @@ public class BoardTest
 			const int playerId = 1;
 			var beforePos = new Position(4, 1);
 			var afterPos = new Position(4, 3);
-			Func<string> currentBoardFunc = BoardTileString.Notation_1_e4;
-			yield return new TestCaseData(beforePos, afterPos, currentBoardFunc(), playerId).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} when {nameof(currentBoardFunc)}");
+			Func<string> expectedBoardAfterMoveFunc = BoardTileString.Notation_1_e4;
+			yield return new TestCaseData(beforePos, afterPos, expectedBoardAfterMoveFunc(), playerId).SetName(
+				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {nameof(expectedBoardAfterMoveFunc)}");
 		}
 	}
 
 	[TestCaseSource(nameof(MovePieceCases))]
-	public void Move_piece_on_board(Position beforePos, Position afterPos, string tilesAtCurrent, int playerId)
+	public void Move_piece_on_board(Position beforePos, Position afterPos, string expectedTilesAfterMove, int playerId)
 	{
 		var (tilesBefore, _, tilesByPlayerBefore) = Board.Create(StandardVariant.BoardAtStart());
 		var twp = (TileWithPiece)Board.GetTile(beforePos, tilesBefore);
@@ -189,9 +186,10 @@ public class BoardTest
 		var (beforeMoveTile, afterMoveTile, tilesAfterMove, tilesByPlayerAfterMove) = Board.MovePiece(twp, afterPos, tilesBefore, tilesByPlayerBefore[playerId]);
 		Assert.That(beforeMoveTile, Is.EqualTo(new Tile(beforePos)));
 		Assert.That(afterMoveTile, Is.EqualTo(twp with { Position = afterPos }));
-		var (expTiles, _, expTilesByPlayer)  = Board.ConvertBoardStringToTiles(tilesAtCurrent);
-		Assert.That(tilesAfterMove, Is.EqualTo(expTiles));
-		Assert.That(tilesByPlayerAfterMove.Last(), Is.EqualTo(afterMoveTile));
+		var (expTilesAfterMove, _, expTilesByPlayers)  = Board.ConvertBoardStringToTiles(expectedTilesAfterMove);
+		Assert.That(tilesAfterMove, Is.EqualTo(expTilesAfterMove));
+		var expTileByPlayer = expTilesByPlayers[playerId];
+		Assert.That(tilesByPlayerAfterMove, Is.EqualTo(expTileByPlayer));
 	}
 	
 }

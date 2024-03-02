@@ -11,7 +11,7 @@ namespace Chess.View
 
 		private Game game;
 		private Action deSelectFunc;
-		private IEnumerable<Position> validMoves;
+		private Position[] validMoves;
 		private TileWithPiece selectedTilePiece;
 		private PlayerAction playerAction = PlayerAction.SelectPiece;
 
@@ -55,13 +55,13 @@ namespace Chess.View
 			tileView.MarkTile(TileMarkType.Normal);
 			selectedTilePiece = twp;
 			
-			validMoves = game.FindValidMoves(twp);
-			var validMovesArr = validMoves as Position[] ?? validMoves.ToArray();
-			chessBoardView.MarkTiles(validMovesArr, TileMarkType.ValidMove);
+			var vm = game.FindValidMoves(twp);
+			validMoves = vm as Position[] ?? vm.ToArray();
+			chessBoardView.MarkTiles(validMoves, TileMarkType.ValidMove);
 			deSelectFunc = () =>
 			{
 				tileView.MarkTile(TileMarkType.Normal);
-				chessBoardView.MarkTiles(validMovesArr, TileMarkType.Normal);
+				chessBoardView.MarkTiles(validMoves, TileMarkType.Normal);
 			};
 			
 			playerAction = PlayerAction.MovePiece;
