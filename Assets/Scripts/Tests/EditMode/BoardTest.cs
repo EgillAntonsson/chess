@@ -25,82 +25,82 @@ public class BoardTest
 		Func<string> currentBoardFunc = StandardVariant.BoardAtStart;
 		IEnumerable<Position> expectedMoves = new Position[] { new(0, 2), new(2, 2) };
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Knight} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Knight} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(0, 1);
 		expectedMoves = new Position[] { new(0, 2), new(0, 3) };
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 		currentBoardFunc = BoardTileString.Notation_1_e4_c5;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(4, 3);
 		expectedMoves = new Position[] { new(4, 4) };
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(4, 3);
 		currentBoardFunc = BoardTileString.Notation_1_e4_e5;
 		expectedMoves = Enumerable.Empty<Position>();
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(4, 0);
 		currentBoardFunc = StandardVariant.BoardAtStart;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(5, 0);
 		currentBoardFunc = StandardVariant.BoardAtStart;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Bishop} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Bishop} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(0, 0);
 		currentBoardFunc = StandardVariant.BoardAtStart;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Rook} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Rook} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(3, 0);
 		currentBoardFunc = StandardVariant.BoardAtStart;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
 
 		playerIdToMove = 2;
 		pos = new Position(3, 7);
 		currentBoardFunc = BoardTileString.Quickest_Win__Player2_To_Move;
 		expectedMoves = new Position[]
 		{
-				new(4, 6),
-				new(5, 5),
-				new(6, 4),
-				new(7, 3)
+			new(4, 6),
+			new(5, 5),
+			new(6, 4),
+			new(7, 3)
 		};
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
 
 		playerIdToMove = 1;
 		pos = new Position(4, 0);
 		currentBoardFunc = BoardTileString.Notation_1_e4_c5;
 		expectedMoves = new Position[]
 		{
-				new(4, 1),
+			new(4, 1),
 		};
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 
 		playerIdToMove = 1;
 		pos = new Position(4, 0);
 		currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
 		expectedMoves = new Position[]
 		{
-				new(4, 1),
-				new(5, 0),
-				new(6, 0)
+			new(4, 1),
+			new(5, 0),
+			new(6, 0)
 		};
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-				$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 	}
 
 	[TestCaseSource(nameof(FindMoveCases))]
@@ -111,11 +111,11 @@ public class BoardTest
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tiles);
 
 		var validMoves = Board.FindMovePositions(twp,
-				StandardVariant.ValidMovesByTypeStandard,
-				playerIdToMove,
-				tiles,
-				pieceTypeByStartPositions,
-				MoveCaptureFlag.Move | MoveCaptureFlag.Capture);
+			StandardVariant.ValidMovesByTypeStandard,
+			playerIdToMove,
+			tiles,
+			pieceTypeByStartPositions,
+			MoveCaptureFlag.Move | MoveCaptureFlag.Capture);
 
 		TestUtil.AssertArraysAreEqual(validMoves, expectedMoves);
 	}
@@ -138,13 +138,13 @@ public class BoardTest
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
 		Func<string> currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
-				$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
 
 		playerId = 1;
 		kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
 		currentBoardFunc = BoardTileString.Check_but_king_can_move;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
-				$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
+			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
 	}
 
 	[TestCaseSource(nameof(IsInCheckCases))]
@@ -177,7 +177,7 @@ public class BoardTest
 		var afterPos = new Position(4, 3);
 		Func<string> expectedBoardAfterMoveFunc = BoardTileString.Notation_1_e4;
 		yield return new TestCaseData(beforePos, afterPos, expectedBoardAfterMoveFunc(), playerId).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {expectedBoardAfterMoveFunc.Method.Name}");
+			$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {expectedBoardAfterMoveFunc.Method.Name}");
 	}
 
 	[TestCaseSource(nameof(MovePieceCases))]
