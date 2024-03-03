@@ -65,12 +65,12 @@ namespace Chess
 			};
 		}
 
-		public static IEnumerable<Position> FindMovesPos(TileWithPiece tileWithPiece,
-				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
-				int playerIdToMove,
-				Tile[,] boardTiles,
-				Dictionary<Position, TileWithPiece> tileByStartPos,
-				MoveCaptureFlag moveFilter)
+		public static IEnumerable<Position> FindMovePositions(TileWithPiece tileWithPiece,
+			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
+			int playerIdToMove,
+			Tile[,] boardTiles,
+			Dictionary<Position, TileWithPiece> tileByStartPos,
+			MoveCaptureFlag moveFilter)
 		{
 			var movesForPieceType = movesForPieceTypeFunc(tileWithPiece.Piece.Type, playerIdToMove);
 			var moves = new List<Move>();
@@ -115,13 +115,12 @@ namespace Chess
 					{
 						return moveFilter switch
 						{
-								MoveCaptureFlag.Move => MovePredicate(tileWithPiece, bTile, m, tileByStartPos),
-								MoveCaptureFlag.Capture => CapturePredicate(bTile, playerIdToMove, m),
-								MoveCaptureFlag.Move | MoveCaptureFlag.Capture => MovePredicate(tileWithPiece, bTile, m, tileByStartPos) || CapturePredicate(bTile, playerIdToMove, m),
-								_ => throw new ArgumentOutOfRangeException(nameof(moveFilter), moveFilter, null)
+							MoveCaptureFlag.Move => MovePredicate(tileWithPiece, bTile, m, tileByStartPos),
+							MoveCaptureFlag.Capture => CapturePredicate(bTile, playerIdToMove, m),
+							MoveCaptureFlag.Move | MoveCaptureFlag.Capture => MovePredicate(tileWithPiece, bTile, m, tileByStartPos) || CapturePredicate(bTile, playerIdToMove, m),
+							_ => throw new ArgumentOutOfRangeException(nameof(moveFilter), moveFilter, null)
 						};
 					}
-					
 				})
 				.Select(m => m.Position);
 		}
@@ -130,15 +129,15 @@ namespace Chess
 		{
 			return tileToCapture is TileWithPiece twp && twp.Piece.PlayerId != playerIdToMove && m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture);
 		}
-		
+
 		public static bool MovePredicate(TileWithPiece tileWithPiece, Tile tileToMoveTo, Move m, Dictionary<Position, TileWithPiece> tileByStartPos)
 		{
 			var canMove = m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move);
 			canMove = canMove && m.MoveConstraint is MoveConstraint.None
-					|| m.MoveConstraint is MoveConstraint.FirstMoveOnly
-					&& tileByStartPos.ContainsKey(tileWithPiece.Position)
-					&& tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
-					|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture;
+				|| m.MoveConstraint is MoveConstraint.FirstMoveOnly
+				&& tileByStartPos.ContainsKey(tileWithPiece.Position)
+				&& tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
+				|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture;
 			return tileToMoveTo is not TileWithPiece && canMove;
 		}
 
@@ -182,7 +181,7 @@ namespace Chess
 				Tile[,] boardTiles,
 				Dictionary<Position, TileWithPiece> tileByStartPos)
 		{
-			var oppMovePosLists = opponentTiles.Select(twp => FindMovesPos(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, MoveCaptureFlag.Capture));
+			var oppMovePosLists = opponentTiles.Select(twp => FindMovePositions(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos, MoveCaptureFlag.Capture));
 			var oppMovePosList = oppMovePosLists.SelectMany(posList => posList);
 			return oppMovePosList.Any(pos => pos == checkableTilePiece.Position);
 		}
@@ -200,7 +199,7 @@ namespace Chess
 			if (!isTilePieceInCheck) return CheckType.NoCheck;
 
 			const MoveCaptureFlag moveFilter = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
-			var movePoses = FindMovesPos(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, moveFilter);
+			var movePoses = FindMovePositions(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, moveFilter);
 
 			var posesNotInCheck = movePoses.Where(pos => !IsInCheckAfterMove(checkableTilePiece, checkableTilePiece, pos, boardTiles, playerTilePieces, tileByStartPos, oppTiles, movesForPieceTypeFunc));
 			return posesNotInCheck.Any() ? CheckType.Check : CheckType.CheckMate;

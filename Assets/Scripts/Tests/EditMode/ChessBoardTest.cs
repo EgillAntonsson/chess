@@ -15,7 +15,7 @@ public class ChessBoardTest
 		expectedMoves.Add(new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId)), expectedPos);
 		var caseName = $"{nameof(Find_moves_for_all_pieces)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
-		
+
 		currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
 		playerId = 1;
 		expectedPos = new Position[] { new(4, 1) };
@@ -26,14 +26,14 @@ public class ChessBoardTest
 		caseName = $"{nameof(Find_moves_for_all_pieces)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
 	}
-	
+
 	[TestCaseSource(nameof(FindMove))]
 	public void Find_moves_for_all_pieces(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
 	{
 		var chessboard = new ChessBoard();
 		chessboard.Create(StandardVariant.BoardAtStart());
 		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoard);
-		
+
 		foreach (var twp in tilesByPlayer[playerId])
 		{
 			var foundMoves = chessboard.FindMoves(twp,
@@ -41,15 +41,15 @@ public class ChessBoardTest
 					StandardVariant.CheckablePieceTypeStandard,
 					StandardVariant.ValidMovesByTypeStandard,
 					playerId);
-			
+
 			// will default to empty positions
 			var expectedMoves = Enumerable.Empty<Position>();
-			if (expMoves.TryGetValue(twp, out var move))
+			if (expMoves.TryGetValue(twp, out var move)) 
 			{
 				expectedMoves = move;
 			}
-				
-			var (areEqual, failMessage) = TestUtil.AreArraysEqual( foundMoves, expectedMoves);
+
+			var (areEqual, failMessage) = TestUtil.AreArraysEqual(foundMoves, expectedMoves);
 			Assert.IsTrue(areEqual, $"For {twp}: {failMessage}");
 		}
 	}

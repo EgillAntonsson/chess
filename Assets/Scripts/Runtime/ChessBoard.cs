@@ -39,7 +39,7 @@ namespace Chess
 			var playerTilePieces = tilesByPlayer[playerIdToMove];
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerIdToMove);
 
-			var poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
+			var poses = Board.FindMovePositions(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
 
 			return !isCheckableTwp && !isInCheck ? poses : IsInCheckAfterMoveSimulation(poses);
 
