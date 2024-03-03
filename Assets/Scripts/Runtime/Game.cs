@@ -37,7 +37,7 @@ namespace Chess
 		{
 			var player = players.First(p => p.Item1 == PlayerIdToMove);
 			var isInCheck = player.Item2 == CheckType.Check;
-			return ChessBoard.FindMoves(tile, isInCheck, StandardVariant.CheckablePieceTypeStandard, variant.ValidMovesByType, PlayerIdToMove);
+			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove, variant);
 		}
 		
 		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)

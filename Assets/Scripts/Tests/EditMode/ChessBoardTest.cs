@@ -31,16 +31,13 @@ public class ChessBoardTest
 	public void Find_moves_for_all_pieces(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
 	{
 		var chessboard = new ChessBoard();
-		chessboard.Create(StandardVariant.BoardAtStart());
+		var rules = new Variant();
+		chessboard.Create(rules.Tiles);
 		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoard);
 
 		foreach (var twp in tilesByPlayer[playerId])
 		{
-			var foundMoves = chessboard.FindMoves(twp,
-					true,
-					StandardVariant.CheckablePieceTypeStandard,
-					StandardVariant.ValidMovesByTypeStandard,
-					playerId);
+			var foundMoves = chessboard.FindMoves(twp, true, playerId, rules);
 
 			// will default to empty positions
 			var expectedMoves = Enumerable.Empty<Position>();
@@ -52,5 +49,31 @@ public class ChessBoardTest
 			var (areEqual, failMessage) = TestUtil.AreArraysEqual(foundMoves, expectedMoves);
 			Assert.IsTrue(areEqual, $"For {twp}: {failMessage}");
 		}
+	}
+
+	[Test]
+	public void Find_moves_for_king_side_castling()
+	{
+		var playerId = 1;
+		var pos = new Position(4, 0);
+		Func<string> currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
+		var expectedMovPositions = new Position[]
+		{
+			new(4, 1),
+			new(5, 0),
+			new(6, 0)
+		};
+
+		var rules = new Variant();
+		var chessboard = new ChessBoard();
+		chessboard.Create(rules.Tiles);
+		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoardFunc());
+
+		var isInCheck = false;
+		var twp = new TileWithPiece(pos, new Piece(PieceType.King, playerId));
+		var movePositions = chessboard.FindMoves(twp, isInCheck, playerId, rules);
+
+		TestUtil.AssertArraysAreEqual(movePositions, expectedMovPositions);
+
 	}
 }

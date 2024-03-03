@@ -9,7 +9,8 @@ public class BoardTest
 	[Test]
 	public void Create_board()
 	{
-		var (tiles, tileByStartPos, _) = Board.Create(StandardVariant.BoardAtStart());
+		var rules = new Variant();
+		var (tiles, tileByStartPos, _) = Board.Create(rules.Tiles);
 
 		Assert.That(tiles.Length, Is.EqualTo(64));
 		Assert.That(tiles[0, 0], Is.EqualTo(new TileWithPiece(new Position(0, 0), new Piece(PieceType.Rook, 1))));
@@ -22,12 +23,14 @@ public class BoardTest
 	{
 		var pos = new Position(1, 0);
 		var playerIdToMove = 1;
-		Func<string> currentBoardFunc = StandardVariant.BoardAtStart;
+		var rules = new Variant();
+		Func<string> currentBoardFunc = () => rules.Tiles;
 		IEnumerable<Position> expectedMoves = new Position[] { new(0, 2), new(2, 2) };
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Knight} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(0, 1);
+		currentBoardFunc = () => rules.Tiles;
 		expectedMoves = new Position[] { new(0, 2), new(0, 3) };
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
@@ -48,22 +51,22 @@ public class BoardTest
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(4, 0);
-		currentBoardFunc = StandardVariant.BoardAtStart;
+		currentBoardFunc = () => rules.Tiles;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(5, 0);
-		currentBoardFunc = StandardVariant.BoardAtStart;
+		currentBoardFunc = () => rules.Tiles;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Bishop} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(0, 0);
-		currentBoardFunc = StandardVariant.BoardAtStart;
+		currentBoardFunc = () => rules.Tiles;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Rook} on {pos} when {currentBoardFunc.Method.Name}");
 
 		pos = new Position(3, 0);
-		currentBoardFunc = StandardVariant.BoardAtStart;
+		currentBoardFunc = () => rules.Tiles;
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, Enumerable.Empty<Position>()).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Queen} on {pos} when {currentBoardFunc.Method.Name}");
 
@@ -90,28 +93,29 @@ public class BoardTest
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 
-		playerIdToMove = 1;
-		pos = new Position(4, 0);
-		currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
-		expectedMoves = new Position[]
-		{
-			new(4, 1),
-			new(5, 0),
-			new(6, 0)
-		};
-		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+		// playerIdToMove = 1;
+		// pos = new Position(4, 0);
+		// currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
+		// expectedMoves = new Position[]
+		// {
+		// 	new(4, 1),
+		// 	new(5, 0),
+		// 	new(6, 0)
+		// };
+		// yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+		// 	$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 	}
 
 	[TestCaseSource(nameof(FindMoveCases))]
 	public void Find_moves_on_board_for(Position piecePos, string tilesAtCurrent, int playerIdToMove, IEnumerable<Position> expectedMoves)
 	{
-		var (_, pieceTypeByStartPositions, _) = Board.Create(StandardVariant.BoardAtStart());
+		var rules = new Variant();
+		var (_, pieceTypeByStartPositions, _) = Board.Create(rules.Tiles);
 		var (tiles, _, tilesByPlayer) = Board.ConvertBoardStringToTiles(tilesAtCurrent);
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tiles);
 
 		var validMoves = Board.FindMovePositions(twp,
-			StandardVariant.ValidMovesByTypeStandard,
+			rules.ValidMovesByType,
 			playerIdToMove,
 			tiles,
 			pieceTypeByStartPositions,
@@ -123,11 +127,12 @@ public class BoardTest
 	[Test]
 	public void Is_not_in_check_at_start()
 	{
-		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(StandardVariant.BoardAtStart());
+		var rules = new Variant();
+		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(rules.Tiles);
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 
-		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, rules.ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
@@ -152,7 +157,7 @@ public class BoardTest
 	{
 		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(BoardTileString.Check_but_king_can_move());
 
-		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, new Variant().ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.Check));
 	}
@@ -160,12 +165,13 @@ public class BoardTest
 	[Test]
 	public void Is_check_mate()
 	{
-		Board.Create(StandardVariant.BoardAtStart());
+		var rules = new Variant();
+		Board.Create(rules.Tiles);
 		var (tiles, tilesByStartPos, tilesByPlayer) = Board.ConvertBoardStringToTiles(BoardTileString.Player1_CheckMate());
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 
-		var opponentCheck = Board.IsInCheck(kingTile, StandardVariant.ValidMovesByTypeStandard, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, rules.ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.CheckMate));
 	}
@@ -183,7 +189,8 @@ public class BoardTest
 	[TestCaseSource(nameof(MovePieceCases))]
 	public void Move_piece_on_board(Position beforePos, Position afterPos, string expectedTilesAfterMove, int playerId)
 	{
-		var (tilesBefore, _, tilesByPlayerBefore) = Board.Create(StandardVariant.BoardAtStart());
+		var rules = new Variant();
+		var (tilesBefore, _, tilesByPlayerBefore) = Board.Create(rules.Tiles);
 		var twp = (TileWithPiece)Board.GetTile(beforePos, tilesBefore);
 
 		var (beforeMoveTile, afterMoveTile, tilesAfterMove, tilesByPlayerAfterMove) = Board.MovePiece(twp, afterPos, tilesBefore, tilesByPlayerBefore[playerId]);

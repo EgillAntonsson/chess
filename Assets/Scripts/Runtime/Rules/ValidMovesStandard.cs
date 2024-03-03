@@ -66,7 +66,9 @@ namespace Chess
 				new(new Position(0, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
 				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
 				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet, moveConstraint)
+				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet, moveConstraint),
+				// new MoveWithPieceSwitch(PieceType.Rook, new Position(2, 0), moveType, moveAndCaptureFlagSet, moveConstraint),
+				// new MoveWithPieceSwitch(PieceType.Rook, new Position(-2, 0), moveType, moveAndCaptureFlagSet, moveConstraint)
 			};
 		}
 		
