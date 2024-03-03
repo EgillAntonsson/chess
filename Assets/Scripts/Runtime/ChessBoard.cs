@@ -38,15 +38,10 @@ namespace Chess
 			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			var playerTilePieces = tilesByPlayer[playerIdToMove];
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerIdToMove);
-			IEnumerable<Position> poses;
-			if (isInCheck && !isCheckableTwp)
-			{
-				poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
-				return IsInCheckAfterMoveSimulation(poses);
-			}
 
-			poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
-			return !isCheckableTwp ? poses : IsInCheckAfterMoveSimulation(poses);
+			var poses = Board.FindMovesPos(tileWithPiece, movesForPieceTypeFunc, playerIdToMove, boardTiles, tileByStartPos, moveCaptureFlags);
+
+			return !isCheckableTwp && !isInCheck ? poses : IsInCheckAfterMoveSimulation(poses);
 
 			IEnumerable<Position> IsInCheckAfterMoveSimulation(IEnumerable<Position> positions)
 			{
