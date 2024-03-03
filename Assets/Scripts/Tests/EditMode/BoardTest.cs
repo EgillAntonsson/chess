@@ -91,6 +91,18 @@ public class BoardTest
 			};
 			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 				$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+			
+			playerIdToMove = 1;
+			pos = new Position(4, 0);
+			currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
+			expectedMoves = new Position[]
+			{
+					new(4, 1),
+					new(5, 0),
+					new(6,0)
+			};
+			yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
+					$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
 		}
 	}
 

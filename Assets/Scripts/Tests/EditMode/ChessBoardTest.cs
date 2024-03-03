@@ -13,7 +13,7 @@ public class ChessBoardTest
 		var expectedPos = new Position[] { new(3, 0), new(3, 1), new(5, 0), new(5, 1) };
 		var expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>();
 		expectedMoves.Add(new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId)), expectedPos);
-		var caseName = $"{nameof(Find_moves)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		var caseName = $"{nameof(Find_moves_for_all_pieces)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
 		
 		currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
@@ -23,12 +23,12 @@ public class ChessBoardTest
 		expectedMoves.Add(new TileWithPiece(new Position(3, 0), new Piece(PieceType.Queen, playerId)), expectedPos);
 		expectedMoves.Add(new TileWithPiece(new Position(5, 0), new Piece(PieceType.Bishop, playerId)), expectedPos);
 		expectedMoves.Add(new TileWithPiece(new Position(6, 0), new Piece(PieceType.Knight, playerId)), expectedPos);
-		caseName = $"{nameof(Find_moves)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		caseName = $"{nameof(Find_moves_for_all_pieces)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
 	}
 	
 	[TestCaseSource(nameof(FindMove))]
-	public void Find_moves(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
+	public void Find_moves_for_all_pieces(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
 	{
 		var chessboard = new ChessBoard();
 		chessboard.Create(StandardVariant.BoardAtStart());
