@@ -173,7 +173,7 @@ public class BoardTest
 			var afterPos = new Position(4, 3);
 			Func<string> expectedBoardAfterMoveFunc = BoardTileString.Notation_1_e4;
 			yield return new TestCaseData(beforePos, afterPos, expectedBoardAfterMoveFunc(), playerId).SetName(
-				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {nameof(expectedBoardAfterMoveFunc)}");
+				$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {expectedBoardAfterMoveFunc.Method.Name}");
 		}
 	}
 
