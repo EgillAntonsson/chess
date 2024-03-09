@@ -7,9 +7,10 @@ public static class TestUtil
 {
 	public static (bool areEqual, string failMessage) AreArraysEqual<T>(IEnumerable<T> actual, IEnumerable<T> expected)
 	{
-		var failMessage = "";
-		var expectedArr = expected as T[] ?? expected.OrderBy(x => x).ToArray();
-		var actualArr = actual as T[] ?? actual.OrderBy(x => x).ToArray();
+		var failMessage = "";	
+		var expectedArr = expected.OrderBy(x => x).ToArray();
+		var actualArr = actual.OrderBy(x => x).ToArray();
+		
 		if (expectedArr.Length != actualArr.Length)
 		{
 			failMessage =

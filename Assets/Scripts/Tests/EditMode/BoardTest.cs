@@ -95,7 +95,7 @@ public class BoardTest
 
 		// playerIdToMove = 1;
 		// pos = new Position(4, 0);
-		// currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
+		// currentBoardFunc = BoardTileString.Can_castle_king_side;
 		// expectedMoves = new Position[]
 		// {
 		// 	new(4, 1),
@@ -147,7 +147,7 @@ public class BoardTest
 
 		playerId = 1;
 		kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
-		currentBoardFunc = BoardTileString.Check_but_king_can_move;
+		currentBoardFunc = BoardTileString.Check_but_king_can_move_but_not_castle;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
 			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
 	}
@@ -155,7 +155,7 @@ public class BoardTest
 	[TestCaseSource(nameof(IsInCheckCases))]
 	public void Is_in_check_returns_check(string tilesAtCurrent, int playerId, TileWithPiece kingTile)
 	{
-		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(BoardTileString.Check_but_king_can_move());
+		var (tiles, tilesByStartPos, tilesByPlayer) = Board.Create(BoardTileString.Check_but_king_can_move_but_not_castle());
 
 		var opponentCheck = Board.IsInCheck(kingTile, new Variant().ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 

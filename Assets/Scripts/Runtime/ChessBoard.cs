@@ -24,7 +24,7 @@ namespace Chess
 			Dictionary<Position, TileWithPiece>,
 			Dictionary<int, IEnumerable<TileWithPiece>>) InjectBoard(string tiles)
 		{
-			(boardTiles, tileByStartPos, tilesByPlayer) = Board.Create(tiles);
+			(boardTiles, _, tilesByPlayer) = Board.Create(tiles);
 			return (boardTiles, tileByStartPos, tilesByPlayer);
 		}
 
@@ -36,73 +36,77 @@ namespace Chess
 			var playerTilePieces = tilesByPlayer[playerId];
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
 
-			var movePositions = Board.FindMovePositions(tileWithPiece, rules.ValidMovesByType, playerId, boardTiles, tileByStartPos, moveCaptureFlags);
+			var movePositions = FilterAwayCheckedMovePositions(
+				Board.FindMovePositions(tileWithPiece, rules.ValidMovesByType, playerId, boardTiles, tileByStartPos, moveCaptureFlags)
+			);
 
-			if (isCheckableTwp && !isInCheck)
-			{
-				var checkableIsInStartPos = tileByStartPos.ContainsKey(checkableTwp.Position);
-				var castlingTiles = tilesByPlayer[playerId].Where(twp => twp.Piece.Type == rules.CastlingPieceType);
-				var castlingTilesInStartPos = castlingTiles.Where(ct => tileByStartPos.ContainsKey(ct.Position));
-				if (checkableIsInStartPos && castlingTilesInStartPos.Any())
-				{
-					foreach (var ctsp in castlingTilesInStartPos)
-					{
-						var nrOfColumnWithDirection = ctsp.Position.Column - tileWithPiece.Position.Column;
-						var sign = Math.Sign(nrOfColumnWithDirection);
-						var nrOfColumn = Math.Abs(nrOfColumnWithDirection);
-						var isEmpty = true;
-						for (var i = 1; i < nrOfColumn; i++)
-						{
-							isEmpty = Board.GetTile(new Position(checkableTwp.Position.Column + i * sign, checkableTwp.Position.Row), boardTiles) is not TileWithPiece;
-						}
+			if (!isCheckableTwp) return movePositions;
+			
+			var castingPositions = FindCastlingMoves(isInCheck, playerId, rules, checkableTwp, playerTilePieces, opponentTiles);
+			return movePositions.Concat(castingPositions);
 
-						if (!isEmpty)
-						{
-							continue;
-						}
-
-						var isInCheckAfterFirstMove = Board.IsInCheckAfterMove(checkableTwp,
-							checkableTwp,
-							new Position(checkableTwp.Position.Column + 1, checkableTwp.Position.Row),
-							boardTiles,
-							playerTilePieces,
-							tileByStartPos,
-							opponentTiles,
-							rules.ValidMovesByType);
-						if (isInCheckAfterFirstMove)
-						{
-							continue;
-						}
-
-						var isInCheckAfterSecondMove = Board.IsInCheckAfterMove(checkableTwp,
-							checkableTwp,
-							new Position(checkableTwp.Position.Column + 2, checkableTwp.Position.Row),
-							boardTiles,
-							playerTilePieces,
-							tileByStartPos,
-							opponentTiles,
-							rules.ValidMovesByType);
-
-						if (isInCheckAfterSecondMove)
-						{
-							continue;
-						}
-						movePositions = movePositions.Append(new Position(checkableTwp.Position.Column + 2, checkableTwp.Position.Row));
-
-					}
-				}
-
-			}
-
-			return !isCheckableTwp && !isInCheck ? movePositions : IsInCheckAfterMoveSimulation(movePositions);
-
-			IEnumerable<Position> IsInCheckAfterMoveSimulation(IEnumerable<Position> positions)
+			IEnumerable<Position> FilterAwayCheckedMovePositions(IEnumerable<Position> positions)
 			{
 				return positions.Where(pos => !Board.IsInCheckAfterMove(checkableTwp, tileWithPiece, pos, boardTiles, playerTilePieces, tileByStartPos, opponentTiles, rules.ValidMovesByType));
 			}
 		}
 
-	public static IEnumerable<TileWithPiece> GetOpponentTiles(Dictionary<int, IEnumerable<TileWithPiece>> tbp, int playerId)
+		private IEnumerable<Position> FindCastlingMoves(bool isInCheck, int playerId,
+			Variant rules,
+			TileWithPiece checkableTwp,
+			IEnumerable<TileWithPiece> playerTilePieces,
+			IEnumerable<TileWithPiece> opponentTiles)
+		{
+			var positions = new List<Position>();
+			if (isInCheck)
+			{
+				return positions;
+			}
+			var checkableIsInStartPos = tileByStartPos.ContainsKey(checkableTwp.Position);
+			var castlingTiles = tilesByPlayer[playerId].Where(twp => twp.Piece.Type == rules.CastlingPieceType);
+			var castlingTilesInStartPos = castlingTiles.Where(ct => tileByStartPos.ContainsKey(ct.Position));
+			
+			var tilesInStartPositions = castlingTilesInStartPos as TileWithPiece[] ?? castlingTilesInStartPos.ToArray();
+			if (!checkableIsInStartPos || !tilesInStartPositions.Any())
+			{
+				return positions;
+			}
+
+			foreach (var ctsp in tilesInStartPositions)
+			{
+				var nrOfColumnWithDirection = ctsp.Position.Column - checkableTwp.Position.Column;
+				var sign = Math.Sign(nrOfColumnWithDirection);
+				var nrOfColumn = Math.Abs(nrOfColumnWithDirection);
+				var isEmpty = true;
+				for (var i = 1; i < nrOfColumn; i++)
+				{
+					isEmpty = Board.GetTile(new Position(checkableTwp.Position.Column + i * sign, checkableTwp.Position.Row), boardTiles) is not TileWithPiece;
+					if (!isEmpty) break;
+				}
+
+				if (!isEmpty) continue;
+
+				var columnsMoves = new[] { checkableTwp.Position.Column + 1 * sign, checkableTwp.Position.Column + 2 * sign };
+				if (columnsMoves.Select(colToCheck => Board.IsInCheckAfterMove(checkableTwp,
+						checkableTwp,
+						new Position(colToCheck, checkableTwp.Position.Row),
+						boardTiles,
+						playerTilePieces,
+						tileByStartPos,
+						opponentTiles,
+						rules.ValidMovesByType))
+					.Any(isInCheckAfterMove => isInCheckAfterMove))
+				{
+					return positions;
+				}
+
+				positions.Add(new Position(checkableTwp.Position.Column + 2 * sign, checkableTwp.Position.Row));
+			}
+
+			return positions;
+		}
+
+		public static IEnumerable<TileWithPiece> GetOpponentTiles(Dictionary<int, IEnumerable<TileWithPiece>> tbp, int playerId)
 		{
 			return tbp.Where(kvp => kvp.Key != playerId).SelectMany(kvp => kvp.Value);
 		}
@@ -118,8 +122,8 @@ namespace Chess
 		}
 
 		public (int playerId, CheckType checktype, Tile checkTile) IsPlayerInCheck(int playerId,
-				PieceType checkablePieceType,
-				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
+			PieceType checkablePieceType,
+			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
 			var checkablePieceTile = GetCheckableTileWithPiece(playerId, checkablePieceType);
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);

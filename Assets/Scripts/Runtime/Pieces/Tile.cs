@@ -12,4 +12,8 @@ namespace Chess
 	public record Tile(Position Position);
 	
 	public record TileWithPiece(Position Position, Piece Piece) : Tile(Position);
+
+	public record TileWithCheckablePiece(Position Position, Piece Piece) : TileWithPiece(Position, Piece);
+	
+	public record TileWithCastlingPiece(Position Position, Piece Piece) : TileWithPiece(Position, Piece);
 }

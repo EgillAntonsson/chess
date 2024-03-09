@@ -6,32 +6,37 @@ using NUnit.Framework;
 
 public class ChessBoardTest
 {
-	public static IEnumerable<TestCaseData> FindMove()
+	public static IEnumerable<TestCaseData> Find_moves_for_all()
 	{
-		Func<string> currentBoardFunc = BoardTileString.Check_but_king_can_move;
+		Func<string> currentBoardFunc = BoardTileString.Check_but_king_can_move_but_not_castle;
 		var playerId = 1;
 		var expectedPos = new Position[] { new(3, 0), new(3, 1), new(5, 0), new(5, 1) };
-		var expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>();
-		expectedMoves.Add(new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId)), expectedPos);
-		var caseName = $"{nameof(Find_moves_for_all_pieces)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		var expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>
+		{
+			{ new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId)), expectedPos }
+		};
+		var caseName = $"{nameof(Find_moves_for_all_pieces_when_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
+
 
 		currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
 		playerId = 1;
 		expectedPos = new Position[] { new(4, 1) };
-		expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>();
-		expectedMoves.Add(new TileWithPiece(new Position(3, 0), new Piece(PieceType.Queen, playerId)), expectedPos);
-		expectedMoves.Add(new TileWithPiece(new Position(5, 0), new Piece(PieceType.Bishop, playerId)), expectedPos);
-		expectedMoves.Add(new TileWithPiece(new Position(6, 0), new Piece(PieceType.Knight, playerId)), expectedPos);
-		caseName = $"{nameof(Find_moves_for_all_pieces)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>
+		{
+			{ new TileWithPiece(new Position(3, 0), new Piece(PieceType.Queen, playerId)), expectedPos },
+			{ new TileWithPiece(new Position(5, 0), new Piece(PieceType.Bishop, playerId)), expectedPos },
+			{ new TileWithPiece(new Position(6, 0), new Piece(PieceType.Knight, playerId)), expectedPos }
+		};
+		caseName = $"{nameof(Find_moves_for_all_pieces_when_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
 	}
 
-	[TestCaseSource(nameof(FindMove))]
-	public void Find_moves_for_all_pieces(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
+	[TestCaseSource(nameof(Find_moves_for_all))]
+	public void Find_moves_for_all_pieces_when_in_check(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
 	{
-		var chessboard = new ChessBoard();
 		var rules = new Variant();
+		var chessboard = new ChessBoard();
 		chessboard.Create(rules.Tiles);
 		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoard);
 
@@ -41,7 +46,7 @@ public class ChessBoardTest
 
 			// will default to empty positions
 			var expectedMoves = Enumerable.Empty<Position>();
-			if (expMoves.TryGetValue(twp, out var move)) 
+			if (expMoves.TryGetValue(twp, out var move))
 			{
 				expectedMoves = move;
 			}
@@ -51,29 +56,114 @@ public class ChessBoardTest
 		}
 	}
 
-	[Test]
-	public void Find_moves_for_king_side_castling()
+	public static IEnumerable<TestCaseData> Find_moves()
 	{
-		var playerId = 1;
-		var pos = new Position(4, 0);
-		Func<string> currentBoardFunc = BoardTileString.Player1_can_castle_king_side;
-		var expectedMovPositions = new Position[]
+		Func<string> currentBoardFunc = BoardTileString.Can_castle_king_side;
+		var tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		var expectedMoves = new Position[]
 		{
 			new(4, 1),
 			new(5, 0),
 			new(6, 0)
 		};
+		var caseName = $"{nameof(Find_moves_when_not_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		yield return new TestCaseData(currentBoardFunc(), tileWithPiece, expectedMoves).SetName(caseName);
 
+
+		currentBoardFunc = BoardTileString.Can_castle_queen_side;
+		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		expectedMoves = new Position[]
+		{
+			new(4, 1),
+			new(3, 1),
+			new(3, 0),
+			new(2, 0)
+		};
+		caseName = $"{nameof(Find_moves_when_not_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		yield return new TestCaseData(currentBoardFunc(), tileWithPiece, expectedMoves).SetName(caseName);
+
+
+		currentBoardFunc = BoardTileString.Can_castle_on_both_sides;
+		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		expectedMoves = new Position[]
+		{
+			new(4, 1),
+			new(3, 1),
+			new(3, 0),
+			new(2, 0),
+			new(5, 0),
+			new(6, 0)
+		};
+		caseName = $"{nameof(Find_moves_when_not_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		yield return new TestCaseData(currentBoardFunc(), tileWithPiece, expectedMoves).SetName(caseName);
+
+
+		currentBoardFunc = BoardTileString.Can_not_castle_as_1st_intra_move_would_be_checked;
+		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		expectedMoves = new Position[]
+		{
+			new(4, 1),
+		};
+		caseName = $"{nameof(Find_moves_when_not_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		yield return new TestCaseData(currentBoardFunc(), tileWithPiece, expectedMoves).SetName(caseName);
+
+
+		currentBoardFunc = BoardTileString.Can_not_castle_as_2nd_intra_move_would_be_checked;
+		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		expectedMoves = new Position[]
+		{
+			new(4, 1),
+			new(3, 1),
+			new(3, 0)
+		};
+		caseName = $"{nameof(Find_moves_when_not_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
+		yield return new TestCaseData(currentBoardFunc(), tileWithPiece, expectedMoves).SetName(caseName);
+	}
+
+	[TestCaseSource(nameof(Find_moves))]
+	public void Find_moves_when_not_in_check(string currentBoard, TileWithPiece tileWithPiece, IEnumerable<Position> expectedMoves)
+	{
 		var rules = new Variant();
 		var chessboard = new ChessBoard();
 		chessboard.Create(rules.Tiles);
-		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoardFunc());
+		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoard);
 
-		var isInCheck = false;
-		var twp = new TileWithPiece(pos, new Piece(PieceType.King, playerId));
-		var movePositions = chessboard.FindMoves(twp, isInCheck, playerId, rules);
+		const bool isInCheck = false;
+		var movePositions = chessboard.FindMoves(tileWithPiece, isInCheck, tileWithPiece.Piece.PlayerId, rules);
 
-		TestUtil.AssertArraysAreEqual(movePositions, expectedMovPositions);
+		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
+	}
 
+	[Test]
+	public void Can_not_castle_after_king_has_moved()
+	{
+		var rules = new Variant();
+		var chessboard = new ChessBoard();
+		chessboard.Create(rules.Tiles);
+		var (_, _, _) = chessboard.InjectBoard(BoardTileString.Check_but_king_can_move_but_not_castle());
+		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		
+		// We assume we are moving to a found valid position from FindMoves method.
+		chessboard.MovePiece(new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1)), new Position(5, 0));
+		// The opponent moves bishop in front of his\her queen .
+		chessboard.MovePiece(new TileWithPiece(new Position(2, 7), new Piece(PieceType.Bishop, 2)), new Position(4, 5));
+
+		// king moves back to his start position, as the opponent's bishop is in between the queen now.
+		chessboard.MovePiece(new TileWithPiece(new Position(5, 0), new Piece(PieceType.King, 1)), new Position(4, 0));
+		// The opponent does a move that has no further impact from the injected board on what is being tested.
+		chessboard.MovePiece(new TileWithPiece(new Position(0, 6), new Piece(PieceType.Pawn, 2)), new Position(0, 5));
+
+		var movePositions = chessboard.FindMoves(tileWithPiece: kingTile, isInCheck: false, playerId: 1, rules: rules);
+
+		var expectedMoves = new Position[]
+		{
+			new(3, 0),
+			new(3, 1),
+			new(4, 1),
+			new(5, 1),
+			new(5, 0)
+		};
+
+		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
 }

@@ -31,7 +31,18 @@ namespace Chess
 						theTiles[c, r] = new Tile(new Position(c, r));
 					else
 					{
-						var pieceType = GetPieceTypeFromChar(posString[0]);
+						char c1 = posString[0];
+						c1 = char.ToUpper(c1);
+						var pieceType = c1 switch
+						{
+							'P' => PieceType.Pawn,
+							'N' => PieceType.Knight,
+							'B' => PieceType.Bishop,
+							'R' => PieceType.Rook,
+							'Q' => PieceType.Queen,
+							'K' => PieceType.King,
+							_ => throw new ArgumentOutOfRangeException(nameof(c1), c1, $"Char {c1} not handled.")
+						};
 						var playerId = int.Parse(posString[1].ToString());
 						var twp = new TileWithPiece(new Position(c, r), new Piece(pieceType, playerId));
 						theTiles[c, r] = twp;
@@ -48,21 +59,6 @@ namespace Chess
 			var tilesByPlayerRet = tilesByPlayer.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<TileWithPiece>)kvp.Value);
 
 			return (theTiles, tileByStartPos, tilesByPlayerRet);
-		}
-
-		private static PieceType GetPieceTypeFromChar(char c)
-		{
-			c = char.ToUpper(c);
-			return c switch
-			{
-				'P' => PieceType.Pawn,
-				'N' => PieceType.Knight,
-				'B' => PieceType.Bishop,
-				'R' => PieceType.Rook,
-				'Q' => PieceType.Queen,
-				'K' => PieceType.King,
-				_ => throw new ArgumentOutOfRangeException(nameof(c), c, $"Char {c} not handled.")
-			};
 		}
 
 		public static IEnumerable<Position> FindMovePositions(TileWithPiece tileWithPiece,
