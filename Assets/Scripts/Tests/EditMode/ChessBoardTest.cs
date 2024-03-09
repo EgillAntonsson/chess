@@ -13,7 +13,7 @@ public class ChessBoardTest
 		var expectedPos = new Position[] { new(3, 0), new(3, 1), new(5, 0), new(5, 1) };
 		var expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>
 		{
-			{ new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId)), expectedPos }
+			{ new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, playerId)), expectedPos }
 		};
 		var caseName = $"{nameof(Find_moves_for_all_pieces_when_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
@@ -36,9 +36,9 @@ public class ChessBoardTest
 	public void Find_moves_for_all_pieces_when_in_check(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
 	{
 		var rules = new Variant();
-		var chessboard = new ChessBoard();
-		chessboard.Create(rules.Tiles);
-		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoard);
+		var chessboard = new ChessBoard(rules);
+		var (_, _, _) = chessboard.Create(rules.Tiles);
+		var (_, tilesByPlayer) = chessboard.Create_ButNotUpdateStartPos(currentBoard);
 
 		foreach (var twp in tilesByPlayer[playerId])
 		{
@@ -59,7 +59,7 @@ public class ChessBoardTest
 	public static IEnumerable<TestCaseData> Find_moves()
 	{
 		Func<string> currentBoardFunc = BoardTileString.Can_castle_king_side;
-		var tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		var tileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		var expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -71,7 +71,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_castle_queen_side;
-		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		tileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -84,7 +84,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_castle_on_both_sides;
-		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		tileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -99,7 +99,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_not_castle_as_1st_intra_move_would_be_checked;
-		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		tileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -109,7 +109,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_not_castle_as_2nd_intra_move_would_be_checked;
-		tileWithPiece = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		tileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -124,9 +124,9 @@ public class ChessBoardTest
 	public void Find_moves_when_not_in_check(string currentBoard, TileWithPiece tileWithPiece, IEnumerable<Position> expectedMoves)
 	{
 		var rules = new Variant();
-		var chessboard = new ChessBoard();
+		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.Tiles);
-		var (tiles, _, tilesByPlayer) = chessboard.InjectBoard(currentBoard);
+		chessboard.Create_ButNotUpdateStartPos(currentBoard);
 
 		const bool isInCheck = false;
 		var movePositions = chessboard.FindMoves(tileWithPiece, isInCheck, tileWithPiece.Piece.PlayerId, rules);
@@ -138,9 +138,9 @@ public class ChessBoardTest
 	public void Can_not_castle_after_king_has_moved()
 	{
 		var rules = new Variant();
-		var chessboard = new ChessBoard();
+		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.Tiles);
-		var (_, _, _) = chessboard.InjectBoard(BoardTileString.Check_but_king_can_move_but_not_castle());
+		// var (_, _, _) = chessboard.InjectBoard(BoardTileString.Check_but_king_can_move_but_not_castle());
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		
 		// We assume we are moving to a found valid position from FindMoves method.

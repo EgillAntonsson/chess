@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 [assembly: InternalsVisibleTo("Chess.Test.EditMode")]
 
@@ -10,28 +9,31 @@ namespace Chess
 {
 	public class ChessBoard
 	{
+		private readonly Variant rules;
 		private Tile[,] boardTiles;
 		private Dictionary<Position, TileWithPiece> tileByStartPos;
 		private Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer;
 
-		public Tile[,] Create(string tiles)
+		public ChessBoard(Variant rules)
 		{
-			(boardTiles, tileByStartPos, tilesByPlayer) = Board.Create(tiles);
-			return boardTiles;
+			this.rules = rules;
+		}
+		
+		public (Tile[,], Dictionary<Position, TileWithPiece>, Dictionary<int, IEnumerable<TileWithPiece>>) Create(string tiles)
+		{
+			(boardTiles, tileByStartPos, tilesByPlayer) = Board.Create(tiles, rules.CheckablePieceType, rules.CastlingPieceType);
+			return (boardTiles, tileByStartPos, tilesByPlayer);
 		}
 
 		internal (Tile[,],
-			Dictionary<Position, TileWithPiece>,
-			Dictionary<int, IEnumerable<TileWithPiece>>) InjectBoard(string tiles)
+			Dictionary<int, IEnumerable<TileWithPiece>>) Create_ButNotUpdateStartPos(string tiles)
 		{
-			(boardTiles, _, tilesByPlayer) = Board.Create(tiles);
-			return (boardTiles, tileByStartPos, tilesByPlayer);
+			(boardTiles, _, tilesByPlayer) = Board.Create(tiles, rules.CheckablePieceType, rules.CastlingPieceType);
+			return (boardTiles, tilesByPlayer);
 		}
 
 		public IEnumerable<Position> FindMoves(TileWithPiece tileWithPiece, bool isInCheck, int playerId, Variant rules)
 		{
-			var checkableTwp = GetCheckableTileWithPiece(playerId, rules.CheckablePieceType);
-			var isCheckableTwp = tileWithPiece == checkableTwp;
 			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			var playerTilePieces = tilesByPlayer[playerId];
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
@@ -40,19 +42,18 @@ namespace Chess
 				Board.FindMovePositions(tileWithPiece, rules.ValidMovesByType, playerId, boardTiles, tileByStartPos, moveCaptureFlags)
 			);
 
-			if (!isCheckableTwp) return movePositions;
+			if (tileWithPiece is not TileWithCheckablePiece) return movePositions;
 			
-			var castingPositions = FindCastlingMoves(isInCheck, playerId, rules, checkableTwp, playerTilePieces, opponentTiles);
+			var castingPositions = FindCastlingMoves(isInCheck, playerId, tileWithPiece, playerTilePieces, opponentTiles);
 			return movePositions.Concat(castingPositions);
 
 			IEnumerable<Position> FilterAwayCheckedMovePositions(IEnumerable<Position> positions)
 			{
-				return positions.Where(pos => !Board.IsInCheckAfterMove(checkableTwp, tileWithPiece, pos, boardTiles, playerTilePieces, tileByStartPos, opponentTiles, rules.ValidMovesByType));
+				return positions.Where(pos => !Board.IsInCheckAfterMove(GetCheckableTileWithPiece(playerId), tileWithPiece, pos, boardTiles, playerTilePieces, tileByStartPos, opponentTiles, rules.ValidMovesByType));
 			}
 		}
 
 		private IEnumerable<Position> FindCastlingMoves(bool isInCheck, int playerId,
-			Variant rules,
 			TileWithPiece checkableTwp,
 			IEnumerable<TileWithPiece> playerTilePieces,
 			IEnumerable<TileWithPiece> opponentTiles)
@@ -125,15 +126,15 @@ namespace Chess
 			PieceType checkablePieceType,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
-			var checkablePieceTile = GetCheckableTileWithPiece(playerId, checkablePieceType);
+			var checkablePieceTile = GetCheckableTileWithPiece(playerId);
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
 			var checkType = Board.IsInCheck(checkablePieceTile, movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos, tilesByPlayer[playerId]);
 			return (playerId, checkType, checkablePieceTile);
 		}
 
-		private TileWithPiece GetCheckableTileWithPiece(int playerId, PieceType checkablePieceType)
+		private TileWithCheckablePiece GetCheckableTileWithPiece(int playerId)
 		{
-			return tilesByPlayer[playerId].First(twp => twp.Piece.Type == checkablePieceType);
+			return (TileWithCheckablePiece)tilesByPlayer[playerId].First(twp => twp is TileWithCheckablePiece);
 		}
 	}
 }

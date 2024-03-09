@@ -7,13 +7,13 @@ namespace Chess
 	public static class Board
 	{
 		public static (Tile[,] boardTiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
-			Create(string boardTiles)
+			Create(string boardTiles, PieceType checkablePieceType, PieceType castlingPieceType)
 		{
-			return ConvertBoardStringToTiles(boardTiles);
+			return ConvertBoardStringToTiles(boardTiles, checkablePieceType, castlingPieceType);
 		}
 
-		public static (Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
-			ConvertBoardStringToTiles(string tiles)
+		private static (Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
+			ConvertBoardStringToTiles(string tiles, PieceType checkablePieceType, PieceType castlingPieceType)
 		{
 			var tilesByPlayer = new Dictionary<int, List<TileWithPiece>>();
 			var tileByStartPos = new Dictionary<Position, TileWithPiece>();
@@ -44,7 +44,20 @@ namespace Chess
 							_ => throw new ArgumentOutOfRangeException(nameof(c1), c1, $"Char {c1} not handled.")
 						};
 						var playerId = int.Parse(posString[1].ToString());
-						var twp = new TileWithPiece(new Position(c, r), new Piece(pieceType, playerId));
+						var pos = new Position(c, r);
+						var piece = new Piece(pieceType, playerId);
+						TileWithPiece twp;
+						if (piece.Type == checkablePieceType)
+						{
+							twp = new TileWithCheckablePiece(pos, piece);
+						} else if (piece.Type == castlingPieceType)
+						{
+							twp = new TileWithCastlingPiece(pos, piece);
+						}
+						else
+						{
+							twp = new TileWithPiece(pos, piece);
+						}
 						theTiles[c, r] = twp;
 
 						tilesByPlayer.TryGetValue(playerId, out var tileByType);
@@ -210,7 +223,8 @@ namespace Chess
 				IEnumerable<TileWithPiece> opponentTiles,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
-			var checkableIsMoved = checkableTilePiece == moveTilePiece;
+			// var checkableIsMoved = checkableTilePiece == moveTilePiece;
+			var checkableIsMoved = moveTilePiece is TileWithCheckablePiece;
 			var movedTuple = MovePiece(moveTilePiece, pos, boardTiles, playerTilePieces);
 			
 			return IsTilePieceInCheck(checkableIsMoved ? movedTuple.afterMoveTile : checkableTilePiece, movesForPieceTypeFunc, opponentTiles, movedTuple.tilesAfterMove, tileByStartPos);

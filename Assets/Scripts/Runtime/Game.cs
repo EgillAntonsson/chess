@@ -17,7 +17,7 @@ namespace Chess
 		public Game(Variant variant)
 		{
 			this.variant = variant;
-			ChessBoard = new ChessBoard();
+			ChessBoard = new ChessBoard(variant);
 			PlayerIdToMove = variant.PlayerIdToStart;
 			TurnNumber = 1;
 
@@ -30,7 +30,8 @@ namespace Chess
 		
 		public Tile[,] Create()
 		{
-			return ChessBoard.Create(variant.Tiles);
+			var (tiles, _, _) = ChessBoard.Create(variant.Tiles);
+			return tiles;
 		}
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
