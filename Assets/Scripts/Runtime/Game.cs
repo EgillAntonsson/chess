@@ -2,27 +2,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Chess
 {
 	public class Game
 	{
-		private readonly Variant variant;
+		private readonly Rules rules;
 		private IEnumerable<(int, CheckType)> players; 
 		public ChessBoard ChessBoard { get; }
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
 
-		public Game(Variant variant)
+		public Game(Rules rules)
 		{
-			this.variant = variant;
-			ChessBoard = new ChessBoard(variant);
-			PlayerIdToMove = variant.PlayerIdToStart;
+			this.rules = rules;
+			ChessBoard = new ChessBoard(rules);
+			PlayerIdToMove = rules.PlayerIdToStart;
 			TurnNumber = 1;
 
 			players = new List<(int, CheckType)>();
-			for (var i = 1; i <= variant.NumberOfPlayers; i++)
+			for (var i = 1; i <= rules.NumberOfPlayers; i++)
 			{
 				players = players.Append((i, CheckType.NoCheck));
 			}
@@ -30,7 +31,12 @@ namespace Chess
 		
 		public Tile[,] Create()
 		{
-			var (tiles, _, _) = ChessBoard.Create(variant.Tiles);
+			var (tiles, tbsp, tbp) = ChessBoard.Create(rules.BoardAtStart);
+			var (success, errorMessage) = ChessBoard.ValidateBoard(tiles, tbsp, tbp);
+			if (!success)
+			{
+				throw new ApplicationException(errorMessage);
+			}
 			return tiles;
 		}
 
@@ -38,31 +44,27 @@ namespace Chess
 		{
 			var player = players.First(p => p.Item1 == PlayerIdToMove);
 			var isInCheck = player.Item2 == CheckType.Check;
-			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove, variant);
+			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove, rules);
 		}
 		
 		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
 			var (beforeMoveTile, afterMoveTile) = ChessBoard.MovePiece(tile, position);
-			var opponents = Enumerable.Empty<(int, CheckType, Tile)>();
-			if (variant.CanCheck)
-			{
-				opponents = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
-						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardVariant.CheckablePieceTypeStandard, variant.ValidMovesByType));
-			}
+			var opponentsInCheck = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
+						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
 
-			var gameHasEnded = CheckIfGameHasEnded(opponents, variant);
+			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
 
-			players = UpdatePlayers(PlayerIdToMove, players, opponents);
+			players = UpdatePlayers(PlayerIdToMove, players, opponentsInCheck);
 			PlayerIdToMove = UpdatePlayerTurn(PlayerIdToMove, players);
 			Debug.Log(PlayerIdToMove);
-			return (beforeMoveTile, afterMoveTile, opponents, gameHasEnded);
+			return (beforeMoveTile, afterMoveTile, opponentsInCheck, gameHasEnded);
 		}
 		
-		private bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentInCheckList, Variant v)
+		private bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentsInCheck, Rules rules)
 		{
-			return v.EndConditions.Contains(EndConditionType.CheckMate)
-					&& opponentInCheckList.All(opponentInCheck => opponentInCheck.checktype == CheckType.CheckMate);
+			return rules.EndConditions.Contains(EndConditionType.CheckMate)
+					&& opponentsInCheck.All(oppInCheck => oppInCheck.checktype == CheckType.CheckMate);
 		}
 
 		private IEnumerable<(int, CheckType)> UpdatePlayers(int pIdToMove, IEnumerable<(int, CheckType)> pl, IEnumerable<(int, CheckType, Tile)> opponents)

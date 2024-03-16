@@ -6,6 +6,17 @@ using NUnit.Framework;
 
 public class ChessBoardTest
 {
+	[Test]
+	public void create_and_validate_board()
+	{
+		var rules = new Rules();
+		var chessboard = new ChessBoard(rules);
+		var (tiles, tileByStartPos, tilesByPlayer) = chessboard.Create(rules.BoardAtStart);
+		var (success, errorMsg) = ChessBoard.ValidateBoard(tiles, tileByStartPos, tilesByPlayer);
+		Assert.That(success, Is.True);
+		Assert.That(errorMsg, Is.Empty);
+	}
+
 	public static IEnumerable<TestCaseData> Find_moves_for_all()
 	{
 		Func<string> currentBoardFunc = BoardTileString.Check_but_king_can_move_but_not_castle;
@@ -35,9 +46,9 @@ public class ChessBoardTest
 	[TestCaseSource(nameof(Find_moves_for_all))]
 	public void Find_moves_for_all_pieces_when_in_check(string currentBoard, int playerId, Dictionary<TileWithPiece, IEnumerable<Position>> expMoves)
 	{
-		var rules = new Variant();
+		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
-		var (_, _, _) = chessboard.Create(rules.Tiles);
+		var (_, _, _) = chessboard.Create(rules.BoardAtStart);
 		var (_, tilesByPlayer) = chessboard.Create_ButNotUpdateStartPos(currentBoard);
 
 		foreach (var twp in tilesByPlayer[playerId])
@@ -123,9 +134,9 @@ public class ChessBoardTest
 	[TestCaseSource(nameof(Find_moves))]
 	public void Find_moves_when_not_in_check(string currentBoard, TileWithPiece tileWithPiece, IEnumerable<Position> expectedMoves)
 	{
-		var rules = new Variant();
+		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
-		chessboard.Create(rules.Tiles);
+		chessboard.Create(rules.BoardAtStart);
 		chessboard.Create_ButNotUpdateStartPos(currentBoard);
 
 		const bool isInCheck = false;
@@ -137,9 +148,9 @@ public class ChessBoardTest
 	[Test]
 	public void Can_not_castle_after_king_has_moved()
 	{
-		var rules = new Variant();
+		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
-		chessboard.Create(rules.Tiles);
+		chessboard.Create(rules.BoardAtStart);
 		// var (_, _, _) = chessboard.InjectBoard(BoardTileString.Check_but_king_can_move_but_not_castle());
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		

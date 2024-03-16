@@ -17,7 +17,7 @@ namespace Chess.View
 
 		private void Start()
 		{
-			game = new Game(new Variant());
+			game = new Game(new Rules());
 			chessBoardView.Create(game.Create(), OnTileClicked);
 		}
 

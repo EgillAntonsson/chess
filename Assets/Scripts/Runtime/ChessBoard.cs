@@ -9,12 +9,12 @@ namespace Chess
 {
 	public class ChessBoard
 	{
-		private readonly Variant rules;
+		private readonly Rules rules;
 		private Tile[,] boardTiles;
 		private Dictionary<Position, TileWithPiece> tileByStartPos;
 		private Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer;
 
-		public ChessBoard(Variant rules)
+		public ChessBoard(Rules rules)
 		{
 			this.rules = rules;
 		}
@@ -25,14 +25,19 @@ namespace Chess
 			return (boardTiles, tileByStartPos, tilesByPlayer);
 		}
 
+		public static (bool success, string errorMessage) ValidateBoard(Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
+		{
+			return (true, "");
+		}
+
 		internal (Tile[,],
 			Dictionary<int, IEnumerable<TileWithPiece>>) Create_ButNotUpdateStartPos(string tiles)
 		{
-			(boardTiles, _, tilesByPlayer) = Board.Create(tiles, rules.CheckablePieceType, rules.CastlingPieceType);
+			(boardTiles, _, tilesByPlayer) = Create(tiles);
 			return (boardTiles, tilesByPlayer);
 		}
 
-		public IEnumerable<Position> FindMoves(TileWithPiece tileWithPiece, bool isInCheck, int playerId, Variant rules)
+		public IEnumerable<Position> FindMoves(TileWithPiece tileWithPiece, bool isInCheck, int playerId, Rules rules)
 		{
 			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			var playerTilePieces = tilesByPlayer[playerId];

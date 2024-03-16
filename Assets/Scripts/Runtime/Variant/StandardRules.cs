@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Chess
 {
-	public class StandardVariant : Variant
+	public class StandardRules : Rules
 	{
 		// public override VariantType VariantType => VariantType.Standard;
-		// public override string Tiles => BoardAtStart();
+		// public override string BoardAtStart => BoardAtStart();
 
 // 		public static string BoardAtStart()
 // 		{
