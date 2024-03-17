@@ -44,12 +44,12 @@ namespace Chess
 		{
 			var player = players.First(p => p.Item1 == PlayerIdToMove);
 			var isInCheck = player.Item2 == CheckType.Check;
-			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove, rules);
+			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove);
 		}
 		
 		public (Tile beforeMoveTile, Tile afterMoveTile, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
-			var (beforeMoveTile, afterMoveTile) = ChessBoard.MovePiece(tile, position);
+			var (beforeMoveTile, afterMoveTile, _) = ChessBoard.MovePiece(tile, position);
 			var opponentsInCheck = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
 						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
 

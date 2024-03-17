@@ -170,15 +170,25 @@ namespace Chess
 		}
 
 		public static (Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tilesAfterMove, IEnumerable<TileWithPiece> playerTilePiecesAfterMove)
-				MovePiece(TileWithPiece twp,
-						Position pos,
-						Tile[,] boardTiles,
-						IEnumerable<TileWithPiece> playerTilePieces)
+			MovePiece(TileWithPiece twp,
+				Position pos,
+				Tile[,] boardTiles,
+				IEnumerable<TileWithPiece> playerTilePieces)
 		{
 			var boardTilesAfterMove = (Tile[,])boardTiles.Clone();
 			var bmt = boardTilesAfterMove[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
-			var amt = (TileWithPiece)(boardTilesAfterMove[pos.Column, pos.Row] = twp with { Position = pos });
-			
+			TileWithPiece amt;
+			if (twp is TileWithCastlingPiece twcp)
+			{
+			amt = twcp with { Position = pos, HasMoved = true };
+			}
+			else
+			{
+				amt = (TileWithPiece)(boardTilesAfterMove[pos.Column, pos.Row] = twp with { Position = pos });
+			}
+
+			boardTilesAfterMove[pos.Column, pos.Row] = amt;
+
 			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
 			
 			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);

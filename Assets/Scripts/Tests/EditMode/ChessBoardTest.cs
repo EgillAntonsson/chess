@@ -53,7 +53,7 @@ public class ChessBoardTest
 
 		foreach (var twp in tilesByPlayer[playerId])
 		{
-			var foundMoves = chessboard.FindMoves(twp, true, playerId, rules);
+			var foundMoves = chessboard.FindMoves(twp, true, playerId);
 
 			// will default to empty positions
 			var expectedMoves = Enumerable.Empty<Position>();
@@ -140,7 +140,7 @@ public class ChessBoardTest
 		chessboard.Create_ButNotUpdateStartPos(currentBoard);
 
 		const bool isInCheck = false;
-		var movePositions = chessboard.FindMoves(tileWithPiece, isInCheck, tileWithPiece.Piece.PlayerId, rules);
+		var movePositions = chessboard.FindMoves(tileWithPiece, isInCheck, tileWithPiece.Piece.PlayerId);
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
@@ -151,20 +151,22 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		// var (_, _, _) = chessboard.InjectBoard(BoardTileString.Check_but_king_can_move_but_not_castle());
-		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
-		
+		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Check_but_king_can_move_but_not_castle());
 		// We assume we are moving to a found valid position from FindMoves method.
-		chessboard.MovePiece(new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1)), new Position(5, 0));
+		// Move the king
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(5, 0));
+		
 		// The opponent moves bishop in front of his\her queen .
-		chessboard.MovePiece(new TileWithPiece(new Position(2, 7), new Piece(PieceType.Bishop, 2)), new Position(4, 5));
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[2, 7], new Position(4, 5));
 
 		// king moves back to his start position, as the opponent's bishop is in between the queen now.
-		chessboard.MovePiece(new TileWithPiece(new Position(5, 0), new Piece(PieceType.King, 1)), new Position(4, 0));
-		// The opponent does a move that has no further impact from the injected board on what is being tested.
-		chessboard.MovePiece(new TileWithPiece(new Position(0, 6), new Piece(PieceType.Pawn, 2)), new Position(0, 5));
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[5, 0], new Position(4, 0));
+		
+		// The opponent does a move that has no impact on what is being tested.
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5));
 
-		var movePositions = chessboard.FindMoves(tileWithPiece: kingTile, isInCheck: false, playerId: 1, rules: rules);
+		// Find moves for the king
+		var movePositions = chessboard.FindMoves(tileWithPiece: (TileWithPiece)tiles[4, 0], isInCheck: false, playerId: 1);
 
 		var expectedMoves = new Position[]
 		{
@@ -177,4 +179,40 @@ public class ChessBoardTest
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
+	
+	[Test]
+	public void Can_not_castle_after_rook_has_moved()
+	{
+		var rules = new Rules();
+		var chessboard = new ChessBoard(rules);
+		chessboard.Create(rules.BoardAtStart);
+		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_on_both_sides());
+		// We assume we are moving to a found valid position from FindMoves method.
+		// Move the left rook
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 0], new Position(1, 0));
+		
+		// The opponent does a move that has no impact on what is being tested.
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 5], new Position(0, 4));
+
+		// Move the left rook back to start pos
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[1, 0], new Position(0, 0));
+		
+		// The opponent does a move that has no impact on what is being tested.
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 4], new Position(0, 3));
+
+		// Find moves for the king
+		var movePositions = chessboard.FindMoves(tileWithPiece: (TileWithPiece)tiles[4, 0], isInCheck: false, playerId: 1);
+
+		var expectedMoves = new Position[]
+		{
+			new(3, 0),
+			new(3, 1),
+			new(4, 1),
+			new(5, 0),
+			new(6, 0)
+		};
+
+		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
+	}
+	
 }

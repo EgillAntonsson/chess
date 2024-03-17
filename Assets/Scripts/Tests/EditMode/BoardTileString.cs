@@ -170,32 +170,4 @@ P1 P1 -- -- -- P1 P1 P1
 R1 -- -- -- K1 B1 N1 R1
 ";
 	}
-	
-	public static string King_moved_after_check()
-	{
-		return @"
-R2 N2 B2 -- K2 B2 N2 R2
-P2 P2 -- -- Q2 -- -- P2
--- -- P2 -- -- P2 -- --
--- -- -- P2 -- -- P2 --
--- -- P1 -- -- -- P1 --
--- Q1 -- P1 -- P1 -- N1
-P1 P1 -- -- -- -- B1 P1
-R1 N1 -- -- -- K1 -- R1
-";
-	}
-	
-	public static string King_went_back_to_start_tile()
-	{
-		return @"
-R2 N2 -- -- K2 B2 N2 R2
-P2 -- -- -- Q2 -- -- P2
--- P2 P2 -- B2 P2 -- --
--- -- -- P2 -- -- P2 --
--- -- P1 -- -- -- P1 --
--- Q1 -- P1 -- P1 -- N1
-P1 P1 -- -- -- -- B1 P1
-R1 N1 -- -- K1 -- -- R1
-";
-	}
 }
