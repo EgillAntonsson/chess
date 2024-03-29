@@ -47,16 +47,9 @@ namespace Chess
 			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove);
 		}
 		
-		public (IEnumerable<Tile> beforeMoveTiles, IEnumerable<Tile> afterMoveTiles, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
+		public (IEnumerable<Tile> changedTiles, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
-			var (beforeMoveTile, afterMoveTile, _) = ChessBoard.MovePiece(tile, position);
-			Tile cbmt = null;
-			TileWithPiece camt = null;
-			if (ChessBoard.CastlingTileByCheckableTilePosition.Keys.Any(p => p == position))
-			{
-				var tuple = ChessBoard.CastlingTileByCheckableTilePosition[position];
-				(cbmt, camt, _) = ChessBoard.MovePiece(tuple.Item1, tuple.Item2);
-			}
+			var (changedTiles, _) = ChessBoard.MovePiece(tile, position);
 			var opponentsInCheck = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
 						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
 
@@ -64,7 +57,8 @@ namespace Chess
 
 			players = UpdatePlayers(PlayerIdToMove, players, opponentsInCheck);
 			PlayerIdToMove = UpdatePlayerTurn(PlayerIdToMove, players);
-			return (new []{beforeMoveTile, cbmt}.Where(a => a != null), new []{afterMoveTile, camt}.Where(a => a != null), opponentsInCheck, gameHasEnded);
+
+			return (changedTiles, opponentsInCheck, gameHasEnded);
 		}
 		
 		private bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentsInCheck, Rules rules)

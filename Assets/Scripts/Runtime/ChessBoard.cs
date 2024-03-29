@@ -13,12 +13,12 @@ namespace Chess
 		private Tile[,] boardTiles;
 		private Dictionary<Position, TileWithPiece> tileByStartPos;
 		private Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer;
-		public Dictionary<Position, (TileWithCastlingPiece, Position)> CastlingTileByCheckableTilePosition { get; private set; }
+		private Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition;
 
 		public ChessBoard(Rules rules)
 		{
 			this.rules = rules;
-			CastlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
+			castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 		}
 		
 		public (Tile[,], Dictionary<Position, TileWithPiece>, Dictionary<int, IEnumerable<TileWithPiece>>) Create(string tiles)
@@ -58,8 +58,8 @@ namespace Chess
 				return movePositions;
 			}
 
-			CastlingTileByCheckableTilePosition = FindCastlingMoves(checkableTwp, playerTilePs, oppTilePs);
-			return movePositions.Concat(CastlingTileByCheckableTilePosition.Keys);
+			castlingTileByCheckableTilePosition = FindCastlingMoves(checkableTwp, playerTilePs, oppTilePs);
+			return movePositions.Concat(castlingTileByCheckableTilePosition.Keys);
 
 			IEnumerable<Position> FilterAwayCheckedMovePositions(IEnumerable<Position> positions)
 			{
@@ -118,15 +118,28 @@ namespace Chess
 			return tbp.Where(kvp => kvp.Key != playerId).SelectMany(kvp => kvp.Value);
 		}
 
-		public (Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tiles) MovePiece(TileWithPiece twp, Position pos)
+		public (IEnumerable<Tile> changedTiles, Tile[,] tiles) MovePiece(TileWithPiece twp, Position pos)
 		{
 			var playerId = twp.Piece.PlayerId;
 			var tilesByP = tilesByPlayer[twp.Piece.PlayerId];
 			var moveOutput = Board.MovePiece(twp, pos, boardTiles, tilesByP);
+			(Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tilesAfterMove, IEnumerable<TileWithPiece> playerTilePiecesAfterMove)? castleOutput = null;
+			if (castlingTileByCheckableTilePosition.Keys.Any(p => p == pos))
+			{
+				var tuple = castlingTileByCheckableTilePosition[pos];
+				castleOutput = Board.MovePiece(tuple.Item1, tuple.Item2, moveOutput.tilesAfterMove, moveOutput.playerTilePiecesAfterMove);
+				moveOutput.tilesAfterMove = castleOutput.Value.tilesAfterMove;
+				moveOutput.playerTilePiecesAfterMove = castleOutput.Value.playerTilePiecesAfterMove;
+				castlingTileByCheckableTilePosition.Clear();
+			}
 			boardTiles = moveOutput.tilesAfterMove;
 			tilesByPlayer[playerId] = moveOutput.playerTilePiecesAfterMove;
+			var changedTiles = new[]
+			{
+				moveOutput.beforeMoveTile, castleOutput?.beforeMoveTile, moveOutput.afterMoveTile, castleOutput?.afterMoveTile
+			}.Where(t => t != null);
 			
-			return (moveOutput.beforeMoveTile, moveOutput.afterMoveTile, boardTiles);
+			return (changedTiles, boardTiles);
 		}
 
 		public (int playerId, CheckType checktype, Tile checkTile) IsPlayerInCheck(int playerId,
