@@ -30,8 +30,8 @@ namespace Chess.View
 			
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-					var (beforeMoveTile, afterMoveTile, opponentInCheckList, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position);
-					chessBoardView.InjectTiles(new [] {beforeMoveTile, afterMoveTile});
+					var (beforeMoveTiles, afterMoveTiles, opponentInCheckList, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position);
+					chessBoardView.InjectTiles(beforeMoveTiles.Concat(afterMoveTiles));
 					foreach (var t in opponentInCheckList)
 					{
 						if (t.checktype != CheckType.NoCheck)

@@ -13,10 +13,12 @@ namespace Chess
 		private Tile[,] boardTiles;
 		private Dictionary<Position, TileWithPiece> tileByStartPos;
 		private Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer;
+		public Dictionary<Position, (TileWithCastlingPiece, Position)> CastlingTileByCheckableTilePosition { get; private set; }
 
 		public ChessBoard(Rules rules)
 		{
 			this.rules = rules;
+			CastlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 		}
 		
 		public (Tile[,], Dictionary<Position, TileWithPiece>, Dictionary<int, IEnumerable<TileWithPiece>>) Create(string tiles)
@@ -56,8 +58,8 @@ namespace Chess
 				return movePositions;
 			}
 
-			var castingPositions = FindCastlingMoves(checkableTwp, playerTilePs, oppTilePs);
-			return movePositions.Concat(castingPositions);
+			CastlingTileByCheckableTilePosition = FindCastlingMoves(checkableTwp, playerTilePs, oppTilePs);
+			return movePositions.Concat(CastlingTileByCheckableTilePosition.Keys);
 
 			IEnumerable<Position> FilterAwayCheckedMovePositions(IEnumerable<Position> positions)
 			{
@@ -65,19 +67,19 @@ namespace Chess
 			}
 		}
 
-		private IEnumerable<Position> FindCastlingMoves(TileWithPiece checkableTwp,
+		private Dictionary<Position, (TileWithCastlingPiece, Position)> FindCastlingMoves(TileWithPiece checkableTwp,
 			TileWithPiece[] playerTilePieces,
 			IEnumerable<TileWithPiece> opponentTiles)
 		{
-			var positions = new List<Position>();
+			var castlingTileByCheckableTilePos = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 			var castlingTilesExcludingCheckable = playerTilePieces
 				.Select(c => c as TileWithCastlingPiece)
 				.Where(c => c != null)
 				.Where(c => c.GetType() == typeof(TileWithCastlingPiece))
 				.Where(t => t.HasMoved == false);
-			foreach (var castlingTiles in castlingTilesExcludingCheckable)
+			foreach (var castlingTile in castlingTilesExcludingCheckable)
 			{
-				var nrOfColumnWithDirection = castlingTiles.Position.Column - checkableTwp.Position.Column;
+				var nrOfColumnWithDirection = castlingTile.Position.Column - checkableTwp.Position.Column;
 				var sign = Math.Sign(nrOfColumnWithDirection);
 				var nrOfColumn = Math.Abs(nrOfColumnWithDirection);
 				var isEmpty = true;
@@ -100,13 +102,15 @@ namespace Chess
 						rules.ValidMovesByType))
 					.Any(isInCheckAfterMove => isInCheckAfterMove))
 				{
-					return positions;
+					return castlingTileByCheckableTilePos;
 				}
 
-				positions.Add(new Position(checkableTwp.Position.Column + 2 * sign, checkableTwp.Position.Row));
+				var checkablePos = new Position(checkableTwp.Position.Column + 2 * sign, checkableTwp.Position.Row);
+				var castlingPos = new Position(checkablePos.Column - 1 * sign, checkablePos.Row);
+				castlingTileByCheckableTilePos.Add(checkablePos, (castlingTile, castlingPos));
 			}
 
-			return positions;
+			return castlingTileByCheckableTilePos;
 		}
 
 		public static IEnumerable<TileWithPiece> GetOpponentTiles(Dictionary<int, IEnumerable<TileWithPiece>> tbp, int playerId)
@@ -117,10 +121,11 @@ namespace Chess
 		public (Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tiles) MovePiece(TileWithPiece twp, Position pos)
 		{
 			var playerId = twp.Piece.PlayerId;
-			var moveOutput = Board.MovePiece(twp, pos, boardTiles, tilesByPlayer[playerId]);
+			var tilesByP = tilesByPlayer[twp.Piece.PlayerId];
+			var moveOutput = Board.MovePiece(twp, pos, boardTiles, tilesByP);
 			boardTiles = moveOutput.tilesAfterMove;
 			tilesByPlayer[playerId] = moveOutput.playerTilePiecesAfterMove;
-			// if moveOutput.afterMoveTile is TileWithCheckablePiece
+			
 			return (moveOutput.beforeMoveTile, moveOutput.afterMoveTile, boardTiles);
 		}
 

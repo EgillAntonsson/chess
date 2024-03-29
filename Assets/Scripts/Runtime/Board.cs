@@ -31,7 +31,7 @@ namespace Chess
 						theTiles[c, r] = new Tile(new Position(c, r));
 					else
 					{
-						char c1 = posString[0];
+						var c1 = posString[0];
 						c1 = char.ToUpper(c1);
 						var pieceType = c1 switch
 						{
@@ -180,7 +180,7 @@ namespace Chess
 			TileWithPiece amt;
 			if (twp is TileWithCastlingPiece twcp)
 			{
-			amt = twcp with { Position = pos, HasMoved = true };
+				amt = twcp with { Position = pos, HasMoved = true };
 			}
 			else
 			{
@@ -190,10 +190,10 @@ namespace Chess
 			boardTilesAfterMove[pos.Column, pos.Row] = amt;
 
 			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
-			
+
 			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);
 		}
-		
+
 		public static bool IsTilePieceInCheck(TileWithPiece checkableTilePiece,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 				IEnumerable<TileWithPiece> opponentTiles,

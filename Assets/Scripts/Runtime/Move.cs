@@ -4,9 +4,6 @@ namespace Chess
 {
 	public record Move(Position Position, MoveType MoveType, MoveCaptureFlag MoveCaptureFlag, MoveConstraint MoveConstraint = MoveConstraint.None);
 
-	// public record MoveWithPieceSwitch(PieceType PieceTypeSwitch, Position Position, MoveType MoveType, MoveCaptureFlag MoveCaptureFlag, MoveConstraint MoveConstraint = MoveConstraint.None)
-		// : Move(Position, MoveType, MoveCaptureFlag, MoveConstraint);
-
 	[Flags]
 	public enum MoveCaptureFlag
 	{
@@ -17,14 +14,14 @@ namespace Chess
 	public enum MoveType
 	{
 		Basic = 0,
-		Infinite = 1,
-		// Jump = 2
+		Infinite = 1
 	}
 
 	public enum MoveConstraint
 	{
 		None = 0,
 		FirstMoveOnly = 1,
-		CanMoveIfNotThreatenedCapture = 2
+		CanMoveIfNotThreatenedCapture = 2,
+		CastlingMove = 3
 	}
 }
