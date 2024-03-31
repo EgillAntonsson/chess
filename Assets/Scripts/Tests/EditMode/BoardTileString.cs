@@ -107,11 +107,25 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 R2 N2 B2 Q2 K2 B2 N2 R2
 P2 P2 P2 -- -- -- P2 P2
 -- -- -- -- -- P2 -- --
--- B1 -- P2 P2 -- -- --
+-- -- -- P2 P2 -- -- --
 -- -- -- -- -- -- -- --
--- -- -- -- P1 N1 -- --
+-- -- -- B1 P1 N1 -- --
 P1 P1 P1 P1 -- P1 P1 P1
 R1 N1 B1 Q1 K1 -- -- R1
+";
+	}
+	
+	public static string One_move_before_can_castle_king_side()
+	{
+		return @"
+R2 N2 B2 Q2 K2 B2 N2 R2
+P2 P2 P2 -- -- P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- P2 P2 -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- B1 P1 -- -- --
+P1 P1 P1 P1 -- P1 P1 P1
+R1 N1 B1 Q1 K1 -- N1 R1
 ";
 	}
 

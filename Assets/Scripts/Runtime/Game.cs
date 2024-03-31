@@ -1,8 +1,6 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Chess
@@ -10,10 +8,12 @@ namespace Chess
 	public class Game
 	{
 		private readonly Rules rules;
-		private IEnumerable<(int, CheckType)> players; 
-		public ChessBoard ChessBoard { get; }
+		private IEnumerable<(int, CheckType)> players;
+		private ChessBoard ChessBoard { get; }
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
+		private Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition;
+		private TileWithPiece foundMovesForTile;
 
 		public Game(Rules rules)
 		{
@@ -44,12 +44,31 @@ namespace Chess
 		{
 			var player = players.First(p => p.Item1 == PlayerIdToMove);
 			var isInCheck = player.Item2 == CheckType.Check;
-			return ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove);
+			var foundMoves = ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove);
+			foundMovesForTile = tile;
+			castlingTileByCheckableTilePosition = foundMoves.castlingTileByCheckableTilePosition;
+			return foundMoves.movePositions;
 		}
 		
 		public (IEnumerable<Tile> changedTiles, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
-			var (changedTiles, _) = ChessBoard.MovePiece(tile, position);
+			// TODO: write a test and then refactor the fail handling.
+			if (PlayerIdToMove != tile.Piece.PlayerId)
+			{
+				
+				Debug.LogError("This is not the player turn to move.");
+			}
+			if (tile != foundMovesForTile)
+			{
+				var foundMovePositions = FindValidMoves(tile);
+				if (foundMovePositions.All(p => p != position))
+				{
+					Debug.LogError("move position for tile piece is not a valid move position");
+				}
+			}
+			
+			var (changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition);
+			castlingTileByCheckableTilePosition.Clear();
 			var opponentsInCheck = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
 						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
 
@@ -61,7 +80,7 @@ namespace Chess
 			return (changedTiles, opponentsInCheck, gameHasEnded);
 		}
 		
-		private bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentsInCheck, Rules rules)
+		private static bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentsInCheck, Rules rules)
 		{
 			return rules.EndConditions.Contains(EndConditionType.CheckMate)
 					&& opponentsInCheck.All(oppInCheck => oppInCheck.checktype == CheckType.CheckMate);
