@@ -2,7 +2,7 @@ using System;
 
 namespace Chess
 {
-	public readonly struct Piece : IEquatable<Piece>
+	public readonly struct Piece : IEquatable<Piece>, IComparable<Piece>
 	{
 		public PieceType Type { get; }
 		public int PlayerId { get; }
@@ -40,6 +40,12 @@ namespace Chess
 		public static bool operator !=(Piece left, Piece right)
 		{
 			return !left.Equals(right);
+		}
+
+		public int CompareTo(Piece other)
+		{
+			var typeComparison = Type.CompareTo(other.Type);
+			return typeComparison != 0 ? typeComparison : PlayerId.CompareTo(other.PlayerId);
 		}
 	}
 }

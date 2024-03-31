@@ -240,12 +240,15 @@ public class ChessBoardTest
 		var (changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition);
 	
 		const int playerId = 1;
-		var expectedCheckablePiece = new TileWithCheckablePiece(new Position(6, 0), new Piece(PieceType.King, playerId), true);
-		var expectedCastlingPiece = new TileWithCastlingPiece(new Position(5, 0), new Piece(PieceType.Rook, playerId), true);
-
-		Assert.That(changedTiles.Count(), Is.EqualTo(4));
-		Assert.That(changedTiles.First(t => t.Position == new Position(6, 0)), Is.EqualTo(expectedCheckablePiece));
-		Assert.That(changedTiles.First(t => t.Position == new Position(5, 0)), Is.EqualTo(expectedCastlingPiece));
+		var expectedChangedTiles = new Tile[]
+		{
+			new TileWithCheckablePiece(new Position(6, 0), new Piece(PieceType.King, playerId), true),
+			new TileWithCastlingPiece(new Position(5, 0), new Piece(PieceType.Rook, playerId), true),
+			new(new Position(4, 0)),
+			new(new Position(7, 0))
+		};
+		
+		TestUtil.AssertArraysAreEqual(changedTiles, expectedChangedTiles);
 	}
 	
 }
