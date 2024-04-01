@@ -219,27 +219,18 @@ public class ChessBoardTest
 	}
 	
 	[Test]
-	public void Move_to_castling()
+	public void Move_to_castling_king_side()
 	{
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.One_move_before_can_castle_king_side());
+		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_king_side());
+		const int playerId = 1;
 		
-		// We assume we are moving to a found valid position from FindMoves method.
-		// P1 moves the right Knight
-		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		(_, tiles) = chessboard.MovePiece((TileWithPiece)tiles[6, 0], new Position(5, 2), castlingTileByCheckableTilePosition);
-		
-		// P2 does a move that has no impact on what is being tested.
-		(_, tiles) = chessboard.MovePiece((TileWithPiece)tiles[5, 6], new Position(5, 5), castlingTileByCheckableTilePosition);
-		
-		// P1 find moves needs to be called to cache the data about potential upcoming castling move.
 		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], isInCheck: false, playerId: 1);
-		// P1 castles.
+
 		var (changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition);
 	
-		const int playerId = 1;
 		var expectedChangedTiles = new Tile[]
 		{
 			new TileWithCheckablePiece(new Position(6, 0), new Piece(PieceType.King, playerId), true),
@@ -251,4 +242,27 @@ public class ChessBoardTest
 		TestUtil.AssertArraysAreEqual(changedTiles, expectedChangedTiles);
 	}
 	
+	[Test]
+	public void Move_to_castling_queen_side()
+	{
+		var rules = new Rules();
+		var chessboard = new ChessBoard(rules);
+		chessboard.Create(rules.BoardAtStart);
+		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_queen_side());
+		const int playerId = 1;
+		
+		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], isInCheck: false, playerId);
+
+		var (changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition);
+	
+		var expectedChangedTiles = new Tile[]
+		{
+			new TileWithCheckablePiece(new Position(2, 0), new Piece(PieceType.King, playerId), true),
+			new TileWithCastlingPiece(new Position(3, 0), new Piece(PieceType.Rook, playerId), true),
+			new(new Position(4, 0)),
+			new(new Position(0, 0))
+		};
+		
+		TestUtil.AssertArraysAreEqual(changedTiles, expectedChangedTiles);
+	}
 }

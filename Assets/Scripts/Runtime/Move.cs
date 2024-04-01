@@ -21,7 +21,6 @@ namespace Chess
 	{
 		None = 0,
 		FirstMoveOnly = 1,
-		CanMoveIfNotThreatenedCapture = 2,
-		CastlingMove = 3
+		CanMoveIfNotThreatenedCapture = 2
 	}
 }
