@@ -38,8 +38,9 @@ namespace Chess
 			return (boardTiles, tilesByPlayer);
 		}
 
-		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition) FindMoves(TileWithPiece tileWithPiece, bool isInCheck, int playerId)
+		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition) FindMoves(TileWithPiece tileWithPiece, Player player)
 		{
+			var playerId = player.PlayerId;
 			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			var playerTilePieces = tilesByPlayer[playerId];
 			var playerTilePs = playerTilePieces as TileWithPiece[] ?? playerTilePieces.ToArray();
@@ -52,7 +53,7 @@ namespace Chess
 
 			var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 			if (tileWithPiece is not TileWithCheckablePiece checkableTwp) return (movePositions, castlingTileByCheckableTilePosition);
-			if (isInCheck || checkableTwp.HasMoved)
+			if (player.IsInCheck || checkableTwp.HasMoved)
 			{
 				return (movePositions, castlingTileByCheckableTilePosition);
 			}
@@ -142,7 +143,6 @@ namespace Chess
 		}
 
 		public (Player player, Tile checkTile) IsPlayerInCheck(int playerId,
-			PieceType checkablePieceType,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
 			var checkablePieceTile = GetCheckableTileWithPiece(playerId);

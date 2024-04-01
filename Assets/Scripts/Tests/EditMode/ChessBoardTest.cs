@@ -48,12 +48,13 @@ public class ChessBoardTest
 	{
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
-		var (_, _, _) = chessboard.Create(rules.BoardAtStart);
+		chessboard.Create(rules.BoardAtStart);
 		var (_, tilesByPlayer) = chessboard.Create_ButNotUpdateStartPos(currentBoard);
+		var player = new Player(playerId, CheckType.Check);
 
 		foreach (var twp in tilesByPlayer[playerId])
 		{
-			var foundMoves = chessboard.FindMoves(twp, true, playerId);
+			var foundMoves = chessboard.FindMoves(twp, player);
 
 			// will default to empty positions
 			var expectedMoves = Enumerable.Empty<Position>();
@@ -138,9 +139,9 @@ public class ChessBoardTest
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
 		chessboard.Create_ButNotUpdateStartPos(currentBoard);
-
-		const bool isInCheck = false;
-		var (movePositions, _) = chessboard.FindMoves(tileWithPiece, isInCheck, tileWithPiece.Piece.PlayerId);
+		var player = new Player(1, CheckType.NoCheck);
+		
+		var (movePositions, _) = chessboard.FindMoves(tileWithPiece, player);
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
@@ -166,8 +167,9 @@ public class ChessBoardTest
 		// The opponent does a move that has no impact on what is being tested.
 		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5), castlingTileByCheckableTilePosition);
 
+		var player = new Player(1, CheckType.NoCheck);
 		// Find moves for the king
-		var (movePositions, _) = chessboard.FindMoves(tileWithPiece: (TileWithPiece)tiles[4, 0], isInCheck: false, playerId: 1);
+		var (movePositions, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player);
 
 		var expectedMoves = new Position[]
 		{
@@ -202,9 +204,11 @@ public class ChessBoardTest
 		
 		// P2 does a move that has no impact on what is being tested.
 		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 4], new Position(0, 3), castlingTileByCheckableTilePosition);
+		
+		var player = new Player(1, CheckType.NoCheck);
 
 		// Find moves for the king
-		var (movePositions, _) = chessboard.FindMoves(tileWithPiece: (TileWithPiece)tiles[4, 0], isInCheck: false, playerId: 1);
+		var (movePositions, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player);
 
 		var expectedMoves = new Position[]
 		{
@@ -226,8 +230,9 @@ public class ChessBoardTest
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_king_side());
 		const int playerId = 1;
+		var player = new Player(playerId, CheckType.NoCheck);
 		
-		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], isInCheck: false, playerId: 1);
+		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player);
 
 		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition);
 
@@ -252,8 +257,9 @@ public class ChessBoardTest
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_queen_side());
 		const int playerId = 1;
+		var player = new Player(playerId, CheckType.NoCheck);
 		
-		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], isInCheck: false, playerId);
+		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player);
 
 		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition);
 

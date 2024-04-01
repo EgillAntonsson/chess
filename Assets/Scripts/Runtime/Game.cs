@@ -43,8 +43,7 @@ namespace Chess
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
 			var player = players.First(p => p.PlayerId == PlayerIdToMove);
-			var isInCheck = player.IsInCheckType == CheckType.Check;
-			var foundMoves = ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove);
+			var foundMoves = ChessBoard.FindMoves(tile, player);
 			foundMovesForTile = tile;
 			castlingTileByCheckableTilePosition = foundMoves.castlingTileByCheckableTilePosition;
 			return foundMoves.movePositions;
@@ -68,10 +67,10 @@ namespace Chess
 			
 			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition);
 			players.First(p => p.PlayerId == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
-			
 			castlingTileByCheckableTilePosition.Clear();
-			var opponentsInCheck = players.Where(tuple => tuple.PlayerId != tile.Piece.PlayerId).
-						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.PlayerId, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
+
+			var opponentsInCheck = players.Where(p => p.PlayerId != tile.Piece.PlayerId).
+						Select(p => ChessBoard.IsPlayerInCheck(p.PlayerId, rules.ValidMovesByType));
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
 
@@ -80,7 +79,7 @@ namespace Chess
 
 			return (changedTiles, opponentsInCheck, gameHasEnded);
 		}
-		
+
 		private static bool CheckIfGameHasEnded(IEnumerable<(Player, Tile checkTile)> opponentsInCheck, Rules rules)
 		{
 			return rules.EndConditions.Contains(EndConditionType.CheckMate)
