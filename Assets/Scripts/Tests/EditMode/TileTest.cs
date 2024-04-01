@@ -21,7 +21,7 @@ public class TileTest
 	}
 	
 	[Test]
-	public void Verify_that_tiles_implement_comparable_based_on_pos()
+	public void Verify_that_tile_implement_comparable_based_on_param()
 	{
 		var posA = new Position(0, 0);
 		var posC = new Position(1, 0);
@@ -36,19 +36,19 @@ public class TileTest
 	}
 	
 	[Test]
-	public void Verify_that_inherited_tiles_implement_comparable_based_on_the_params()
+	public void Verify_that_tile_with_piece_implement_comparable_based_on_the_params()
 	{
 		var posA = new Position(0, 0);
 		var pieceA = new Piece(PieceType.Bishop, 1);
-		var tileA = new TileWithCastlingPiece(posA, pieceA);
-		var tileB = new TileWithCastlingPiece(posA, pieceA);
+		var tileA = new TileWithPiece(posA, pieceA);
+		var tileB = new TileWithPiece(posA, pieceA);
 		Assert.That(tileA.CompareTo(tileB), Is.EqualTo(0));
 
 		var pieceB = new Piece(PieceType.Knight, 1);
-		var tileC = new TileWithCastlingPiece(posA, pieceB);
+		var tileC = new TileWithPiece(posA, pieceB);
 		Assert.That(tileC.CompareTo(tileA), Is.Not.EqualTo(0));
 		
-		var tileD = new TileWithCastlingPiece(posA, pieceB, true);
+		var tileD = new TileWithPiece(posA, pieceB, true);
 		Assert.That(tileD.CompareTo(tileC), Is.Not.EqualTo(0));
 	}
 }

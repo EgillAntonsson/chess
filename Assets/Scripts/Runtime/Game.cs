@@ -8,7 +8,7 @@ namespace Chess
 	public class Game
 	{
 		private readonly Rules rules;
-		private IEnumerable<(int, CheckType)> players;
+		private IEnumerable<Player> players;
 		private ChessBoard ChessBoard { get; }
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
@@ -22,10 +22,10 @@ namespace Chess
 			PlayerIdToMove = rules.PlayerIdToStart;
 			TurnNumber = 1;
 
-			players = new List<(int, CheckType)>();
+			players = new List<Player>();
 			for (var i = 1; i <= rules.NumberOfPlayers; i++)
 			{
-				players = players.Append((i, CheckType.NoCheck));
+				players = players.Append(new Player(i, CheckType.NoCheck));
 			}
 		}
 		
@@ -42,20 +42,19 @@ namespace Chess
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
-			var player = players.First(p => p.Item1 == PlayerIdToMove);
-			var isInCheck = player.Item2 == CheckType.Check;
+			var player = players.First(p => p.PlayerId == PlayerIdToMove);
+			var isInCheck = player.IsInCheckType == CheckType.Check;
 			var foundMoves = ChessBoard.FindMoves(tile, isInCheck, PlayerIdToMove);
 			foundMovesForTile = tile;
 			castlingTileByCheckableTilePosition = foundMoves.castlingTileByCheckableTilePosition;
 			return foundMoves.movePositions;
 		}
 		
-		public (IEnumerable<Tile> changedTiles, IEnumerable<(int playerId, CheckType checktype, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
+		public (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position)
 		{
 			// TODO: write a test and then refactor the fail handling.
 			if (PlayerIdToMove != tile.Piece.PlayerId)
 			{
-				
 				Debug.LogError("This is not the player turn to move.");
 			}
 			if (tile != foundMovesForTile)
@@ -67,35 +66,37 @@ namespace Chess
 				}
 			}
 			
-			var (changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition);
+			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition);
+			players.First(p => p.PlayerId == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
+			
 			castlingTileByCheckableTilePosition.Clear();
-			var opponentsInCheck = players.Where(tuple => tuple.Item1 != tile.Piece.PlayerId).
-						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.Item1, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
+			var opponentsInCheck = players.Where(tuple => tuple.PlayerId != tile.Piece.PlayerId).
+						Select(tuple => ChessBoard.IsPlayerInCheck(tuple.PlayerId, StandardRules.CheckablePieceTypeStandard, rules.ValidMovesByType));
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
 
-			players = UpdatePlayers(PlayerIdToMove, players, opponentsInCheck);
+			players = UpdatePlayers(players, opponentsInCheck);
 			PlayerIdToMove = UpdatePlayerTurn(PlayerIdToMove, players);
 
 			return (changedTiles, opponentsInCheck, gameHasEnded);
 		}
 		
-		private static bool CheckIfGameHasEnded(IEnumerable<(int playerId, CheckType checktype, Tile checkTile)> opponentsInCheck, Rules rules)
+		private static bool CheckIfGameHasEnded(IEnumerable<(Player, Tile checkTile)> opponentsInCheck, Rules rules)
 		{
 			return rules.EndConditions.Contains(EndConditionType.CheckMate)
-					&& opponentsInCheck.All(oppInCheck => oppInCheck.checktype == CheckType.CheckMate);
+					&& opponentsInCheck.All(oppInCheck => oppInCheck.Item1.IsInCheckType == CheckType.CheckMate);
 		}
 
-		private IEnumerable<(int, CheckType)> UpdatePlayers(int pIdToMove, IEnumerable<(int, CheckType)> pl, IEnumerable<(int, CheckType, Tile)> opponents)
+		private IEnumerable<Player> UpdatePlayers(IEnumerable<Player> pl, IEnumerable<(Player, Tile)> opponents)
 		{
 			var pla = (from p in pl from opp in opponents
-					where opp.Item1 == p.Item1
-					select new ValueTuple<int, CheckType>(opp.Item1, opp.Item2)).ToList();
-			pla.Add(pl.First(t => t.Item1 == PlayerIdToMove));
+					where opp.Item1.PlayerId == p.PlayerId
+					select new Player(opp.Item1.PlayerId, opp.Item1.IsInCheckType)).ToList();
+			pla.Add(pl.First(t => t.PlayerId == PlayerIdToMove));
 			return pla;
 		}
 		
-		private static int UpdatePlayerTurn(int pIdToMove, IEnumerable<(int, CheckType)> pl)
+		private static int UpdatePlayerTurn(int pIdToMove, IEnumerable<Player> pl)
 		{
 			return pIdToMove == pl.Count() ? 1 : pIdToMove + 1;
 		}

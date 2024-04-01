@@ -10,24 +10,22 @@ namespace Chess
 		}
 	}
 
-	public record TileWithPiece(Position Position, Piece Piece) : Tile(Position), IComparable<TileWithPiece>
+	public record TileWithPiece(Position Position, Piece Piece, bool HasMoved = false) : Tile(Position), IComparable<TileWithPiece>
 	{
 		public int CompareTo(TileWithPiece other)
 		{
-			
 			var tileComparison = base.CompareTo(other);
-			return tileComparison != 0 ? tileComparison : Piece.CompareTo(other.Piece);
+			if (tileComparison != 0)
+			{
+				return tileComparison;
+			}
+
+			var pieceComparison = Piece.CompareTo(other.Piece);
+			return pieceComparison != 0 ? pieceComparison : HasMoved.CompareTo(other.HasMoved);
 		}
 	}
 
-	public record TileWithCastlingPiece(Position Position, Piece Piece, bool HasMoved = false) : TileWithPiece(Position, Piece), IComparable<TileWithCastlingPiece>
-	{
-		public int CompareTo(TileWithCastlingPiece other)
-		{
-			var tileWithPieceComparison = base.CompareTo(other);
-			return tileWithPieceComparison != 0 ? tileWithPieceComparison : HasMoved.CompareTo(other.HasMoved);
-		}
-	}
+	public record TileWithCastlingPiece(Position Position, Piece Piece, bool HasMoved = false) : TileWithPiece(Position, Piece, HasMoved);
 
 	public record TileWithCheckablePiece(Position Position, Piece Piece, bool HasMoved = false) : TileWithCastlingPiece(Position, Piece, HasMoved);
 }

@@ -27,6 +27,7 @@ namespace Chess
 
 		public static (bool success, string errorMessage) ValidateBoard(Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
 		{
+			// TODO: implement or remove.
 			return (true, "");
 		}
 
@@ -37,7 +38,7 @@ namespace Chess
 			return (boardTiles, tilesByPlayer);
 		}
 
-		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition)  FindMoves(TileWithPiece tileWithPiece, bool isInCheck, int playerId)
+		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition) FindMoves(TileWithPiece tileWithPiece, bool isInCheck, int playerId)
 		{
 			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			var playerTilePieces = tilesByPlayer[playerId];
@@ -116,7 +117,8 @@ namespace Chess
 			return tbp.Where(kvp => kvp.Key != playerId).SelectMany(kvp => kvp.Value);
 		}
 
-		public (IEnumerable<Tile> changedTiles, Tile[,] tiles) MovePiece(TileWithPiece twp, Position pos, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition)
+		public (TileWithPiece movedTileWithPiece, IEnumerable<Tile> changedTiles, Tile[,] tiles) MovePiece(TileWithPiece twp, Position pos, Dictionary<Position, (TileWithCastlingPiece, Position)> 
+                castlingTileByCheckableTilePosition)
 		{
 			var playerId = twp.Piece.PlayerId;
 			var tilesByP = tilesByPlayer[twp.Piece.PlayerId];
@@ -136,17 +138,17 @@ namespace Chess
 				moveOutput.beforeMoveTile, castleOutput?.beforeMoveTile, moveOutput.afterMoveTile, castleOutput?.afterMoveTile
 			}.Where(t => t != null);
 			
-			return (changedTiles, boardTiles);
+			return (moveOutput.afterMoveTile, changedTiles, boardTiles);
 		}
 
-		public (int playerId, CheckType checktype, Tile checkTile) IsPlayerInCheck(int playerId,
+		public (Player player, Tile checkTile) IsPlayerInCheck(int playerId,
 			PieceType checkablePieceType,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
 			var checkablePieceTile = GetCheckableTileWithPiece(playerId);
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
 			var checkType = Board.IsInCheck(checkablePieceTile, movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos, tilesByPlayer[playerId]);
-			return (playerId, checkType, checkablePieceTile);
+			return (new Player(playerId, checkType), checkablePieceTile);
 		}
 
 		private TileWithCheckablePiece GetCheckableTileWithPiece(int playerId)

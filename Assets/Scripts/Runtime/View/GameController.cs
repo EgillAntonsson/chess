@@ -33,7 +33,7 @@ namespace Chess.View
 					chessBoardView.InjectTiles(changedTiles);
 					foreach (var t in opponentInCheckList)
 					{
-						if (t.checktype != CheckType.NoCheck)
+						if (t.Item1.IsInCheckType != CheckType.NoCheck)
 						{
 							chessBoardView.MarkTile(t.checkTile.Position, TileMarkType.Check);
 						}
