@@ -2,6 +2,7 @@ using System;
 
 namespace Chess
 {
+	
 	public readonly struct Position : IEquatable<Position>, IComparable<Position>
 	{
 		// public static Position None => new Position(int.MinValue, int.MinValue);

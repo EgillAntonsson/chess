@@ -23,4 +23,5 @@ namespace Chess
 		FirstMoveOnly = 1,
 		CanMoveIfNotThreatenedCapture = 2
 	}
+
 }

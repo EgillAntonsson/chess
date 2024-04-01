@@ -79,7 +79,7 @@ namespace Chess
 			int playerIdToMove,
 			Tile[,] boardTiles,
 			Dictionary<Position, TileWithPiece> tileByStartPos,
-			MoveCaptureFlag moveFilter)
+			MoveCaptureFlag moveFilter = MoveCaptureFlag.Move | MoveCaptureFlag.Capture)
 		{
 			var movesForPieceType = movesForPieceTypeFunc(tileWithPiece.Piece.Type, playerIdToMove);
 			var moves = new List<Move>();
@@ -175,18 +175,9 @@ namespace Chess
 		{
 			var boardTilesAfterMove = (Tile[,])boardTiles.Clone();
 			var bmt = boardTilesAfterMove[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
-			TileWithPiece amt;
-			if (twp is TileWithCastlingPiece twcp)
-			{
-				amt = twcp with { Position = pos, HasMoved = true };
-			}
-			else
-			{
-				amt = twp with { Position = pos };
-			}
-
+			var firstMove = twp.HasMoved == false;
+			var amt = twp with { Position = pos, HasMoved = true, FirstMove = firstMove};
 			boardTilesAfterMove[pos.Column, pos.Row] = amt;
-
 			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
 
 			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);

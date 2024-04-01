@@ -1,16 +1,17 @@
-using Chess;
-
-public class Player
+namespace Chess
 {
-	public int PlayerId { get; }
-	public CheckType IsInCheckType { get; }
-
-	public bool IsInCheck => IsInCheckType == CheckType.Check;
-	internal TileWithPiece LastMovedTilePiece;
-
-	public Player(int playerId, CheckType isInCheckType = CheckType.NoCheck)
+	public class Player
 	{
-		PlayerId = playerId;
-		IsInCheckType = isInCheckType;
+		public int Id { get; }
+		public CheckType IsInCheckType { get; }
+
+		public bool IsInCheck => IsInCheckType == CheckType.Check;
+		internal TileWithPiece LastMovedTilePiece;
+
+		public Player(int id, CheckType isInCheckType)
+		{
+			Id = id;
+			IsInCheckType = isInCheckType;
+		}
 	}
 }

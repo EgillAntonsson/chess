@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Chess
@@ -34,9 +33,10 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 				_ => new Move[] { }
 			};
 		}
-		public virtual bool CanCastle => true;
 		public virtual PieceType CheckablePieceType => PieceType.King;
 		public virtual PieceType CastlingPieceType => PieceType.Rook;
+		public virtual PieceType InPassingPieceType => PieceType.Pawn;
+		
 
 		
 	}

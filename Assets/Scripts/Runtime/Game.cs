@@ -42,8 +42,12 @@ namespace Chess
 
 		public IEnumerable<Position> FindValidMoves(TileWithPiece tile)
 		{
-			var player = players.First(p => p.PlayerId == PlayerIdToMove);
-			var foundMoves = ChessBoard.FindMoves(tile, player);
+			var player = players.First(p => p.Id == PlayerIdToMove);
+			var lastMoveOfOpponents = players
+				.Where(p => p.Id != PlayerIdToMove)
+				.Select(p => p.LastMovedTilePiece)
+				.Where(twp => twp != null);
+			var foundMoves = ChessBoard.FindMoves(tile, player, lastMoveOfOpponents);
 			foundMovesForTile = tile;
 			castlingTileByCheckableTilePosition = foundMoves.castlingTileByCheckableTilePosition;
 			return foundMoves.movePositions;
@@ -66,11 +70,11 @@ namespace Chess
 			}
 			
 			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition);
-			players.First(p => p.PlayerId == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
+			players.First(p => p.Id == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
 			castlingTileByCheckableTilePosition.Clear();
 
-			var opponentsInCheck = players.Where(p => p.PlayerId != tile.Piece.PlayerId).
-						Select(p => ChessBoard.IsPlayerInCheck(p.PlayerId, rules.ValidMovesByType));
+			var opponentsInCheck = players.Where(p => p.Id != tile.Piece.PlayerId).
+						Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.ValidMovesByType));
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
 
@@ -89,9 +93,9 @@ namespace Chess
 		private IEnumerable<Player> UpdatePlayers(IEnumerable<Player> pl, IEnumerable<(Player, Tile)> opponents)
 		{
 			var pla = (from p in pl from opp in opponents
-					where opp.Item1.PlayerId == p.PlayerId
-					select new Player(opp.Item1.PlayerId, opp.Item1.IsInCheckType)).ToList();
-			pla.Add(pl.First(t => t.PlayerId == PlayerIdToMove));
+					where opp.Item1.Id == p.Id
+					select new Player(opp.Item1.Id, opp.Item1.IsInCheckType)).ToList();
+			pla.Add(pl.First(t => t.Id == PlayerIdToMove));
 			return pla;
 		}
 		

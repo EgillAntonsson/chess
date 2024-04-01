@@ -38,24 +38,30 @@ namespace Chess
 			return (boardTiles, tilesByPlayer);
 		}
 
-		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition) FindMoves(TileWithPiece tileWithPiece, Player player)
+		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition)
+			FindMoves(TileWithPiece tileWithPiece, Player player, IEnumerable<TileWithPiece> lastMoveOfOpponents)
 		{
-			var playerId = player.PlayerId;
-			const MoveCaptureFlag moveCaptureFlags = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
+			var playerId = player.Id;
 			var playerTilePieces = tilesByPlayer[playerId];
 			var playerTilePs = playerTilePieces as TileWithPiece[] ?? playerTilePieces.ToArray();
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
 			var oppTilePs = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
 
 			var movePositions = FilterAwayCheckedMovePositions(
-				Board.FindMovePositions(tileWithPiece, rules.ValidMovesByType, playerId, boardTiles, tileByStartPos, moveCaptureFlags)
+				Board.FindMovePositions(tileWithPiece, rules.ValidMovesByType, playerId, boardTiles, tileByStartPos)
 			);
 
 			var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-			if (tileWithPiece is not TileWithCheckablePiece checkableTwp) return (movePositions, castlingTileByCheckableTilePosition);
+			var inPassingMoves = FindInPassingMove(tileWithPiece, lastMoveOfOpponents);
+			
+			if (tileWithPiece is not TileWithCheckablePiece checkableTwp)
+			{
+				return (movePositions.Concat(inPassingMoves), castlingTileByCheckableTilePosition);
+			}
+
 			if (player.IsInCheck || checkableTwp.HasMoved)
 			{
-				return (movePositions, castlingTileByCheckableTilePosition);
+				return (movePositions.Concat(inPassingMoves), castlingTileByCheckableTilePosition);
 			}
 
 			castlingTileByCheckableTilePosition = FindCastlingMoves(checkableTwp, playerTilePs, oppTilePs);
@@ -65,6 +71,29 @@ namespace Chess
 			{
 				return positions.Where(pos => !Board.IsInCheckAfterMove(GetCheckableTileWithPiece(playerId), tileWithPiece, pos, boardTiles, playerTilePs, tileByStartPos, oppTilePs, rules.ValidMovesByType));
 			}
+		}
+
+		private IEnumerable<Position> FindInPassingMove(TileWithPiece tileWithPiece, IEnumerable<TileWithPiece> lastMoveOfOpponents)
+		{
+			var inPassingPieceType = rules.InPassingPieceType;
+			if (tileWithPiece.Piece.Type != inPassingPieceType)
+			{
+				return Enumerable.Empty<Position>();
+			}
+
+			var captureMoves = rules.ValidMovesByType(inPassingPieceType, tileWithPiece.Piece.PlayerId)
+				.Where(m => m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture));
+
+			// TODO: try to generalize more with captureMoves.
+			
+			var ret = lastMoveOfOpponents
+				.Where(twp => twp.Piece.Type == inPassingPieceType)
+				.Where(twp => twp.FirstMove)
+				.Where(twp => Position.GridDistance(twp.Position, tileWithPiece.Position) == 1 && twp.Position.Row == tileWithPiece.Position.Row)
+				.Select(twp => twp.Position);
+
+			var first = captureMoves.First();
+			return ret.Select(p => new Position(p.Column, p.Row + first.Position.Row));
 		}
 
 		private Dictionary<Position, (TileWithCastlingPiece, Position)> FindCastlingMoves(TileWithPiece checkableTwp,
