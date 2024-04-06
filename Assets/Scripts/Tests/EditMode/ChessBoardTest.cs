@@ -144,8 +144,8 @@ public class ChessBoardTest
 		var player = new Player(1, CheckType.NoCheck);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
-		
-		var (movePositions, _) = chessboard.FindMoves(tileWithPiece, player, lastMoveOfOpponents);
+
+		var (movePositions, _, _) = chessboard.FindMoves(tileWithPiece, player, lastMoveOfOpponents);
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
@@ -157,25 +157,27 @@ public class ChessBoardTest
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Check_but_king_can_move_but_not_castle());
-		// We assume we are moving to a found valid position from FindMoves method.
-		// Move the king
+		// these two below values should not matter to this test.
 		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(5, 0), castlingTileByCheckableTilePosition);
+		var inPassing = new List<(Position, TileWithPiece)>();
 		
+		// Move the king
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(5, 0), castlingTileByCheckableTilePosition, inPassing);
+
 		// The opponent moves bishop in front of his\her queen .
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[2, 7], new Position(4, 5), castlingTileByCheckableTilePosition);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[2, 7], new Position(4, 5), castlingTileByCheckableTilePosition, inPassing);
 
 		// king moves back to his start position, as the opponent's bishop is in between the queen now.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[5, 0], new Position(4, 0), castlingTileByCheckableTilePosition);
-		
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[5, 0], new Position(4, 0), castlingTileByCheckableTilePosition, inPassing);
+
 		// The opponent does a move that has no impact on what is being tested.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5), castlingTileByCheckableTilePosition);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5), castlingTileByCheckableTilePosition, inPassing);
 
 		var player = new Player(1, CheckType.NoCheck);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 		// Find moves for the king
-		var (movePositions, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
+		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
 
 		var expectedMoves = new Position[]
 		{
@@ -188,7 +190,7 @@ public class ChessBoardTest
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
-	
+
 	[Test]
 	public void Can_not_castle_after_rook_has_moved()
 	{
@@ -196,27 +198,29 @@ public class ChessBoardTest
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_on_both_sides());
-		
-		// We assume we are moving to a found valid position from FindMoves method.
-		// P1 moves the left rook
+
+		// these two below values should not matter to this test.
 		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 0], new Position(1, 0), castlingTileByCheckableTilePosition);
-		
+		var inPassing = new List<(Position, TileWithPiece)>();
+
+		// P1 moves the left rook
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 0], new Position(1, 0), castlingTileByCheckableTilePosition, inPassing);
+
 		// P2 does a move that has no impact on what is being tested.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 5], new Position(0, 4), castlingTileByCheckableTilePosition);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 5], new Position(0, 4), castlingTileByCheckableTilePosition, inPassing);
 
 		// P1 moves the left rook back to start pos
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[1, 0], new Position(0, 0), castlingTileByCheckableTilePosition);
-		
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[1, 0], new Position(0, 0), castlingTileByCheckableTilePosition, inPassing);
+
 		// P2 does a move that has no impact on what is being tested.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 4], new Position(0, 3), castlingTileByCheckableTilePosition);
-		
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 4], new Position(0, 3), castlingTileByCheckableTilePosition, inPassing);
+
 		var player = new Player(1, CheckType.NoCheck);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
 		// Find moves for the king
-		var (movePositions, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
+		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
 
 		var expectedMoves = new Position[]
 		{
@@ -229,7 +233,7 @@ public class ChessBoardTest
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
-	
+
 	[Test]
 	public void Move_to_castling_king_side()
 	{
@@ -241,10 +245,10 @@ public class ChessBoardTest
 		var player = new Player(playerId, CheckType.NoCheck);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
-		
+
 		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
 
-		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition);
+		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
 
 		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(6, 0), new Piece(PieceType.King, playerId), true, true);
 		var expectedChangedTiles = new Tile[]
@@ -254,11 +258,11 @@ public class ChessBoardTest
 			new(new Position(4, 0)),
 			new(new Position(7, 0))
 		};
-		
+
 		Assert.That(movedTileWithPiece, Is.EqualTo(expectedMovedTileWithPiece));
 		TestUtil.AssertArraysAreEqual(changedTiles, expectedChangedTiles);
 	}
-	
+
 	[Test]
 	public void Move_to_castling_queen_side()
 	{
@@ -270,10 +274,10 @@ public class ChessBoardTest
 		var player = new Player(playerId, CheckType.NoCheck);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
-		
+
 		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
 
-		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition);
+		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
 
 		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(2, 0), new Piece(PieceType.King, playerId), true, true);
 		var expectedChangedTiles = new Tile[]
@@ -283,31 +287,69 @@ public class ChessBoardTest
 			new(new Position(4, 0)),
 			new(new Position(0, 0))
 		};
-		
+
 		Assert.That(movedTileWithPiece, Is.EqualTo(expectedMovedTileWithPiece));
 		TestUtil.AssertArraysAreEqual(changedTiles, expectedChangedTiles);
 	}
-	
+
 	[Test]
-	public void Find_pawn_in_passing_capture()
+	public void Find_and_capture_pawn_in_passing_to_the_left()
 	{
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.One_move_before_in_passing_capture());
 		var player = new Player(id: 1, CheckType.NoCheck);
-		// can be empty for these tests
-		
 		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		
+		IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece = new List<(Position, TileWithPiece)>();
 		// P2 moves pawn into position so that P1 can capture it via In Passing rule
-		var (movedTileWithPiece, _, ts2) = chessboard.MovePiece((TileWithPiece)tiles[3, 6], new Position(3, 4), castlingTileByCheckableTilePosition);
+		var (movedTileWithPiece, _, ts2) = chessboard.MovePiece((TileWithPiece)tiles[3, 6], new Position(3, 4), castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
+		;
 
 		var lastMoveOfOpponents = new[] { movedTileWithPiece };
-		var (movePos, _) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player, lastMoveOfOpponents);
-		
-		var expectedMovePos = new [] { new Position(3, 5), new Position(4, 5)};
-		
+		IEnumerable<Position> movePos = new List<Position>();
+		(movePos, _, pairsOfInPassingCapturePosAndPassedPiece) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player, lastMoveOfOpponents);
+
+		var expectedMovePos = new[] { new Position(3, 5), new Position(4, 5) };
 		TestUtil.AssertArraysAreEqual(movePos, expectedMovePos);
+
+
+		var (movedTileWithPiece2, changedTiles, ts3) = chessboard.MovePiece((TileWithPiece)tiles[4, 4], new Position(3, 5), castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
+		
+		// var expectedMovedTileWithPiece = new TileWithPiece(new Position(3, 5), new Piece(PieceType.Pawn, player.Id), true, false);
+		// Assert.That(movedTileWithPiece2, Is.EqualTo(expectedMovedTileWithPiece));
+		Assert.That(ts3[3, 5], Is.EqualTo(movedTileWithPiece2));
+		Assert.That(movedTileWithPiece2.Piece, Is.EqualTo(new Piece(PieceType.Pawn, player.Id)));
+		var expectedChangedTiles = new Tile[]
+		{
+			movedTileWithPiece2,
+			new(new Position(4, 4)),
+			new(new Position(3, 4)) // The passing pawn has been captured
+		};
+		TestUtil.AssertArraysAreEqual(changedTiles, expectedChangedTiles);
 	}
+
+	// [Test]
+	// public void Find_and_capture_pawn_in_passing_to_the_right()
+	// {
+	// 	var rules = new Rules();
+	// 	var chessboard = new ChessBoard(rules);
+	// 	chessboard.Create(rules.BoardAtStart);
+	// 	var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.One_move_before_in_passing_capture());
+	// 	var player = new Player(id: 1, CheckType.NoCheck);
+	// 	// can be empty for these tests
+	//
+	// 	var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
+	//
+	// 	// P2 moves pawn into position so that P1 can capture it via In Passing rule
+	// 	var (movedTileWithPiece, _, ts2) = chessboard.MovePiece((TileWithPiece)tiles[5, 6], new Position(5, 4), castlingTileByCheckableTilePosition);
+	//
+	// 	var lastMoveOfOpponents = new[] { movedTileWithPiece };
+	// 	var (movePos, _) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player, lastMoveOfOpponents);
+	//
+	// 	var expectedMovePos = new[] { new Position(5, 5), new Position(4, 5) };
+	//
+	// 	TestUtil.AssertArraysAreEqual(movePos, expectedMovePos);
+	// }
+
 }

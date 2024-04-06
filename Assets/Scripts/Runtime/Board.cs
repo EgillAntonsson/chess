@@ -173,6 +173,7 @@ namespace Chess
 				Tile[,] boardTiles,
 				IEnumerable<TileWithPiece> playerTilePieces)
 		{
+			
 			var boardTilesAfterMove = (Tile[,])boardTiles.Clone();
 			var bmt = boardTilesAfterMove[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
 			var firstMove = twp.HasMoved == false;
@@ -181,6 +182,14 @@ namespace Chess
 			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
 
 			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);
+		}
+
+		public static (Tile removedTile, Tile[,] tiles) RemovePiece(TileWithPiece twp, Tile[,] tiles)
+		{
+			// TODO: Make MovePiece use this function.
+			var tilesClone = (Tile[,])tiles.Clone();
+			var removedTile = tilesClone[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
+			return (removedTile, tilesClone);
 		}
 
 		public static bool IsTilePieceInCheck(TileWithPiece checkableTilePiece,
@@ -201,6 +210,7 @@ namespace Chess
 			Dictionary<Position, TileWithPiece> tileByStartPos,
 			IEnumerable<TileWithPiece> playerTilePieces)
 		{
+			// TODO: try to remove the returning and passed in playerTilePiece into this class. The calling class should rather just cache and send the player pieces that are needed.
 			var oppTiles = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
 			var isTilePieceInCheck = IsTilePieceInCheck(checkableTilePiece, movesForPieceTypeFunc, oppTiles, boardTiles, tileByStartPos);
 

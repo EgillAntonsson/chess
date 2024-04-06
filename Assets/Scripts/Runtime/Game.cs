@@ -12,8 +12,9 @@ namespace Chess
 		private ChessBoard ChessBoard { get; }
 		public int PlayerIdToMove { get; private set; }
 		public int TurnNumber { get; private set; }
-		private Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition;
 		private TileWithPiece foundMovesForTile;
+		private Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition;
+		private IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece;
 
 		public Game(Rules rules)
 		{
@@ -50,6 +51,7 @@ namespace Chess
 			var foundMoves = ChessBoard.FindMoves(tile, player, lastMoveOfOpponents);
 			foundMovesForTile = tile;
 			castlingTileByCheckableTilePosition = foundMoves.castlingTileByCheckableTilePosition;
+			pairsOfInPassingCapturePosAndPassedPiece = foundMoves.pairsOfInPassingCapturePosAndPassedPiece;
 			return foundMoves.movePositions;
 		}
 		
@@ -69,12 +71,12 @@ namespace Chess
 				}
 			}
 			
-			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition);
+			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
 			players.First(p => p.Id == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
 			castlingTileByCheckableTilePosition.Clear();
 
 			var opponentsInCheck = players.Where(p => p.Id != tile.Piece.PlayerId).
-						Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.ValidMovesByType));
+						Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MovesByType));
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
 

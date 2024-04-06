@@ -118,7 +118,7 @@ public class BoardTest
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tiles);
 
 		var validMoves = Board.FindMovePositions(twp,
-			rules.ValidMovesByType,
+			rules.MovesByType,
 			playerIdToMove,
 			tiles,
 			pieceTypeByStartPositions,
@@ -135,7 +135,7 @@ public class BoardTest
 		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 
-		var opponentCheck = Board.IsInCheck(kingTile, rules.ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, rules.MovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
@@ -161,7 +161,7 @@ public class BoardTest
 		var rules = new Rules();
 		var (tiles, tilesByStartPos, tilesByPlayer) = CreateBoard(BoardTileString.Check_but_king_can_move_but_not_castle(), rules);
 
-		var opponentCheck = Board.IsInCheck(kingTile, new Rules().ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, new Rules().MovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.Check));
 	}
@@ -175,7 +175,7 @@ public class BoardTest
 		var kingTile = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
 		const int playerId = 1;
 
-		var opponentCheck = Board.IsInCheck(kingTile, rules.ValidMovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, rules.MovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.CheckMate));
 	}
