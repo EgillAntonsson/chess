@@ -10,8 +10,10 @@ namespace Chess
 		}
 	}
 
-	public record TileWithPiece(Position Position, Piece Piece, bool HasMoved = false, bool FirstMove = false) : Tile(Position), IComparable<TileWithPiece>
+	public record TileWithPiece(Position Position, Piece Piece, Position PieceStartPosition, bool HasMoved = false, bool FirstMove = false)
+		: Tile(Position), IComparable<TileWithPiece>
 	{
+		// public bool HasMoved => Position - PieceStartPosition != new Position(0, 0);
 		public int CompareTo(TileWithPiece other)
 		{
 			var tileComparison = base.CompareTo(other);
@@ -26,12 +28,25 @@ namespace Chess
 				return pieceComparison;
 			}
 
+			var pieceStartPositionComparison = PieceStartPosition.CompareTo(other.PieceStartPosition);
+			if (pieceStartPositionComparison != 0)
+			{
+				return pieceStartPositionComparison;
+			}
+
 			var hasMovedComparison = HasMoved.CompareTo(other.HasMoved);
-			return hasMovedComparison != 0 ? hasMovedComparison : FirstMove.CompareTo(other.FirstMove);
+			if (hasMovedComparison != 0)
+			{
+				return hasMovedComparison;
+			}
+
+			return FirstMove.CompareTo(other.FirstMove);
 		}
 	}
 
-	public record TileWithCastlingPiece(Position Position, Piece Piece, bool HasMoved = false, bool FirstMove = false) : TileWithPiece(Position, Piece, HasMoved, FirstMove);
+	public record TileWithCastlingPiece(Position Position, Piece Piece, Position PieceStartPosition, bool HasMoved = false, bool FirstMove = false)
+		: TileWithPiece(Position, Piece, PieceStartPosition, HasMoved, FirstMove);
 
-	public record TileWithCheckablePiece(Position Position, Piece Piece, bool HasMoved = false, bool FirstMove = false) : TileWithCastlingPiece(Position, Piece, HasMoved, FirstMove);
+	public record TileWithCheckablePiece(Position Position, Piece Piece,Position PieceStartPosition, bool HasMoved = false, bool FirstMove = false)
+		: TileWithCastlingPiece(Position, Piece, PieceStartPosition, HasMoved, FirstMove);
 }

@@ -40,15 +40,15 @@ public class TileTest
 	{
 		var posA = new Position(0, 0);
 		var pieceA = new Piece(PieceType.Bishop, 1);
-		var tileA = new TileWithPiece(posA, pieceA);
-		var tileB = new TileWithPiece(posA, pieceA);
+		var tileA = new TileWithPiece(posA, pieceA, posA);
+		var tileB = new TileWithPiece(posA, pieceA, posA);
 		Assert.That(tileA.CompareTo(tileB), Is.EqualTo(0));
 
 		var pieceB = new Piece(PieceType.Knight, 1);
-		var tileC = new TileWithPiece(posA, pieceB);
+		var tileC = new TileWithPiece(posA, pieceB, posA);
 		Assert.That(tileC.CompareTo(tileA), Is.Not.EqualTo(0));
 		
-		var tileD = new TileWithPiece(posA, pieceB, true);
+		var tileD = new TileWithPiece(posA, pieceB, new Position(2,2), true);
 		Assert.That(tileD.CompareTo(tileC), Is.Not.EqualTo(0));
 	}
 }

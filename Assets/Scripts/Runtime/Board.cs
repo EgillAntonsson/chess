@@ -49,14 +49,14 @@ namespace Chess
 						TileWithPiece twp;
 						if (piece.Type == checkablePieceType)
 						{
-							twp = new TileWithCheckablePiece(pos, piece);
+							twp = new TileWithCheckablePiece(pos, piece, pos);
 						} else if (piece.Type == castlingPieceType)
 						{
-							twp = new TileWithCastlingPiece(pos, piece);
+							twp = new TileWithCastlingPiece(pos, piece, pos);
 						}
 						else
 						{
-							twp = new TileWithPiece(pos, piece);
+							twp = new TileWithPiece(pos, piece, pos);
 						}
 						theTiles[c, r] = twp;
 
@@ -170,23 +170,19 @@ namespace Chess
 		public static (Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tilesAfterMove, IEnumerable<TileWithPiece> playerTilePiecesAfterMove)
 			MovePiece(TileWithPiece twp,
 				Position pos,
-				Tile[,] boardTiles,
+				Tile[,] ts,
 				IEnumerable<TileWithPiece> playerTilePieces)
 		{
-			
-			var boardTilesAfterMove = (Tile[,])boardTiles.Clone();
-			var bmt = boardTilesAfterMove[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
+			var (removedTile, tilesClone) = RemovePiece(twp, ts);
 			var firstMove = twp.HasMoved == false;
 			var amt = twp with { Position = pos, HasMoved = true, FirstMove = firstMove};
-			boardTilesAfterMove[pos.Column, pos.Row] = amt;
+			tilesClone[pos.Column, pos.Row] = amt;
 			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
-
-			return (bmt, amt, boardTilesAfterMove, tilesByPlayerAfterMove);
+			return (removedTile, amt, tilesClone, tilesByPlayerAfterMove);
 		}
 
-		public static (Tile removedTile, Tile[,] tiles) RemovePiece(TileWithPiece twp, Tile[,] tiles)
+		public static (Tile removedTile, Tile[,] tilesClone) RemovePiece(TileWithPiece twp, Tile[,] tiles)
 		{
-			// TODO: Make MovePiece use this function.
 			var tilesClone = (Tile[,])tiles.Clone();
 			var removedTile = tilesClone[twp.Position.Column, twp.Position.Row] = new Tile(twp.Position);
 			return (removedTile, tilesClone);

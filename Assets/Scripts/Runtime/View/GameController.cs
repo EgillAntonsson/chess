@@ -26,24 +26,26 @@ namespace Chess.View
 			var tile = tileView.Tile;
 			
 			deSelectFunc?.Invoke();
-			
+
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-					var (changedTiles, opponentInCheckList, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position);
-					chessBoardView.InjectTiles(changedTiles);
-					foreach (var t in opponentInCheckList)
+				var (changedTiles, opponentInCheckList, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position, PromotionSelection);
+				chessBoardView.InjectTiles(changedTiles);
+				foreach (var t in opponentInCheckList)
+				{
+					if (t.Item1.IsInCheckType != CheckType.NoCheck)
 					{
-						if (t.Item1.IsInCheckType != CheckType.NoCheck)
-						{
-							chessBoardView.MarkTile(t.checkTile.Position, TileMarkType.Check);
-						}
+						chessBoardView.MarkTile(t.checkTile.Position, TileMarkType.Check);
 					}
-					if (hasGameEnded)
-					{
-						Debug.Log("Game has ended");
-					}
-					playerAction = PlayerAction.SelectPiece;
-					return;
+				}
+
+				if (hasGameEnded)
+				{
+					Debug.Log("Game has ended");
+				}
+
+				playerAction = PlayerAction.SelectPiece;
+				return;
 			}
 
 			if (tile is not TileWithPiece twp || twp.Piece.PlayerId != game.PlayerIdToMove)
@@ -64,7 +66,9 @@ namespace Chess.View
 			};
 			
 			playerAction = PlayerAction.MovePiece;
-			
+			return;
+
+			PieceType PromotionSelection() => PieceType.Queen;
 		}
 	}
 

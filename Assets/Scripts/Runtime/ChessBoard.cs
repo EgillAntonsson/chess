@@ -48,7 +48,7 @@ namespace Chess
 			var oppTilePs = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
 
 			var movePositions = FilterAwayCheckedMovePositions(
-				Board.FindMovePositions(tileWithPiece, rules.MovesByType, playerId, boardTiles, tileByStartPos)
+				Board.FindMovePositions(tileWithPiece, rules.MoveDefinitionByType, playerId, boardTiles, tileByStartPos)
 			);
 			
 			var pairsOfInPassingCapturePosAndPassedPiece = FindInPassingMove(tileWithPiece, lastMoveOfOpponents);
@@ -60,7 +60,7 @@ namespace Chess
 
 			IEnumerable<Position> FilterAwayCheckedMovePositions(IEnumerable<Position> positions)
 			{
-				return positions.Where(pos => !Board.IsInCheckAfterMove(GetCheckableTileWithPiece(playerId), tileWithPiece, pos, boardTiles, playerTilePs, tileByStartPos, oppTilePs, rules.MovesByType));
+				return positions.Where(pos => !Board.IsInCheckAfterMove(GetCheckableTileWithPiece(playerId), tileWithPiece, pos, boardTiles, playerTilePs, tileByStartPos, oppTilePs, rules.MoveDefinitionByType));
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace Chess
 				return Enumerable.Empty<(Position, TileWithPiece)>();
 			}
 
-			var captureMoves = rules.MovesByType(inPassingPieceType, tileWithPiece.Piece.PlayerId)
+			var captureMoves = rules.MoveDefinitionByType(inPassingPieceType, tileWithPiece.Piece.PlayerId)
 				.Where(m => m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Capture));
 			var capturedMove = captureMoves.First();
 
@@ -122,7 +122,7 @@ namespace Chess
 						playerTilePieces,
 						tileByStartPos,
 						opponentTiles,
-						rules.MovesByType))
+						rules.MoveDefinitionByType))
 					.Any(isInCheckAfterMove => isInCheckAfterMove))
 				{
 					return castlingTileByCheckableTilePos;

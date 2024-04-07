@@ -20,17 +20,17 @@ public class BoardTest
 
 		Assert.That(tiles.Length, Is.EqualTo(64));
 		var pos = new Position(0, 0);
-		TileWithPiece twp = new TileWithCastlingPiece(pos, new Piece(PieceType.Rook, 1));
+		TileWithPiece twp = new TileWithCastlingPiece(pos, new Piece(PieceType.Rook, 1), pos);
 		Assert.That(tiles[pos.Column, pos.Row], Is.EqualTo(twp));
 		Assert.That(tileByStartPos[pos], Is.EqualTo(twp));
 
 		pos = new Position(0, 1);
-		twp = new TileWithPiece(pos, new Piece(PieceType.Pawn, 1));
+		twp = new TileWithPiece(pos, new Piece(PieceType.Pawn, 1), pos);
 		Assert.That(tiles[pos.Column, pos.Row], Is.EqualTo(twp));
 		Assert.That(tileByStartPos[pos], Is.EqualTo(twp));
 
 		pos = new Position(4, 0);
-		twp = new TileWithCheckablePiece(pos, new Piece(PieceType.King, 1));
+		twp = new TileWithCheckablePiece(pos, new Piece(PieceType.King, 1), pos);
 		Assert.That(tileByStartPos[pos], Is.EqualTo(twp));
 	}
 
@@ -118,7 +118,7 @@ public class BoardTest
 		var twp = (TileWithPiece)Board.GetTile(piecePos, tiles);
 
 		var validMoves = Board.FindMovePositions(twp,
-			rules.MovesByType,
+			rules.MoveDefinitionByType,
 			playerIdToMove,
 			tiles,
 			pieceTypeByStartPositions,
@@ -132,10 +132,11 @@ public class BoardTest
 	{
 		var rules = new Rules();
 		var (tiles, tilesByStartPos, tilesByPlayer) = CreateBoard(rules.BoardAtStart, rules);
-		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		var p = new Position(4, 0);
+		var kingTile = new TileWithPiece(p, new Piece(PieceType.King, 1), p);
 		const int playerId = 1;
 
-		var opponentCheck = Board.IsInCheck(kingTile, rules.MovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, rules.MoveDefinitionByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.NoCheck));
 	}
@@ -143,13 +144,14 @@ public class BoardTest
 	public static IEnumerable<TestCaseData> IsInCheckCases()
 	{
 		var playerId = 1;
-		var kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
+		var p = new Position(4, 0);
+		var kingTile = new TileWithPiece(p, new Piece(PieceType.King, playerId), p);
 		Func<string> currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
 			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
 
 		playerId = 1;
-		kingTile = new TileWithPiece(new Position(4, 0), new Piece(PieceType.King, playerId));
+		kingTile = new TileWithPiece(p, new Piece(PieceType.King, playerId), p);
 		currentBoardFunc = BoardTileString.Check_but_king_can_move_but_not_castle;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
 			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
@@ -161,7 +163,7 @@ public class BoardTest
 		var rules = new Rules();
 		var (tiles, tilesByStartPos, tilesByPlayer) = CreateBoard(BoardTileString.Check_but_king_can_move_but_not_castle(), rules);
 
-		var opponentCheck = Board.IsInCheck(kingTile, new Rules().MovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, new Rules().MoveDefinitionByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.Check));
 	}
@@ -172,10 +174,11 @@ public class BoardTest
 		var rules = new Rules();
 		var (_, tilesByStartPos, _) = CreateBoard(rules.BoardAtStart, rules);
 		var (tiles, _, tilesByPlayer) = CreateBoard(BoardTileString.Player1_CheckMate(), rules);
-		var kingTile = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, 1));
+		var p = new Position(4, 0);
+		var kingTile = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
 		const int playerId = 1;
 
-		var opponentCheck = Board.IsInCheck(kingTile, rules.MovesByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
+		var opponentCheck = Board.IsInCheck(kingTile, rules.MoveDefinitionByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
 
 		Assert.That(opponentCheck, Is.EqualTo(CheckType.CheckMate));
 	}

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Chess
@@ -20,13 +19,25 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 
 		public virtual int NumberOfPlayers => 2;
 		public virtual int PlayerIdToStart => 1;
+		
+		/// No more than one piece can be of type CheckablePieceType.
 		public virtual PieceType CheckablePieceType => PieceType.King;
+		
+		/// Can not be the same as Checkable Piece Type.
 		public virtual PieceType CastlingPieceType => PieceType.Rook;
-		/// <summary>
-		/// Can not be the same as Checkable Piece Type. All capture must must have the same row position
-		/// </summary>
+		
+		/// Can not be the same as Checkable Piece Type. All capture must have the same row/column position.
 		public virtual PieceType InPassingPieceType => PieceType.Pawn;
-		public IEnumerable<Move> MovesByType(PieceType type, int playerId)
+		
+		/// Can not be the same as Checkable Piece Type.
+		public virtual PieceType PromotionPieceType => PieceType.Pawn;
+
+		public virtual (Position Position, Position.Axis Axis) PromotionPosition(int playerId) {
+			var row = playerId == 1 ? 6 : -6;
+			return (new Position(0, row), Position.Axis.Row);
+		}
+
+		public virtual IEnumerable<Move> MoveDefinitionByType(PieceType type, int playerId)
 		{
 			return type switch
 			{
@@ -36,7 +47,7 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 				PieceType.Rook => RookMoves(),
 				PieceType.Queen => QueenMoves(),
 				PieceType.King => KingMoves(),
-				_ => throw new ArgumentOutOfRangeException(nameof(type), type, "Must implement moves for new PieceType")
+				_ => new Move[]{}
 			};
 		}
 		protected virtual IEnumerable<Move> KnightMoves()
