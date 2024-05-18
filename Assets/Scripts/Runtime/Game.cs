@@ -55,39 +55,37 @@ namespace Chess
 			return foundMoves.movePositions;
 		}
 		
-		public (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)>, bool) MovePiece(TileWithPiece tile, Position position, Func<PieceType> promotionSelection)
+		public (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)> opponentsInCheck, bool hasGameEnded) MovePiece(TileWithPiece tile, Position position, Func<PieceType> promotionSelectionCb)
 		{
 			// TODO: write a test and then refactor the fail handling.
 			if (PlayerIdToMove != tile.Piece.PlayerId)
 			{
-				throw new ApplicationException("This is not player's turn to move.");
-				Debug.LogError("This is not the player turn to move.");
+				throw new ApplicationException("Not the turn to move for this player.");
 			}
 			if (tile != foundMovesForTile)
 			{
 				var foundMovePositions = FindValidMoves(tile);
 				if (foundMovePositions.All(p => p != position))
 				{
-					Debug.LogError("move position for tile piece is not a valid move position");
+					throw new ApplicationException("Move position for tile piece is not a valid move position");
 				}
+			}
+
+			var tileToMove = tile;
+			if (ShouldPromotionOccur(tile, rules))
+			{
+				// tileToMove = new TileWithPiece(tile.Position, new Piece(promotionSelectionCb(), tile.Piece.PlayerId), tile.Position);
+				// return (changedTiles, new (Player, Tile checkTile)[] { }, false);
 			}
 			
 			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
 			players.First(p => p.Id == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
-			
-			castlingTileByCheckableTilePosition.Clear();
-			// TODO: Clear pairsOfInPassingCapturePosAndPassedPiece (write test for it).
 
-			if (ShouldPromotionOccur(movedTileWithPiece, rules))
-			{
-				var smu = promotionSelection();
-				return (changedTiles, new (Player, Tile checkTile)[] { }, false);
-			}
 
 			return ProcessEndOfMove(tile, changedTiles);
 		}
 
-		private static bool ShouldPromotionOccur(TileWithPiece twp, Rules rules)
+		public static bool ShouldPromotionOccur(TileWithPiece twp, Rules rules)
 		{
 			if (twp.Piece.Type != rules.PromotionPieceType)
 			{
@@ -97,8 +95,8 @@ namespace Chess
 			var promotionPos = rules.PromotionPosition(twp.Piece.PlayerId);
 			return promotionPos.Axis switch
 			{
-				Position.Axis.Column => twp.Position.Column - promotionPos.Position.Column == twp.PieceStartPosition.Column,
-				Position.Axis.Row => twp.Position.Row - promotionPos.Position.Row == twp.PieceStartPosition.Row,
+				Position.Axis.Column => twp.Position.Column - promotionPos.Position.Column == twp.StartPosition.Column,
+				Position.Axis.Row => twp.Position.Row - promotionPos.Position.Row == twp.StartPosition.Row,
 				_ => throw new ArgumentOutOfRangeException(promotionPos.Axis.ToString(), "Must implement for the added Position.Axis")
 			};
 		}

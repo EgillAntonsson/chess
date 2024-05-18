@@ -20,17 +20,17 @@ public class BoardTest
 
 		Assert.That(tiles.Length, Is.EqualTo(64));
 		var pos = new Position(0, 0);
-		TileWithPiece twp = new TileWithCastlingPiece(pos, new Piece(PieceType.Rook, 1), pos);
+		TileWithPiece twp = new TileWithCastlingPiece(pos, new Piece(PieceType.Rook, 1));
 		Assert.That(tiles[pos.Column, pos.Row], Is.EqualTo(twp));
 		Assert.That(tileByStartPos[pos], Is.EqualTo(twp));
 
 		pos = new Position(0, 1);
-		twp = new TileWithPiece(pos, new Piece(PieceType.Pawn, 1), pos);
+		twp = new TileWithPiece(pos, new Piece(PieceType.Pawn, 1));
 		Assert.That(tiles[pos.Column, pos.Row], Is.EqualTo(twp));
 		Assert.That(tileByStartPos[pos], Is.EqualTo(twp));
 
 		pos = new Position(4, 0);
-		twp = new TileWithCheckablePiece(pos, new Piece(PieceType.King, 1), pos);
+		twp = new TileWithCheckablePiece(pos, new Piece(PieceType.King, 1));
 		Assert.That(tileByStartPos[pos], Is.EqualTo(twp));
 	}
 
@@ -133,7 +133,7 @@ public class BoardTest
 		var rules = new Rules();
 		var (tiles, tilesByStartPos, tilesByPlayer) = CreateBoard(rules.BoardAtStart, rules);
 		var p = new Position(4, 0);
-		var kingTile = new TileWithPiece(p, new Piece(PieceType.King, 1), p);
+		var kingTile = new TileWithPiece(p, new Piece(PieceType.King, 1));
 		const int playerId = 1;
 
 		var opponentCheck = Board.IsInCheck(kingTile, rules.MoveDefinitionByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
@@ -145,13 +145,13 @@ public class BoardTest
 	{
 		var playerId = 1;
 		var p = new Position(4, 0);
-		var kingTile = new TileWithPiece(p, new Piece(PieceType.King, playerId), p);
+		var kingTile = new TileWithPiece(p, new Piece(PieceType.King, playerId));
 		Func<string> currentBoardFunc = BoardTileString.Check_but_piece_can_defend;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
 			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
 
 		playerId = 1;
-		kingTile = new TileWithPiece(p, new Piece(PieceType.King, playerId), p);
+		kingTile = new TileWithPiece(p, new Piece(PieceType.King, playerId));
 		currentBoardFunc = BoardTileString.Check_but_king_can_move_but_not_castle;
 		yield return new TestCaseData(currentBoardFunc(), playerId, kingTile).SetName(
 			$"{nameof(Is_in_check_returns_check)} when {currentBoardFunc.Method.Name}");
@@ -175,7 +175,7 @@ public class BoardTest
 		var (_, tilesByStartPos, _) = CreateBoard(rules.BoardAtStart, rules);
 		var (tiles, _, tilesByPlayer) = CreateBoard(BoardTileString.Player1_CheckMate(), rules);
 		var p = new Position(4, 0);
-		var kingTile = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
+		var kingTile = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1));
 		const int playerId = 1;
 
 		var opponentCheck = Board.IsInCheck(kingTile, rules.MoveDefinitionByType, ChessBoard.GetOpponentTiles(tilesByPlayer, playerId), tiles, tilesByStartPos, tilesByPlayer[playerId]);
@@ -209,5 +209,16 @@ public class BoardTest
 		// Assert.That(tilesAfterMove, Is.EqualTo(expTilesAfterMove));
 		var expTileByPlayer = expTilesByPlayers[playerId];
 		// Assert.That(tilesByPlayerAfterMove, Is.EqualTo(expTileByPlayer));
+	}
+
+	[Test]
+	public void PromotePiece()
+	{
+		var rules = new Rules();
+		var (tiles, _, tilesByPlayerBefore) = CreateBoard(BoardTileString.One_move_before_promotion(), rules);
+		var tuple = Board.PromotePiece((TileWithPiece)tiles[0, 6], PieceType.Queen, tiles);
+		var expectedTwp = new TileWithPiece(new Position(0, 6), new Piece(PieceType.Queen, 1));
+		Assert.That(tuple.promotedTile, Is.EqualTo(expectedTwp));
+		Assert.That(tuple.tiles[0,6], Is.EqualTo(expectedTwp));
 	}
 }

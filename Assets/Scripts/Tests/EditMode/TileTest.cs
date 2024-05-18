@@ -38,17 +38,26 @@ public class TileTest
 	[Test]
 	public void Verify_that_tile_with_piece_implement_comparable_based_on_the_params()
 	{
-		var posA = new Position(0, 0);
+		var posA = new Position(1, 1);
 		var pieceA = new Piece(PieceType.Bishop, 1);
-		var tileA = new TileWithPiece(posA, pieceA, posA);
-		var tileB = new TileWithPiece(posA, pieceA, posA);
+		var tileA = new TileWithPiece(posA, pieceA);
+		var tileB = new TileWithPiece(posA, pieceA);
 		Assert.That(tileA.CompareTo(tileB), Is.EqualTo(0));
 
 		var pieceB = new Piece(PieceType.Knight, 1);
-		var tileC = new TileWithPiece(posA, pieceB, posA);
+		var tileC = new TileWithPiece(posA, pieceB);
 		Assert.That(tileC.CompareTo(tileA), Is.Not.EqualTo(0));
-		
-		var tileD = new TileWithPiece(posA, pieceB, new Position(2,2), true);
-		Assert.That(tileD.CompareTo(tileC), Is.Not.EqualTo(0));
+	}
+
+	[Test]
+	public void Verify_that_tile_with_piece_initializes_StartPosition_only_once()
+	{
+		var piece = new Piece(PieceType.Pawn, 1);
+		var posA = new Position(0, 0);
+		var tileA = new TileWithPiece(posA, piece);
+		var tileB = tileA with { Position = new Position(0, 2) };
+		var tileC = new TileWithPiece(posA, piece) { Position = new Position(3, 0)};
+		Assert.That(tileB.StartPosition, Is.EqualTo(posA));
+		Assert.That(tileC.StartPosition, Is.EqualTo(posA));
 	}
 }

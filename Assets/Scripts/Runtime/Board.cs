@@ -49,15 +49,17 @@ namespace Chess
 						TileWithPiece twp;
 						if (piece.Type == checkablePieceType)
 						{
-							twp = new TileWithCheckablePiece(pos, piece, pos);
-						} else if (piece.Type == castlingPieceType)
+							twp = new TileWithCheckablePiece(pos, piece);
+						}
+						else if (piece.Type == castlingPieceType)
 						{
-							twp = new TileWithCastlingPiece(pos, piece, pos);
+							twp = new TileWithCastlingPiece(pos, piece);
 						}
 						else
 						{
-							twp = new TileWithPiece(pos, piece, pos);
+							twp = new TileWithPiece(pos, piece);
 						}
+
 						theTiles[c, r] = twp;
 
 						tilesByPlayer.TryGetValue(playerId, out var tileByType);
@@ -149,7 +151,7 @@ namespace Chess
 		}
 
 		/// <summary>
-		/// For now we take it as given that it is a square board this we only need to get the length of one dimension.
+		/// For now, we take it as given that it is a square board, thus we only need to get the length of one dimension.
 		/// </summary>
 		/// <param name="boardTiles"></param>
 		public static int GetSize(Tile[,] boardTiles)
@@ -165,6 +167,14 @@ namespace Chess
 		private static bool IsOnBoard(Position position, int size)
 		{
 			return position.Column >= 0 && position.Column < size && position.Row >= 0 && position.Row < size;
+		}
+
+		public static (TileWithPiece promotedTile, Tile[,] tiles) PromotePiece(TileWithPiece tile, PieceType toType, Tile[,] tiles)
+		{
+			var promotedTile = tile with { Piece = new Piece(toType, tile.Piece.PlayerId) };
+			var tilesClone = (Tile[,])tiles.Clone();
+			tilesClone[promotedTile.Position.Column, promotedTile.Position.Row] = promotedTile;
+			return (promotedTile, tilesClone);
 		}
 
 		public static (Tile beforeMoveTile, TileWithPiece afterMoveTile, Tile[,] tilesAfterMove, IEnumerable<TileWithPiece> playerTilePiecesAfterMove)
@@ -228,7 +238,6 @@ namespace Chess
 				IEnumerable<TileWithPiece> opponentTiles,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
-			// var checkableIsMoved = checkableTilePiece == moveTilePiece;
 			var checkableIsMoved = moveTilePiece is TileWithCheckablePiece;
 			var movedTuple = MovePiece(moveTilePiece, pos, boardTiles, playerTilePieces);
 			

@@ -25,7 +25,7 @@ public class ChessBoardTest
 		var p = new Position(4, 0);
 		var expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>
 		{
-			{ new TileWithCheckablePiece(p, new Piece(PieceType.King, playerId), p), expectedPos }
+			{ new TileWithCheckablePiece(p, new Piece(PieceType.King, playerId)), expectedPos }
 		};
 		var caseName = $"{nameof(Find_moves_for_all_pieces_when_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
@@ -36,9 +36,9 @@ public class ChessBoardTest
 		expectedPos = new Position[] { new(4, 1) };
 		expectedMoves = new Dictionary<TileWithPiece, IEnumerable<Position>>
 		{
-			{ new TileWithPiece(new Position(3, 0), new Piece(PieceType.Queen, playerId), new Position(3, 0)), expectedPos },
-			{ new TileWithPiece(new Position(5, 0), new Piece(PieceType.Bishop, playerId), new Position(5, 0)), expectedPos },
-			{ new TileWithPiece(new Position(6, 0), new Piece(PieceType.Knight, playerId), new Position(6, 0)), expectedPos }
+			{ new TileWithPiece(new Position(3, 0), new Piece(PieceType.Queen, playerId)), expectedPos },
+			{ new TileWithPiece(new Position(5, 0), new Piece(PieceType.Bishop, playerId)), expectedPos },
+			{ new TileWithPiece(new Position(6, 0), new Piece(PieceType.Knight, playerId)), expectedPos }
 		};
 		caseName = $"{nameof(Find_moves_for_all_pieces_when_in_check)} when {currentBoardFunc.Method.Name}".Replace('_', ' ');
 		yield return new TestCaseData(currentBoardFunc(), playerId, expectedMoves).SetName(caseName);
@@ -75,7 +75,7 @@ public class ChessBoardTest
 	{
 		Func<string> currentBoardFunc = BoardTileString.Can_castle_king_side;
 		var p = new Position(4, 0);
-		var tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
+		var tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1));
 		var expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -87,7 +87,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_castle_queen_side;
-		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
+		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -100,7 +100,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_castle_on_both_sides;
-		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
+		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -115,7 +115,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_not_castle_as_1st_intra_move_would_be_checked;
-		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
+		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -125,7 +125,7 @@ public class ChessBoardTest
 
 
 		currentBoardFunc = BoardTileString.Can_not_castle_as_2nd_intra_move_would_be_checked;
-		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1), p);
+		tileWithPiece = new TileWithCheckablePiece(p, new Piece(PieceType.King, 1));
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
@@ -253,11 +253,12 @@ public class ChessBoardTest
 		var (movedTileWithPiece, changedTiles, _) =
 			chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
 
-		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(6, 0), new Piece(PieceType.King, playerId), new Position(4, 0), true, true);
+		// create first with StartingPosition and then create a new with the updated Position (but StartingPosition the same.
+		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, playerId), true, true) { Position = new Position(6, 0) };
 		var expectedChangedTiles = new Tile[]
 		{
 			expectedMovedTileWithPiece,
-			new TileWithCastlingPiece(new Position(5, 0), new Piece(PieceType.Rook, playerId), new Position(7, 0), true, true),
+			new TileWithCastlingPiece(new Position(7, 0), new Piece(PieceType.Rook, playerId), true, true) { Position = new Position(5, 0) },
 			new(new Position(4, 0)),
 			new(new Position(7, 0))
 		};
@@ -282,11 +283,11 @@ public class ChessBoardTest
 
 		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
 
-		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(2, 0), new Piece(PieceType.King, playerId), new Position(4, 0), true, true);
+		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, playerId), true, true) { Position = new Position(2, 0)};
 		var expectedChangedTiles = new Tile[]
 		{
 			expectedMovedTileWithPiece,
-			new TileWithCastlingPiece(new Position(3, 0), new Piece(PieceType.Rook, playerId), new Position(0, 0), true, true),
+			new TileWithCastlingPiece(new Position(0, 0), new Piece(PieceType.Rook, playerId), true, true)  { Position = new Position(3, 0)},
 			new(new Position(4, 0)),
 			new(new Position(0, 0))
 		};

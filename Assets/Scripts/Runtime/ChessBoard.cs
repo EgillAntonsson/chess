@@ -37,6 +37,11 @@ namespace Chess
 			(boardTiles, _, tilesByPlayer) = Create(tiles);
 			return (boardTiles, tilesByPlayer);
 		}
+		
+		public void PromotePiece(TileWithPiece tile, PieceType toType)
+		{
+			return;
+		}
 
 		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition, IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece)
 			FindMoves(TileWithPiece tileWithPiece, Player player, IEnumerable<TileWithPiece> lastMoveOfOpponents)
