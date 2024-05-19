@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Chess.View
@@ -20,7 +21,7 @@ namespace Chess.View
 			chessBoardView.Create(game.Create(), OnTileClicked);
 		}
 
-		private void OnTileClicked(TileView tileView)
+		private async void OnTileClicked(TileView tileView)
 		{
 			Debug.Log(tileView.Tile);
 			var tile = tileView.Tile;
@@ -29,7 +30,7 @@ namespace Chess.View
 
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-				var (changedTiles, opponentInCheckList, hasGameEnded) = game.MovePiece(selectedTilePiece, tile.Position, PromotionSelection);
+				var (changedTiles, opponentInCheckList, hasGameEnded) = await game.MovePiece(selectedTilePiece, tile.Position, PromoteAsync);
 				chessBoardView.InjectTiles(changedTiles);
 				foreach (var t in opponentInCheckList)
 				{
@@ -67,9 +68,15 @@ namespace Chess.View
 			
 			playerAction = PlayerAction.MovePiece;
 			return;
-
-			PieceType PromotionSelection() => PieceType.Queen;
 		}
+
+		public static async Task<PieceType> PromoteAsync(TileWithPiece twp)
+		{
+			// Wait for the user to make a selection
+			await Task.Delay(1000); // This will block until the user makes a selection
+			return PieceType.Queen;
+		}
+		
 	}
 
 	public enum PlayerAction

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Chess
@@ -55,9 +56,9 @@ namespace Chess
 			return foundMoves.movePositions;
 		}
 		
-		public (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)> opponentsInCheck, bool hasGameEnded) MovePiece(TileWithPiece tile, Position position, Func<PieceType> promotionSelectionCb)
+		public async Task<(IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)> opponentsInCheck, bool hasGameEnded)>
+			MovePiece(TileWithPiece tile, Position position, Func<TileWithPiece, Task<PieceType>> promoteAsync)
 		{
-			// TODO: write a test and then refactor the fail handling.
 			if (PlayerIdToMove != tile.Piece.PlayerId)
 			{
 				throw new ApplicationException("Not the turn to move for this player.");
@@ -73,8 +74,10 @@ namespace Chess
 			
 			if (ShouldPromotionOccur(tile, rules))
 			{
-				var ret = WaitForPromotion(promotionSelectionCb);
-				Debug.Log("Waiting... ?");
+				var result = await promoteAsync(tile);
+				// bool wasSuccessful = result.success;
+				// string outcomeMessage = result.message;
+				Debug.Log(result);
 				// var promotedPiece = ChessBoard.PromotePiece(tile, promotionSelectionCb());
 				// return (changedTiles, new (Player, Tile checkTile)[] { }, false);
 			}
@@ -86,15 +89,15 @@ namespace Chess
 			return ProcessEndOfMove(tile, changedTiles);
 		}
 
-		private static IEnumerable<WaitUntil> WaitForPromotion(Func<PieceType> promotionSelectionCb)
-		{
-			yield return new WaitUntil(() => IsPromotionSelected(promotionSelectionCb));
-		}
-		
-		private static bool IsPromotionSelected(Func<PieceType> promotionSelectionCb)
-		{
-			return promotionSelectionCb != null;
-		}
+		// private static IEnumerable<WaitUntil> WaitForPromotion(Func<PieceType> promotionSelectionCb)
+		// {
+		// 	yield return new WaitUntil(() => IsPromotionSelected(promotionSelectionCb));
+		// }
+		//
+		// private static bool IsPromotionSelected(Func<PieceType> promotionSelectionCb)
+		// {
+		// 	return promotionSelectionCb != null;
+		// }
 
 		public static bool ShouldPromotionOccur(TileWithPiece twp, Rules rules)
 		{

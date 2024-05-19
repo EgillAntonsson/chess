@@ -4,27 +4,27 @@ namespace Chess
 {
 	public class Rules
 	{
-// 		public virtual string BoardAtStart => @"
-// R2 N2 B2 Q2 K2 B2 N2 R2
-// P2 P2 P2 P2 P2 P2 P2 P2
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// P1 P1 P1 P1 P1 P1 P1 P1
-// R1 N1 B1 Q1 K1 B1 N1 R1
-// ";
-
-public virtual string BoardAtStart => @"
--- -- -- -- K2 -- -- --
+		public virtual string BoardAtStart => @"
+R2 N2 B2 Q2 K2 B2 N2 R2
+P2 P2 P2 P2 P2 P2 P2 P2
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --
-P1 -- -- -- -- -- -- --
--- -- -- -- K1 -- -- --
+P1 P1 P1 P1 P1 P1 P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
 ";
+
+// public virtual string BoardAtStart => @"
+// -- -- -- -- K2 -- -- --
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// P1 -- -- -- -- -- -- --
+// -- -- -- -- K1 -- -- --
+// ";
 		
 		public virtual HashSet<EndConditionType> EndConditions => new() { EndConditionType.CheckMate };
 
