@@ -50,14 +50,13 @@ public class BoardTest
 		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
 			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
 
-		currentBoardFunc = BoardTileString.Notation_1_e4_c5;
-		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+		yield return new TestCaseData(pos, BoardTileString.Notation_1_e4_c5, playerIdToMove, expectedMoves).SetName(
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {nameof(BoardTileString.Notation_1_e4_c5)}");
 
 		pos = new Position(4, 3);
 		expectedMoves = new Position[] { new(4, 4) };
-		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {currentBoardFunc.Method.Name}");
+		yield return new TestCaseData(pos, BoardTileString.Notation_1_e4_c5, playerIdToMove, expectedMoves).SetName(
+			$"{nameof(Find_moves_on_board_for)} {PieceType.Pawn} on {pos} when {nameof(BoardTileString.Notation_1_e4_c5)}");
 
 		pos = new Position(4, 3);
 		currentBoardFunc = BoardTileString.Notation_1_e4_e5;
@@ -100,13 +99,12 @@ public class BoardTest
 
 		playerIdToMove = 1;
 		pos = new Position(4, 0);
-		currentBoardFunc = BoardTileString.Notation_1_e4_c5;
 		expectedMoves = new Position[]
 		{
 			new(4, 1),
 		};
-		yield return new TestCaseData(pos, currentBoardFunc(), playerIdToMove, expectedMoves).SetName(
-			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {currentBoardFunc.Method.Name}");
+		yield return new TestCaseData(pos, BoardTileString.Notation_1_e4_c5, playerIdToMove, expectedMoves).SetName(
+			$"{nameof(Find_moves_on_board_for)} {PieceType.King} on {pos} when {nameof(BoardTileString.Notation_1_e4_c5)}");
 	}
 
 	[TestCaseSource(nameof(FindMoveCases))]
@@ -188,9 +186,8 @@ public class BoardTest
 		const int playerId = 1;
 		var beforePos = new Position(4, 1);
 		var afterPos = new Position(4, 3);
-		Func<string> expectedBoardAfterMoveFunc = BoardTileString.Notation_1_e4;
-		yield return new TestCaseData(beforePos, afterPos, expectedBoardAfterMoveFunc(), playerId).SetName(
-			$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {expectedBoardAfterMoveFunc.Method.Name}");
+		yield return new TestCaseData(beforePos, afterPos, BoardTileString.Notation_1_e4, playerId).SetName(
+			$"{nameof(Move_piece_on_board)} Pawn from {beforePos} to {afterPos} with board after move being {nameof(BoardTileString.Notation_1_e4)}");
 	}
 
 	[TestCaseSource(nameof(MovePieceCases))]

@@ -70,11 +70,12 @@ namespace Chess
 					throw new ApplicationException("Move position for tile piece is not a valid move position");
 				}
 			}
-
-			var tileToMove = tile;
+			
 			if (ShouldPromotionOccur(tile, rules))
 			{
-				// tileToMove = new TileWithPiece(tile.Position, new Piece(promotionSelectionCb(), tile.Piece.PlayerId), tile.Position);
+				var ret = WaitForPromotion(promotionSelectionCb);
+				Debug.Log("Waiting... ?");
+				// var promotedPiece = ChessBoard.PromotePiece(tile, promotionSelectionCb());
 				// return (changedTiles, new (Player, Tile checkTile)[] { }, false);
 			}
 			
@@ -83,6 +84,16 @@ namespace Chess
 
 
 			return ProcessEndOfMove(tile, changedTiles);
+		}
+
+		private static IEnumerable<WaitUntil> WaitForPromotion(Func<PieceType> promotionSelectionCb)
+		{
+			yield return new WaitUntil(() => IsPromotionSelected(promotionSelectionCb));
+		}
+		
+		private static bool IsPromotionSelected(Func<PieceType> promotionSelectionCb)
+		{
+			return promotionSelectionCb != null;
 		}
 
 		public static bool ShouldPromotionOccur(TileWithPiece twp, Rules rules)
@@ -95,8 +106,8 @@ namespace Chess
 			var promotionPos = rules.PromotionPosition(twp.Piece.PlayerId);
 			return promotionPos.Axis switch
 			{
-				Position.Axis.Column => twp.Position.Column - promotionPos.Position.Column == twp.StartPosition.Column,
-				Position.Axis.Row => twp.Position.Row - promotionPos.Position.Row == twp.StartPosition.Row,
+				Position.Axis.Column => twp.Position.Column - twp.StartPosition.Column == promotionPos.AxisPositionToTravel,
+				Position.Axis.Row => twp.Position.Row - twp.StartPosition.Row == promotionPos.AxisPositionToTravel,
 				_ => throw new ArgumentOutOfRangeException(promotionPos.Axis.ToString(), "Must implement for the added Position.Axis")
 			};
 		}

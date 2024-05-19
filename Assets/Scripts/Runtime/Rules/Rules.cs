@@ -4,15 +4,26 @@ namespace Chess
 {
 	public class Rules
 	{
-		public virtual string BoardAtStart => @"
-R2 N2 B2 Q2 K2 B2 N2 R2
-P2 P2 P2 P2 P2 P2 P2 P2
+// 		public virtual string BoardAtStart => @"
+// R2 N2 B2 Q2 K2 B2 N2 R2
+// P2 P2 P2 P2 P2 P2 P2 P2
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// -- -- -- -- -- -- -- --
+// P1 P1 P1 P1 P1 P1 P1 P1
+// R1 N1 B1 Q1 K1 B1 N1 R1
+// ";
+
+public virtual string BoardAtStart => @"
+-- -- -- -- K2 -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
-P1 P1 P1 P1 P1 P1 P1 P1
-R1 N1 B1 Q1 K1 B1 N1 R1
+-- -- -- -- -- -- -- --
+P1 -- -- -- -- -- -- --
+-- -- -- -- K1 -- -- --
 ";
 		
 		public virtual HashSet<EndConditionType> EndConditions => new() { EndConditionType.CheckMate };
@@ -32,9 +43,10 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 		/// Can not be the same as Checkable Piece Type.
 		public virtual PieceType PromotionPieceType => PieceType.Pawn;
 
-		public virtual (Position Position, Position.Axis Axis) PromotionPosition(int playerId) {
-			var row = playerId == 1 ? 6 : -6;
-			return (new Position(0, row), Position.Axis.Row);
+		// The AxisPosition is 
+		public virtual (int AxisPositionToTravel, Position.Axis Axis) PromotionPosition(int playerId) {
+			var row = playerId == 1 ? 5 : -5;
+			return ( row, Position.Axis.Row);
 		}
 
 		public virtual IEnumerable<Move> MoveDefinitionByType(PieceType type, int playerId)

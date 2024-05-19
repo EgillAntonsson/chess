@@ -38,9 +38,11 @@ namespace Chess
 			return (boardTiles, tilesByPlayer);
 		}
 		
-		public void PromotePiece(TileWithPiece tile, PieceType toType)
+		public TileWithPiece PromotePiece(TileWithPiece tile, PieceType toType)
 		{
-			return;
+			var ret = Board.PromotePiece(tile, toType, boardTiles);
+			boardTiles = ret.tiles;
+			return ret.promotedTile;
 		}
 
 		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition, IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece)

@@ -1,11 +1,12 @@
+using System;
+
 /// <summary>
 /// Notation names are 1 based.
 /// </summary>
 public static class BoardTileString
 {
-	public static string Notation_1_e4()
-	{
-		return @"
+	/// Notation names are 1 based.
+	public const string Notation_1_e4 = @"
 R2 N2 B2 Q2 K2 B2 N2 R2
 P2 P2 P2 P2 P2 P2 P2 P2
 -- -- -- -- -- -- -- --
@@ -15,11 +16,9 @@ P2 P2 P2 P2 P2 P2 P2 P2
 P1 P1 P1 P1 -- P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
-	}
 
-	public static string Notation_1_e4_c5()
-	{
-		return @"
+	/// Notation names are 1 based.
+	public const string Notation_1_e4_c5 = @"
 R2 N2 B2 Q2 K2 B2 N2 R2
 P2 P2 -- P2 P2 P2 P2 P2
 -- -- -- -- -- -- -- --
@@ -29,8 +28,8 @@ P2 P2 -- P2 P2 P2 P2 P2
 P1 P1 P1 P1 -- P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
-	}
 
+	/// Notation names are 1 based.
 	public static string Notation_1_e4_e5()
 	{
 		return @"
