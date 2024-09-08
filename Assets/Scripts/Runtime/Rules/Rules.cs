@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Chess
 {
@@ -15,6 +16,7 @@ P1 P1 P1 P1 P1 P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 
+// For testing out promotion
 // public virtual string BoardAtStart => @"
 // -- -- -- -- K2 -- -- --
 // -- -- -- -- -- -- -- --
@@ -42,6 +44,8 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 		
 		/// Can not be the same as Checkable Piece Type.
 		public virtual PieceType PromotionPieceType => PieceType.Pawn;
+
+		[NotNull] public virtual PieceType[] PromotionChoices => new[] { PieceType.Queen, PieceType.Rook, PieceType.Bishop, PieceType.Knight };
 
 		// The AxisPosition is 
 		public virtual (int AxisPositionToTravel, Position.Axis Axis) PromotionPosition(int playerId) {

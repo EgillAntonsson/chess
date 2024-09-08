@@ -8,6 +8,7 @@ namespace Chess.View
 	public class GameController : MonoBehaviour
 	{
 		[SerializeField] private ChessBoardView chessBoardView;
+		[SerializeField] private PromotionSelectionView promotionSelectionView;
 
 		private Game game;
 		private Action deSelectFunc;
@@ -17,8 +18,10 @@ namespace Chess.View
 
 		private void Start()
 		{
-			game = new Game(new Rules());
+			var rules = new Rules();
+			game = new Game(rules);
 			chessBoardView.Create(game.Create(), OnTileClicked);
+			promotionSelectionView.Create(rules.PromotionChoices);
 		}
 
 		private async void OnTileClicked(TileView tileView)
@@ -30,7 +33,7 @@ namespace Chess.View
 
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-				var (changedTiles, opponentInCheckList, hasGameEnded) = await game.MovePiece(selectedTilePiece, tile.Position, PromoteAsync);
+				var (changedTiles, opponentInCheckList, hasGameEnded) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
 				chessBoardView.InjectTiles(changedTiles);
 				foreach (var t in opponentInCheckList)
 				{
@@ -67,16 +70,7 @@ namespace Chess.View
 			};
 			
 			playerAction = PlayerAction.MovePiece;
-			return;
 		}
-
-		public static async Task<PieceType> PromoteAsync(TileWithPiece twp)
-		{
-			// Wait for the user to make a selection
-			await Task.Delay(1000); // This will block until the user makes a selection
-			return PieceType.Queen;
-		}
-		
 	}
 
 	public enum PlayerAction

@@ -57,7 +57,7 @@ namespace Chess
 		}
 		
 		public async Task<(IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)> opponentsInCheck, bool hasGameEnded)>
-			MovePiece(TileWithPiece tile, Position position, Func<TileWithPiece, Task<PieceType>> promoteAsync)
+			MovePiece(TileWithPiece tile, Position position, Func<Task<PieceType>> promoteAsync)
 		{
 			if (PlayerIdToMove != tile.Piece.PlayerId)
 			{
@@ -74,30 +74,15 @@ namespace Chess
 			
 			if (ShouldPromotionOccur(tile, rules))
 			{
-				var result = await promoteAsync(tile);
-				// bool wasSuccessful = result.success;
-				// string outcomeMessage = result.message;
-				Debug.Log(result);
-				// var promotedPiece = ChessBoard.PromotePiece(tile, promotionSelectionCb());
-				// return (changedTiles, new (Player, Tile checkTile)[] { }, false);
+				var promotedType = await promoteAsync();
+				tile = ChessBoard.PromotePiece(tile, promotedType);
 			}
-			
-			var (movedTileWithPiece, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
-			players.First(p => p.Id == tile.Piece.PlayerId).LastMovedTilePiece = movedTileWithPiece;
 
+			var (movedTile, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
 
-			return ProcessEndOfMove(tile, changedTiles);
+			players.First(p => p.Id == tile.Piece.PlayerId).LastMovedTilePiece = movedTile;
+			return ProcessEndOfMove(changedTiles, movedTile.Piece.PlayerId);
 		}
-
-		// private static IEnumerable<WaitUntil> WaitForPromotion(Func<PieceType> promotionSelectionCb)
-		// {
-		// 	yield return new WaitUntil(() => IsPromotionSelected(promotionSelectionCb));
-		// }
-		//
-		// private static bool IsPromotionSelected(Func<PieceType> promotionSelectionCb)
-		// {
-		// 	return promotionSelectionCb != null;
-		// }
 
 		public static bool ShouldPromotionOccur(TileWithPiece twp, Rules rules)
 		{
@@ -115,9 +100,9 @@ namespace Chess
 			};
 		}
 
-		private (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)>, bool) ProcessEndOfMove(TileWithPiece tile, IEnumerable<Tile> changedTiles)
+		private (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)>, bool) ProcessEndOfMove(IEnumerable<Tile> changedTiles, int playerId)
 		{
-			var opponentsInCheck = players.Where(p => p.Id != tile.Piece.PlayerId).
+			var opponentsInCheck = players.Where(p => p.Id != playerId).
 				Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType));
 
 			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
