@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Chess.View
@@ -26,15 +25,16 @@ namespace Chess.View
 
 		private async void OnTileClicked(TileView tileView)
 		{
-			Debug.Log(tileView.Tile);
 			var tile = tileView.Tile;
 			
 			deSelectFunc?.Invoke();
 
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-				var (changedTiles, opponentInCheckList, hasGameEnded) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
+				var (changedTiles, opponentInCheckList, hasGameEnded, tileWithCheckablePiece) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
 				chessBoardView.InjectTiles(changedTiles);
+
+				chessBoardView.MarkTile(tileWithCheckablePiece.Position, TileMarkType.Normal);
 				foreach (var t in opponentInCheckList)
 				{
 					if (t.Item1.IsInCheckType != CheckType.NoCheck)

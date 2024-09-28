@@ -16,18 +16,6 @@ P1 P1 P1 P1 P1 P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 
-// For testing out promotion
-// public virtual string BoardAtStart => @"
-// -- -- -- -- K2 -- -- --
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// -- -- -- -- -- -- -- --
-// P1 -- -- -- -- -- -- --
-// -- -- -- -- K1 -- -- --
-// ";
-		
 		public virtual HashSet<EndConditionType> EndConditions => new() { EndConditionType.CheckMate };
 
 		public virtual int NumberOfPlayers => 2;
@@ -66,6 +54,7 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 				_ => new Move[]{}
 			};
 		}
+
 		protected virtual IEnumerable<Move> KnightMoves()
 		{
 			const MoveType moveType = MoveType.Basic;
@@ -143,7 +132,7 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
 			};
 		}
-		
+
 		protected virtual IEnumerable<Move> RookMoves()
 		{
 			const MoveType moveType = MoveType.Infinite;

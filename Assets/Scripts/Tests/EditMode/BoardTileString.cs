@@ -71,6 +71,33 @@ P1 P1 -- -- -- -- B1 P1
 R1 N1 -- -- K1 -- -- R1
 ";
 	}
+	public static string Quickwin_averted_player1_checked_but_can_move_pawn()
+	{
+		return @"
+R2 N2 B2 -- K2 B2 N2 R2
+P2 P2 P2 P2 -- P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- -- P2 -- -- --
+P1 -- -- -- -- -- -- Q2
+-- -- -- -- -- P1 -- --
+-- P1 P1 P1 P1 -- P1 P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
+
+	public static string Quickwin_blundered_as_player1_can_capture_Queen()
+	{
+		return @"
+R2 N2 B2 -- K2 B2 N2 R2
+P2 P2 P2 P2 -- P2 P2 P2
+-- -- -- -- -- -- -- --
+-- -- -- -- P2 -- -- --
+P1 -- -- -- -- -- -- --
+-- -- -- -- -- P1 Q2 --
+-- P1 P1 P1 P1 -- -- P1
+R1 N1 B1 Q1 K1 B1 N1 R1
+";
+	}
 
 	public static string Quickest_Win__Player2_To_Move()
 	{

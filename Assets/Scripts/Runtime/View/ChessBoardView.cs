@@ -25,7 +25,6 @@ namespace Chess.View
 					tileViewByPosition.Add(new Position(col, row), tileView);
 				}
 			}
-			
 		}
 		
 		public void InjectTiles(IEnumerable<Tile> tiles)

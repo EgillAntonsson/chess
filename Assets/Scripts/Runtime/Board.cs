@@ -4,20 +4,15 @@ using System.Linq;
 
 namespace Chess
 {
+	//TODO: Aim to remove passed in and returned playerPieces and opponentPieces into these methods, and instead use the proper functions to get these when needed.
 	public static class Board
 	{
 		public static (Tile[,] boardTiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
-			Create(string boardTiles, PieceType checkablePieceType, PieceType castlingPieceType)
-		{
-			return ConvertBoardStringToTiles(boardTiles, checkablePieceType, castlingPieceType);
-		}
-
-		private static (Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
-			ConvertBoardStringToTiles(string tiles, PieceType checkablePieceType, PieceType castlingPieceType)
+			Create(string tiles, PieceType checkablePieceType, PieceType castlingPieceType)
 		{
 			var tilesByPlayer = new Dictionary<int, List<TileWithPiece>>();
 			var tileByStartPos = new Dictionary<Position, TileWithPiece>();
-			var rows = tiles.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+			var rows = tiles.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 			var theTiles = new Tile[rows.Length, rows.Length];
 
 			for (var row = rows.Length - 1; row >= 0; row--)
@@ -74,6 +69,31 @@ namespace Chess
 			var tilesByPlayerRet = tilesByPlayer.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<TileWithPiece>)kvp.Value);
 
 			return (theTiles, tileByStartPos, tilesByPlayerRet);
+		}
+		
+		// If application code does not use this, then this should be removed.
+		public static IEnumerable<TileWithPiece> GetPlayerPieces(Tile[,] tiles, int playerId)
+		{
+			return tiles.Cast<Tile>()
+				.Where(t => t is TileWithPiece twp && twp.Piece.PlayerId == playerId)
+				.Select(t => t as TileWithPiece);
+		}
+
+		// If application code does not use this, then this should be removed.
+		public static IEnumerable<TileWithPiece> GetOpponentPieces(Tile[,] tiles, int playerId)
+		{
+			return tiles.Cast<Tile>()
+				.Where(t => t is TileWithPiece twp && twp.Piece.PlayerId != playerId)
+				.Select(t => t as TileWithPiece);
+		}
+
+		public static Dictionary<int, IEnumerable<TileWithPiece>> GetPiecesByPlayer(Tile[,] tiles)
+		{
+			return tiles
+				.Cast<Tile>()
+				.OfType<TileWithPiece>()
+				.GroupBy(t => t.Piece.PlayerId)
+				.ToDictionary(g => g.Key, g => g.AsEnumerable());
 		}
 
 		public static IEnumerable<Position> FindMovePositions(TileWithPiece tileWithPiece,
@@ -187,6 +207,7 @@ namespace Chess
 			var firstMove = twp.HasMoved == false;
 			var amt = twp with { Position = pos, HasMoved = true, FirstMove = firstMove};
 			tilesClone[pos.Column, pos.Row] = amt;
+
 			var tilesByPlayerAfterMove = playerTilePieces.Where(t => t != twp).Append(amt);
 			return (removedTile, amt, tilesClone, tilesByPlayerAfterMove);
 		}
@@ -198,7 +219,7 @@ namespace Chess
 			return (removedTile, tilesClone);
 		}
 
-		public static bool IsTilePieceInCheck(TileWithPiece checkableTilePiece,
+		private static bool IsTilePieceInCheck(TileWithPiece checkableTilePiece,
 				Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc,
 				IEnumerable<TileWithPiece> opponentTiles,
 				Tile[,] boardTiles,
@@ -216,17 +237,14 @@ namespace Chess
 			Dictionary<Position, TileWithPiece> tileByStartPos,
 			IEnumerable<TileWithPiece> playerTilePieces)
 		{
-			// TODO: try to remove the returning and passed in playerTilePiece into this class. The calling class should rather just cache and send the player pieces that are needed.
 			var oppTiles = opponentTiles as TileWithPiece[] ?? opponentTiles.ToArray();
 			var isTilePieceInCheck = IsTilePieceInCheck(checkableTilePiece, movesForPieceTypeFunc, oppTiles, boardTiles, tileByStartPos);
 
 			if (!isTilePieceInCheck) return CheckType.NoCheck;
-
-			const MoveCaptureFlag moveFilter = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
-			var movePoses = FindMovePositions(checkableTilePiece, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos, moveFilter);
-
-			var posesNotInCheck = movePoses.Where(pos => !IsInCheckAfterMove(checkableTilePiece, checkableTilePiece, pos, boardTiles, playerTilePieces, tileByStartPos, oppTiles, movesForPieceTypeFunc));
-			return posesNotInCheck.Any() ? CheckType.Check : CheckType.CheckMate;
+			
+			return (from twp in playerTilePieces let movePoses = FindMovePositions(twp, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos)
+				select movePoses.Where(pos => !IsInCheckAfterMove(checkableTilePiece, twp, pos, boardTiles, playerTilePieces, tileByStartPos, oppTiles, movesForPieceTypeFunc)))
+					.Any(posesNotInCheck => posesNotInCheck.Any()) ? CheckType.Check : CheckType.CheckMate;
 		}
 
 		public static bool IsInCheckAfterMove(TileWithPiece checkableTilePiece,
@@ -240,8 +258,9 @@ namespace Chess
 		{
 			var checkableIsMoved = moveTilePiece is TileWithCheckablePiece;
 			var movedTuple = MovePiece(moveTilePiece, pos, boardTiles, playerTilePieces);
+			var opponentTilesAfterMove = opponentTiles.Where(t => t.Position != pos);
 			
-			return IsTilePieceInCheck(checkableIsMoved ? movedTuple.afterMoveTile : checkableTilePiece, movesForPieceTypeFunc, opponentTiles, movedTuple.tilesAfterMove, tileByStartPos);
+			return IsTilePieceInCheck(checkableIsMoved ? movedTuple.afterMoveTile : checkableTilePiece, movesForPieceTypeFunc, opponentTilesAfterMove, movedTuple.tilesAfterMove, tileByStartPos);
 		}
 	}
 }

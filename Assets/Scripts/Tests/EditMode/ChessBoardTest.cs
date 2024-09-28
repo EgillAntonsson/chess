@@ -6,17 +6,6 @@ using NUnit.Framework;
 
 public class ChessBoardTest
 {
-	[Test]
-	public void create_and_validate_board()
-	{
-		var rules = new Rules();
-		var chessboard = new ChessBoard(rules);
-		var (tiles, tileByStartPos, tilesByPlayer) = chessboard.Create(rules.BoardAtStart);
-		var (success, errorMsg) = ChessBoard.ValidateBoard(tiles, tileByStartPos, tilesByPlayer);
-		Assert.That(success, Is.True);
-		Assert.That(errorMsg, Is.Empty);
-	}
-
 	public static IEnumerable<TestCaseData> Find_moves_for_all()
 	{
 		Func<string> currentBoardFunc = BoardTileString.Check_but_king_can_move_but_not_castle;
@@ -150,6 +139,25 @@ public class ChessBoardTest
 		var (movePositions, _, _) = chessboard.FindMoves(tileWithPiece, player, lastMoveOfOpponents);
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
+	}
+
+	[Test]
+	public void MovePiece_when_capturing()
+	{
+		var rules = new Rules();
+		var chessboard = new ChessBoard(rules);
+		chessboard.Create(rules.BoardAtStart);
+		var createRet = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Quickwin_blundered_as_player1_can_capture_Queen());
+		var player = new Player(1, CheckType.NoCheck);
+
+		// Can be empty as not the focus of this test.
+		var castlingTileDict = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
+		// Can be empty as not the focus of this test.
+		var inPassing = Enumerable.Empty<(Position inPassingCapturePos, TileWithPiece passedPiece)>();
+		
+		var moveRet = chessboard.MovePiece((TileWithPiece)createRet.Item1[7, 1], new Position(6, 2), castlingTileDict, inPassing);
+		
+		Assert.That(Board.GetPlayerPieces(moveRet.tiles, 2).Count(), Is.EqualTo(15));
 	}
 
 	[Test]

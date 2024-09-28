@@ -34,11 +34,6 @@ namespace Chess
 		public Tile[,] Create()
 		{
 			var (tiles, tbsp, tbp) = ChessBoard.Create(rules.BoardAtStart);
-			var (success, errorMessage) = ChessBoard.ValidateBoard(tiles, tbsp, tbp);
-			if (!success)
-			{
-				throw new ApplicationException(errorMessage);
-			}
 			return tiles;
 		}
 
@@ -56,7 +51,7 @@ namespace Chess
 			return foundMoves.movePositions;
 		}
 		
-		public async Task<(IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)> opponentsInCheck, bool hasGameEnded)>
+		public async Task<(IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)> opponentsInCheck, bool hasGameEnded, TileWithCheckablePiece tileWithCheckablePiece)>
 			MovePiece(TileWithPiece tile, Position position, Func<Task<PieceType>> promoteAsync)
 		{
 			if (PlayerIdToMove != tile.Piece.PlayerId)
@@ -81,7 +76,19 @@ namespace Chess
 			var (movedTile, changedTiles, _) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
 
 			players.First(p => p.Id == tile.Piece.PlayerId).LastMovedTilePiece = movedTile;
-			return ProcessEndOfMove(changedTiles, movedTile.Piece.PlayerId);
+			
+			// Process End Of Move
+			var playerId = movedTile.Piece.PlayerId;
+			var opponentsInCheck = players
+				.Where(p => p.Id != playerId)
+				.Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType));
+
+			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
+
+			players = UpdatePlayers(players, opponentsInCheck);
+			PlayerIdToMove = UpdatePlayerTurn(PlayerIdToMove, players);
+
+			return (changedTiles, opponentsInCheck, gameHasEnded, ChessBoard.GetCheckableTileWithPiece(playerId));
 		}
 
 		public static bool ShouldPromotionOccur(TileWithPiece twp, Rules rules)
@@ -96,21 +103,8 @@ namespace Chess
 			{
 				Position.Axis.Column => twp.Position.Column - twp.StartPosition.Column == promotionPos.AxisPositionToTravel,
 				Position.Axis.Row => twp.Position.Row - twp.StartPosition.Row == promotionPos.AxisPositionToTravel,
-				_ => throw new ArgumentOutOfRangeException(promotionPos.Axis.ToString(), "Must implement for the added Position.Axis")
+				_ => false
 			};
-		}
-
-		private (IEnumerable<Tile> changedTiles, IEnumerable<(Player, Tile checkTile)>, bool) ProcessEndOfMove(IEnumerable<Tile> changedTiles, int playerId)
-		{
-			var opponentsInCheck = players.Where(p => p.Id != playerId).
-				Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType));
-
-			var gameHasEnded = CheckIfGameHasEnded(opponentsInCheck, rules);
-
-			players = UpdatePlayers(players, opponentsInCheck);
-			PlayerIdToMove = UpdatePlayerTurn(PlayerIdToMove, players);
-
-			return (changedTiles, opponentsInCheck, gameHasEnded);
 		}
 
 		private static bool CheckIfGameHasEnded(IEnumerable<(Player, Tile checkTile)> opponentsInCheck, Rules rules)
