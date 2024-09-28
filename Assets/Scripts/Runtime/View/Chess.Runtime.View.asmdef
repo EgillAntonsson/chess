@@ -1,0 +1,19 @@
+{
+    "name": "Chess.Runtime.View",
+    "rootNamespace": "",
+    "references": [
+        "GUID:453908e39747538489f60956436c32b8"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WebGL"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
