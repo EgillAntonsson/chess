@@ -40,9 +40,9 @@ namespace Chess
 		}
 
 		public (IEnumerable<Position> movePositions, Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition, IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece)
-			FindMoves(TileWithPiece tileWithPiece, Player player, IEnumerable<TileWithPiece> lastMoveOfOpponents)
+			FindMoves(TileWithPiece tileWithPiece, CheckType playerCheckType, IEnumerable<TileWithPiece> lastMoveOfOpponents)
 		{
-			var playerId = player.Id;
+			var playerId = tileWithPiece.Piece.PlayerId;
 			var playerTilePs = tilesByPlayer[playerId];
 			var oppTilePs = GetOpponentTiles(tilesByPlayer, playerId);
 
@@ -53,7 +53,7 @@ namespace Chess
 			var pairsOfInPassingCapturePosAndPassedPiece = FindInPassingMove(tileWithPiece, lastMoveOfOpponents);
 			var inPassingCapturePositions = pairsOfInPassingCapturePosAndPassedPiece.Select(pair => pair.inPassingCapturePos);
 			
-			var castlingTileByCheckableTilePosition = FindCastlingMoves(tileWithPiece, player.IsInCheckType == CheckType.Check, playerTilePs, oppTilePs);
+			var castlingTileByCheckableTilePosition = FindCastlingMoves(tileWithPiece, playerCheckType == CheckType.Check, playerTilePs, oppTilePs);
 			
 			return (movePositions.Concat(castlingTileByCheckableTilePosition.Keys).Concat(inPassingCapturePositions), castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
 
@@ -175,13 +175,13 @@ namespace Chess
 			return (moveOutput.afterMoveTile, changedTiles, boardTiles);
 		}
 
-		public (Player player, Tile checkTile) IsPlayerInCheck(int playerId,
+		public (Player player, Position checkTilePos) IsPlayerInCheck(int playerId,
 			Func<PieceType, int, IEnumerable<Move>> movesForPieceTypeFunc)
 		{
 			var checkablePieceTile = GetCheckableTileWithPiece(playerId);
 			var opponentTiles = GetOpponentTiles(tilesByPlayer, playerId);
 			var checkType = Board.IsInCheck(checkablePieceTile, movesForPieceTypeFunc, opponentTiles, boardTiles, tileByStartPos, tilesByPlayer[playerId]);
-			return (new Player(playerId, checkType), checkablePieceTile);
+			return (new Player(playerId, checkType), checkablePieceTile.Position);
 		}
 
 		public TileWithCheckablePiece GetCheckableTileWithPiece(int playerId)

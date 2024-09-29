@@ -46,7 +46,7 @@ public class ChessBoardTest
 
 		foreach (var twp in tilesByPlayer[playerId])
 		{
-			var foundMoves = chessboard.FindMoves(twp, player, lastMoveOfOpponents);
+			var foundMoves = chessboard.FindMoves(twp, player.IsInCheckType, lastMoveOfOpponents);
 
 			// will default to empty positions
 			var expectedMoves = Enumerable.Empty<Position>();
@@ -136,7 +136,7 @@ public class ChessBoardTest
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
-		var (movePositions, _, _) = chessboard.FindMoves(tileWithPiece, player, lastMoveOfOpponents);
+		var (movePositions, _, _) = chessboard.FindMoves(tileWithPiece, player.IsInCheckType, lastMoveOfOpponents);
 
 		TestUtil.AssertArraysAreEqual(movePositions, expectedMoves);
 	}
@@ -187,7 +187,7 @@ public class ChessBoardTest
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 		// Find moves for the king
-		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
+		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
 
 		var expectedMoves = new Position[]
 		{
@@ -230,7 +230,7 @@ public class ChessBoardTest
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
 		// Find moves for the king
-		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
+		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
 
 		var expectedMoves = new Position[]
 		{
@@ -256,7 +256,7 @@ public class ChessBoardTest
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
-		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
+		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
 
 		var (movedTileWithPiece, changedTiles, _) =
 			chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
@@ -287,7 +287,7 @@ public class ChessBoardTest
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
-		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player, lastMoveOfOpponents);
+		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
 
 		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
 
@@ -320,7 +320,7 @@ public class ChessBoardTest
 
 		var lastMoveOfOpponents = new[] { movedTileWithPiece };
 		IEnumerable<Position> movePos = new List<Position>();
-		(movePos, _, pairsOfInPassingCapturePosAndPassedPiece) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player, lastMoveOfOpponents);
+		(movePos, _, pairsOfInPassingCapturePosAndPassedPiece) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player.IsInCheckType, lastMoveOfOpponents);
 
 		var expectedMovePos = new[] { new Position(3, 5), new Position(4, 5) };
 		TestUtil.AssertArraysAreEqual(movePos, expectedMovePos);

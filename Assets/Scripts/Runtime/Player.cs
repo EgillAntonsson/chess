@@ -4,10 +4,9 @@ namespace Chess
 	{
 		public int Id { get; }
 		public CheckType IsInCheckType { get; }
+		public TileWithPiece LastMovedTilePiece { get; internal set; }
 
-		internal TileWithPiece LastMovedTilePiece;
-
-		public Player(int id, CheckType isInCheckType)
+		public Player(int id, CheckType isInCheckType = CheckType.NoCheck)
 		{
 			Id = id;
 			IsInCheckType = isInCheckType;

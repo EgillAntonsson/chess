@@ -18,34 +18,44 @@ namespace Chess.View
 		private void Start()
 		{
 			var rules = new Rules();
-			game = new Game(rules);
+			var chessboard = new ChessBoard(rules);
+			game = new Game(rules, chessboard);
 			chessBoardView.Create(game.Create(), OnTileClicked);
 			promotionSelectionView.Create(rules.PromotionChoices);
 		}
 
 		private async void OnTileClicked(TileView tileView)
 		{
+			if (game.GameHasEnded || game.PromotionIsOccuring)
+			{
+				return;
+			}
 			var tile = tileView.Tile;
 			
 			deSelectFunc?.Invoke();
 
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
-				var (changedTiles, opponentInCheckList, hasGameEnded, tileWithCheckablePiece) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
+				var (changedTiles, playersWithCheckTile, playersEndResult) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
 				chessBoardView.InjectTiles(changedTiles);
-
-				chessBoardView.MarkTile(tileWithCheckablePiece.Position, TileMarkType.Normal);
-				foreach (var t in opponentInCheckList)
+				
+				foreach (var t in playersWithCheckTile)
 				{
-					if (t.Item1.IsInCheckType != CheckType.NoCheck)
-					{
-						chessBoardView.MarkTile(t.checkTile.Position, TileMarkType.Check);
-					}
+					chessBoardView.MarkTile(t.checkTilePos, TileMarkTypeUtil.ConvertFromCheckType(t.player.IsInCheckType));
 				}
 
-				if (hasGameEnded)
+				if (game.GameHasEnded)
 				{
-					Debug.Log("Game has ended");
+					Debug.Log("GAME HAS ENDED:");
+					foreach (var kvp in playersEndResult.Where(kvp => kvp.Value == Result.Win))
+					{
+						Debug.Log($"'{kvp.Key}' WON.");
+						return;
+					}
+					foreach (var kvp in playersEndResult.Where(kvp => kvp.Value == Result.Draw))
+					{
+						Debug.Log("IT'S A DRAW.");
+					}
 				}
 
 				playerAction = PlayerAction.SelectPiece;
@@ -57,15 +67,13 @@ namespace Chess.View
 				return;
 			}
 			
-			tileView.MarkTile(TileMarkType.Normal);
 			selectedTilePiece = twp;
 			
-			var vm = game.FindValidMoves(twp);
+			var vm = game.FindMovePositions(twp);
 			validMoves = vm as Position[] ?? vm.ToArray();
 			chessBoardView.MarkTiles(validMoves, TileMarkType.ValidMove);
 			deSelectFunc = () =>
 			{
-				tileView.MarkTile(TileMarkType.Normal);
 				chessBoardView.MarkTiles(validMoves, TileMarkType.Normal);
 			};
 			

@@ -16,7 +16,12 @@ P1 P1 P1 P1 P1 P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 
-		public virtual HashSet<EndConditionType> EndConditions => new() { EndConditionType.CheckMate };
+		public HashSet<EndCondition> EndConditions => new()
+		{
+			new EndCondition(EndConditionType.CheckMate, playerThatMovedResult: Result.Win),
+			new EndCondition(EndConditionType.StaleMate, playerThatMovedResult: Result.Draw)
+			
+		};
 
 		public virtual int NumberOfPlayers => 2;
 		public virtual int PlayerIdToStart => 1;
@@ -105,18 +110,17 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 		protected virtual IEnumerable<Move> KingMoves()
 		{
 			const MoveType moveType = MoveType.Basic;
-			const MoveConstraint moveConstraint = MoveConstraint.CanMoveIfNotThreatenedCapture;
 			const MoveCaptureFlag moveAndCaptureFlagSet = MoveCaptureFlag.Move | MoveCaptureFlag.Capture;
 			return new Move[]
 			{
-				new(new Position(0, 1), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(1, 1), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(1, 0), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(1, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(0, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet, moveConstraint),
-				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet, moveConstraint)
+				new(new Position(0, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 1), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(0, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, -1), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 0), moveType, moveAndCaptureFlagSet),
+				new(new Position(-1, 1), moveType, moveAndCaptureFlagSet)
 			};
 		}
 		

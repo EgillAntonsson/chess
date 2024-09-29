@@ -165,8 +165,7 @@ namespace Chess
 		{
 			var canMove = m.MoveCaptureFlag.HasFlag(MoveCaptureFlag.Move);
 			canMove = canMove && m.MoveConstraint is MoveConstraint.None
-				|| m.MoveConstraint is MoveConstraint.FirstMoveOnly && tileByStartPos.ContainsKey(tileWithPiece.Position) && tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type
-				|| m.MoveConstraint is MoveConstraint.CanMoveIfNotThreatenedCapture;
+				|| m.MoveConstraint is MoveConstraint.FirstMoveOnly && tileByStartPos.ContainsKey(tileWithPiece.Position) && tileByStartPos[tileWithPiece.Position].Piece.Type == tileWithPiece.Piece.Type;
 			return tileToMoveTo is not TileWithPiece && canMove;
 		}
 
