@@ -1,5 +1,3 @@
-using System;
-
 /// <summary>
 /// Notation names are 1 based.
 /// </summary>
@@ -71,6 +69,7 @@ P1 P1 -- -- -- -- B1 P1
 R1 N1 -- -- K1 -- -- R1
 ";
 	}
+
 	public static string Quickwin_averted_player1_checked_but_can_move_pawn()
 	{
 		return @"
@@ -182,7 +181,7 @@ P1 P1 -- -- -- P1 P1 P1
 R1 -- -- -- K1 B1 N1 R1
 ";
 	}
-	
+
 	public static string Can_not_castle_as_2nd_intra_move_would_be_checked()
 	{
 		return @"
@@ -196,7 +195,7 @@ P1 P1 -- -- -- P1 P1 P1
 R1 -- -- -- K1 B1 N1 R1
 ";
 	}
-	
+
 	public static string One_move_before_in_passing_capture()
 	{
 		return @"
@@ -210,7 +209,7 @@ P1 P1 P1 P1 -- P1 P1 P1
 R1 N1 B1 Q1 K1 B1 N1 R1
 ";
 	}
-	
+
 	public static string One_move_before_promotion()
 	{
 		return @"
@@ -224,6 +223,7 @@ P1 -- -- -- -- -- -- --
 -- -- -- -- K1 -- -- --
 ";
 	}
+
 	public static string Stalemate_player_2_can_not_move()
 	{
 		return @"
@@ -235,6 +235,20 @@ K2 -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- K1
+";
+	}
+
+	public static string Bishop_pinned_by_rook()
+	{
+		return @"
+K2 -- -- -- R2 -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- B1 -- -- --
+-- -- -- -- K1 -- -- --
 ";
 	}
 }

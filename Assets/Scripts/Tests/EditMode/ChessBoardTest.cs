@@ -305,6 +305,59 @@ public class ChessBoardTest
 	}
 
 	[Test]
+	public void Pinned_piece_has_no_legal_moves()
+	{
+		var rules = new Rules();
+		var chessboard = new ChessBoard(rules);
+		chessboard.Create(rules.BoardAtStart);
+		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Bishop_pinned_by_rook());
+		var player = new Player(1, CheckType.NoCheck);
+		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
+
+		var pinnedBishopPos = new Position(4, 1);
+		var (movePositions, _, _) = chessboard.FindMoves(
+			(TileWithPiece)tiles[pinnedBishopPos.Column, pinnedBishopPos.Row],
+			player.IsInCheckType,
+			lastMoveOfOpponents);
+
+		Assert.That(movePositions, Is.Empty);
+	}
+
+	[Test]
+	public void En_passant_not_available_after_one_turn_has_passed()
+	{
+		var rules = new Rules();
+		var chessboard = new ChessBoard(rules);
+		chessboard.Create(rules.BoardAtStart);
+		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.One_move_before_in_passing_capture());
+		var player1 = new Player(1, CheckType.NoCheck);
+		var castlingDict = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
+		var inPassing = Enumerable.Empty<(Position, TileWithPiece)>();
+
+		// P2 double-pushes pawn making en passant available for P1.
+		var (movedP2Pawn, _, ts2) = chessboard.MovePiece(
+			(TileWithPiece)tiles[3, 6], new Position(3, 4), castlingDict, inPassing);
+
+		// Confirm: en passant is immediately available.
+		var (movePosImmediate, _, _) = chessboard.FindMoves(
+			(TileWithPiece)ts2[4, 4], player1.IsInCheckType, new[] { movedP2Pawn });
+		Assert.That(movePosImmediate, Contains.Item(new Position(3, 5)));
+
+		// P1 does not take en passant — makes a different move.
+		var (_, _, ts3) = chessboard.MovePiece(
+			(TileWithPiece)ts2[0, 1], new Position(0, 2), castlingDict, inPassing);
+
+		// P2's next move is not a pawn double-push — en passant opportunity has expired.
+		var (movedP2Queen, _, ts4) = chessboard.MovePiece(
+			(TileWithPiece)ts3[3, 7], new Position(3, 6), castlingDict, inPassing);
+
+		// The P1 pawn can no longer capture en passant.
+		var (movePosAfterTurn, _, _) = chessboard.FindMoves(
+			(TileWithPiece)ts4[4, 4], player1.IsInCheckType, new[] { movedP2Queen });
+		Assert.That(movePosAfterTurn, Has.No.Member(new Position(3, 5)));
+	}
+
+	[Test]
 	public void Find_and_capture_pawn_in_passing()
 	{
 		var rules = new Rules();
