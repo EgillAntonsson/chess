@@ -1,0 +1,6 @@
+﻿<Solution>
+  <Project Path="Chess.Runtime.csproj" />
+  <Project Path="Chess.Test.EditMode.csproj" />
+  <Project Path="Chess.Runtime.View.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+</Solution>
