@@ -1,4 +1,4 @@
 namespace Chess
 {
-	public record PromotionAxis(int AxisPositionToTravel, Position.Axis Axis);
+	public readonly record struct PromotionAxis(int AxisPositionToTravel, Position.Axis Axis);
 }
