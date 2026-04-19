@@ -88,11 +88,10 @@ namespace Chess
 
 			var (movedTile, changedTiles, tiles) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
 
-			players.First(p => p.Id == playerIdThatIsMoving).LastMovedTilePiece = movedTile;
-			
 			// Process End Of Move
-			var playersWithCheckTilePos = players.Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType));
-			players = playersWithCheckTilePos.Select(p => p.player);
+			var playersWithCheckTilePos = players.Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType)).ToList();
+			players = playersWithCheckTilePos.Select(p => p.player).ToList();
+			players.First(p => p.Id == playerIdThatIsMoving).LastMovedTilePiece = movedTile;
 
 			var endConditionsResult = CheckEndConditions(playerIdThatIsMoving, players, rules.EndConditions, tiles);
 			if (endConditionsResult.gameHasEnded)

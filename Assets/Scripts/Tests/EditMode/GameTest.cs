@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Chess;
 using NUnit.Framework;
-using UnityEditor.Experimental.GraphView;
 
 public class GameTest
 {
@@ -48,6 +48,38 @@ public class GameTest
 		
 		playerIdToMove = Game.UpdatePlayerTurn(1, players);
 		Assert.That(playerIdToMove, Is.EqualTo(3));
+	}
+
+	[Test]
+	public async Task En_passant_capture_is_offered_after_opponent_double_push()
+	{
+		var rules = new Rules();
+		var chessBoard = new ChessBoard(rules);
+		var game = new Game(rules, chessBoard);
+		var tiles = game.Create();
+		// Promotion is not relevant to this test, so we can just return some valid piece type.
+		Task<PieceType> noPromotion() => Task.FromResult(PieceType.Queen);
+
+		TileWithPiece GetMovedTile(IEnumerable<Tile> changedTiles, Position to) =>
+			changedTiles.OfType<TileWithPiece>().First(t => t.Position == to);
+
+		// P1 double-pushes e-pawn to row 3.
+		var (changed1, _, _) = await game.MovePiece((TileWithPiece)tiles[4, 1], new Position(4, 3), noPromotion);
+		var p1Pawn = GetMovedTile(changed1, new Position(4, 3));
+
+		// P2 makes a filler move.
+		await game.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5), noPromotion);
+
+		// P1 advances e-pawn one step to row 4.
+		var (changed3, _, _) = await game.MovePiece(p1Pawn, new Position(4, 4), noPromotion);
+		var p1PawnAtRow4 = GetMovedTile(changed3, new Position(4, 4));
+
+		// P2 double-pushes d-pawn to row 4, landing adjacent to P1 pawn.
+		await game.MovePiece((TileWithPiece)tiles[3, 6], new Position(3, 4), noPromotion);
+
+		// P1 pawn should have en passant capture available.
+		var movePositions = game.FindMovePositions(p1PawnAtRow4);
+		Assert.That(movePositions, Contains.Item(new Position(3, 5)));
 	}
 
 	[Test]
