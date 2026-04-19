@@ -56,7 +56,7 @@ public class ChessBoardTest
 			}
 
 			var (areEqual, failMessage) = TestUtil.AreArraysEqual(foundMoves.movePositions, expectedMoves);
-			Assert.IsTrue(areEqual, $"For {twp}: {failMessage}");
+			Assert.That(areEqual, Is.True, $"For {twp}: {failMessage}");
 		}
 	}
 
@@ -367,7 +367,6 @@ public class ChessBoardTest
 		IEnumerable<InPassingMove> inPassingMoves = new List<InPassingMove>();
 		// P2 moves pawn into position so that P1 can capture it via In Passing rule
 		var (movedTileWithPiece, _, ts2) = chessboard.MovePiece((TileWithPiece)tiles[3, 6], new Position(3, 4), castlingMoves, inPassingMoves);
-		;
 
 		var lastMoveOfOpponents = new[] { movedTileWithPiece };
 		IEnumerable<Position> movePos = new List<Position>();
