@@ -18,8 +18,8 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 
 		public HashSet<EndCondition> EndConditions => new()
 		{
-			new EndCondition(EndConditionType.CheckMate, playerThatMovedResult: Result.Win),
-			new EndCondition(EndConditionType.StaleMate, playerThatMovedResult: Result.Draw)
+			new EndCondition(EndConditionType.CheckMate, Result.Win),
+			new EndCondition(EndConditionType.StaleMate, Result.Draw)
 			
 		};
 

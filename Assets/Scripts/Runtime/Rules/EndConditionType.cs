@@ -1,7 +1,3 @@
-
-using System;
-using Codice.Client.BaseCommands.BranchExplorer.Layout;
-
 namespace Chess
 {
 	public enum EndConditionType
@@ -17,29 +13,14 @@ namespace Chess
 		Loose = 2
 	}
 
-	public struct EndCondition
+	public readonly record struct EndCondition(EndConditionType Type, Result PlayerThatMovedResult)
 	{
-		public EndConditionType Type { get; }
-		public Result PlayerThatMovedResult { get; }
-
-		public EndCondition(EndConditionType type, Result playerThatMovedResult)
-		{
-			Type = type;
-			PlayerThatMovedResult = playerThatMovedResult;
-		}
-
-		public Result GetOpponentsResult()
-		{
-			switch (PlayerThatMovedResult)
+		public Result GetOpponentsResult() =>
+			PlayerThatMovedResult switch
 			{
-				case Result.Win:
-					return Result.Loose;
-				case Result.Draw:
-					return Result.Draw;
-				case Result.Loose:
-				default:
-					return Result.Draw;
-			}
-		}
+				Result.Win => Result.Loose,
+				Result.Draw => Result.Draw,
+				_ => Result.Draw
+			};
 	}
 }
