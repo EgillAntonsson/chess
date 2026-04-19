@@ -39,7 +39,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (_, tilesByPlayer) = chessboard.Create_ButNotUpdateStartPos(currentBoard);
+		var (_, tilesByPlayer) = chessboard.SetBoardState(currentBoard);
 		var player = new Player(playerId, CheckType.Check);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
@@ -131,7 +131,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		chessboard.Create_ButNotUpdateStartPos(currentBoard);
+		chessboard.SetBoardState(currentBoard);
 		var player = new Player(1, CheckType.NoCheck);
 		// can be empty for these tests
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
@@ -147,7 +147,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var createRet = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Quickwin_blundered_as_player1_can_capture_Queen());
+		var createRet = chessboard.SetBoardState(BoardTileString.Quickwin_blundered_as_player1_can_capture_Queen());
 		var player = new Player(1, CheckType.NoCheck);
 
 		// Can be empty as not the focus of this test.
@@ -166,7 +166,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Check_but_king_can_move_but_not_castle());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Check_but_king_can_move_but_not_castle());
 		// these two below values should not matter to this test.
 		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 		var inPassing = new List<(Position, TileWithPiece)>();
@@ -207,7 +207,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_on_both_sides());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Can_castle_on_both_sides());
 
 		// these two below values should not matter to this test.
 		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
@@ -250,7 +250,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_king_side());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Can_castle_king_side());
 		const int playerId = 1;
 		var player = new Player(playerId, CheckType.NoCheck);
 		// can be empty for these tests
@@ -281,7 +281,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Can_castle_queen_side());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Can_castle_queen_side());
 		const int playerId = 1;
 		var player = new Player(playerId, CheckType.NoCheck);
 		// can be empty for these tests
@@ -310,7 +310,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.Bishop_pinned_by_rook());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Bishop_pinned_by_rook());
 		var player = new Player(1, CheckType.NoCheck);
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
@@ -329,7 +329,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.One_move_before_in_passing_capture());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.One_move_before_in_passing_capture());
 		var player1 = new Player(1, CheckType.NoCheck);
 		var castlingDict = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 		var inPassing = Enumerable.Empty<(Position, TileWithPiece)>();
@@ -363,7 +363,7 @@ public class ChessBoardTest
 		var rules = new Rules();
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
-		var (tiles, _) = chessboard.Create_ButNotUpdateStartPos(BoardTileString.One_move_before_in_passing_capture());
+		var (tiles, _) = chessboard.SetBoardState(BoardTileString.One_move_before_in_passing_capture());
 		var player = new Player(id: 1, CheckType.NoCheck);
 		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
 		IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece = new List<(Position, TileWithPiece)>();

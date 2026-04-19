@@ -26,7 +26,7 @@ namespace Chess
 		}
 
 		internal (Tile[,],
-			Dictionary<int, IEnumerable<TileWithPiece>>) Create_ButNotUpdateStartPos(string tiles)
+			Dictionary<int, IEnumerable<TileWithPiece>>) SetBoardState(string tiles)
 		{
 			(boardTiles, _, tilesByPlayer) = Create(tiles);
 			return (boardTiles, tilesByPlayer);

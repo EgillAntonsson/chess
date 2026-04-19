@@ -105,7 +105,7 @@ public class GameTest
 		var rules = new Rules();
 		var chessBoard = new ChessBoard(rules);
 		chessBoard.Create(rules.BoardAtStart);
-		var retCreate = chessBoard.Create_ButNotUpdateStartPos(BoardTileString.Stalemate_player_2_can_not_move());
+		var retCreate = chessBoard.SetBoardState(BoardTileString.Stalemate_player_2_can_not_move());
 		var game = new Game(rules, chessBoard);
 		var opponentsInCheck = new List<Player>();
 		opponentsInCheck.Add(new Player(2));
