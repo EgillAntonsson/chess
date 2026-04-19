@@ -83,6 +83,53 @@ public class GameTest
 	}
 
 	[Test]
+	public async Task Pawn_promotes_to_chosen_piece_type_when_reaching_promotion_row()
+	{
+		var rules = new Rules();
+		var chessBoard = new ChessBoard(rules);
+		var game = new Game(rules, chessBoard);
+		var tiles = game.Create();
+		Task<PieceType> promoteToQueen() => Task.FromResult(PieceType.Queen);
+
+		TileWithPiece GetMovedTile(IEnumerable<Tile> changedTiles, Position to) =>
+			changedTiles.OfType<TileWithPiece>().First(t => t.Position == to);
+
+		// P1 a-pawn double-pushes to row three.
+		var (zeroThree, _, _) = await game.MovePiece((TileWithPiece)tiles[0, 1], new Position(0, 3), promoteToQueen);
+		var p1Pawn = GetMovedTile(zeroThree, new Position(0, 3));
+
+		// P2 filler.
+		await game.MovePiece((TileWithPiece)tiles[7, 6], new Position(7, 5), promoteToQueen);
+
+		// P1 pawn advances to row four.
+		var (zeroFour, _, _) = await game.MovePiece(p1Pawn, new Position(0, 4), promoteToQueen);
+		p1Pawn = GetMovedTile(zeroFour, new Position(0, 4));
+
+		// P2 filler.
+		await game.MovePiece((TileWithPiece)tiles[6, 6], new Position(6, 5), promoteToQueen);
+
+		// P1 pawn advances to row five.
+		var (zeroFive, _, _) = await game.MovePiece(p1Pawn, new Position(0, 5), promoteToQueen);
+		p1Pawn = GetMovedTile(zeroFive, new Position(0, 5));
+
+		// P2 filler.
+		await game.MovePiece((TileWithPiece)tiles[5, 6], new Position(5, 5), promoteToQueen);
+
+		// P1 pawn captures diagonally, reaching the second last row.
+		var (oneSix, _, _) = await game.MovePiece(p1Pawn, new Position(1, 6), promoteToQueen);
+		p1Pawn = GetMovedTile(oneSix, new Position(1, 6));
+
+		// P2 filler.
+		await game.MovePiece((TileWithPiece)tiles[4, 6], new Position(4, 5), promoteToQueen);
+
+		// P1 pawn's next move triggers promotion.
+		var (zeroSeven, _, _) = await game.MovePiece(p1Pawn, new Position(0, 7), promoteToQueen);
+		var promotedTile = GetMovedTile(zeroSeven, new Position(0, 7));
+
+		Assert.That(promotedTile.Piece.Type, Is.EqualTo(PieceType.Queen));
+	}
+
+	[Test]
 	public void CheckEndConditions_results_in_checkmate()
 	{
 		var rules = new Rules();
