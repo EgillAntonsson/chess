@@ -41,9 +41,10 @@ R1 N1 B1 Q1 K1 B1 N1 R1
 		[NotNull] public virtual PieceType[] PromotionChoices => new[] { PieceType.Queen, PieceType.Rook, PieceType.Bishop, PieceType.Knight };
 
 		// The AxisPosition is 
-		public virtual (int AxisPositionToTravel, Position.Axis Axis) PromotionPosition(int playerId) {
+		public virtual PromotionAxis PromotionPosition(int playerId)
+		{
 			var row = playerId == 1 ? 5 : -5;
-			return ( row, Position.Axis.Row);
+			return new PromotionAxis(row, Position.Axis.Row);
 		}
 
 		public virtual IEnumerable<Move> MoveDefinitionByType(PieceType type, int playerId)

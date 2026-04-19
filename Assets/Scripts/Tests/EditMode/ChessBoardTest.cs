@@ -148,15 +148,13 @@ public class ChessBoardTest
 		var chessboard = new ChessBoard(rules);
 		chessboard.Create(rules.BoardAtStart);
 		var createRet = chessboard.SetBoardState(BoardTileString.Quickwin_blundered_as_player1_can_capture_Queen());
-		var player = new Player(1, CheckType.NoCheck);
 
 		// Can be empty as not the focus of this test.
-		var castlingTileDict = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		// Can be empty as not the focus of this test.
-		var inPassing = Enumerable.Empty<(Position inPassingCapturePos, TileWithPiece passedPiece)>();
-		
-		var moveRet = chessboard.MovePiece((TileWithPiece)createRet.Item1[7, 1], new Position(6, 2), castlingTileDict, inPassing);
-		
+		var castlingMoves = new Dictionary<Position, CastlingMove>();
+		var inPassing = Enumerable.Empty<InPassingMove>();
+
+		var moveRet = chessboard.MovePiece((TileWithPiece)createRet.Item1[7, 1], new Position(6, 2), castlingMoves, inPassing);
+
 		Assert.That(Board.GetPlayerPieces(moveRet.tiles, 2).Count(), Is.EqualTo(15));
 	}
 
@@ -168,23 +166,23 @@ public class ChessBoardTest
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Check_but_king_can_move_but_not_castle());
 		// these two below values should not matter to this test.
-		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		var inPassing = new List<(Position, TileWithPiece)>();
-		
+		var castlingMoves = new Dictionary<Position, CastlingMove>();
+		var inPassingMoves = new List<InPassingMove>();
+
 		// Move the king
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(5, 0), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(5, 0), castlingMoves, inPassingMoves);
 
 		// The opponent moves bishop in front of his\her queen .
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[2, 7], new Position(4, 5), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[2, 7], new Position(4, 5), castlingMoves, inPassingMoves);
 
 		// king moves back to his start position, as the opponent's bishop is in between the queen now.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[5, 0], new Position(4, 0), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[5, 0], new Position(4, 0), castlingMoves, inPassingMoves);
 
 		// The opponent does a move that has no impact on what is being tested.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 6], new Position(0, 5), castlingMoves, inPassingMoves);
 
 		var player = new Player(1, CheckType.NoCheck);
-		// can be empty for these tests
+		// can be empty for this test.
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 		// Find moves for the king
 		var (movePositions, _, _) = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
@@ -210,20 +208,20 @@ public class ChessBoardTest
 		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Can_castle_on_both_sides());
 
 		// these two below values should not matter to this test.
-		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		var inPassing = new List<(Position, TileWithPiece)>();
+		var castlingMoves = new Dictionary<Position, CastlingMove>();
+		var inPassingMoves = new List<InPassingMove>();
 
 		// P1 moves the left rook
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 0], new Position(1, 0), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 0], new Position(1, 0), castlingMoves, inPassingMoves);
 
 		// P2 does a move that has no impact on what is being tested.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 5], new Position(0, 4), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 5], new Position(0, 4), castlingMoves, inPassingMoves);
 
 		// P1 moves the left rook back to start pos
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[1, 0], new Position(0, 0), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[1, 0], new Position(0, 0), castlingMoves, inPassingMoves);
 
 		// P2 does a move that has no impact on what is being tested.
-		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 4], new Position(0, 3), castlingTileByCheckableTilePosition, inPassing);
+		(_, _, tiles) = chessboard.MovePiece((TileWithPiece)tiles[0, 4], new Position(0, 3), castlingMoves, inPassingMoves);
 
 		var player = new Player(1, CheckType.NoCheck);
 		// can be empty for these tests
@@ -259,7 +257,7 @@ public class ChessBoardTest
 		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
 
 		var (movedTileWithPiece, changedTiles, _) =
-			chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
+			chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(6, 0), foundMoves.castlingMoves, foundMoves.inPassingMoves);
 
 		// create first with StartingPosition and then create a new with the updated Position (but StartingPosition the same.
 		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, playerId), true, true) { Position = new Position(6, 0) };
@@ -284,12 +282,12 @@ public class ChessBoardTest
 		var (tiles, _) = chessboard.SetBoardState(BoardTileString.Can_castle_queen_side());
 		const int playerId = 1;
 		var player = new Player(playerId, CheckType.NoCheck);
-		// can be empty for these tests
+		// Can be empty for this test.
 		var lastMoveOfOpponents = Enumerable.Empty<TileWithPiece>();
 
 		var foundMoves = chessboard.FindMoves((TileWithPiece)tiles[4, 0], player.IsInCheckType, lastMoveOfOpponents);
 
-		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingTileByCheckableTilePosition, foundMoves.pairsOfInPassingCapturePosAndPassedPiece);
+		var (movedTileWithPiece, changedTiles, _) = chessboard.MovePiece((TileWithPiece)tiles[4, 0], new Position(2, 0), foundMoves.castlingMoves, foundMoves.inPassingMoves);
 
 		var expectedMovedTileWithPiece = new TileWithCheckablePiece(new Position(4, 0), new Piece(PieceType.King, playerId), true, true) { Position = new Position(2, 0)};
 		var expectedChangedTiles = new Tile[]
@@ -331,12 +329,12 @@ public class ChessBoardTest
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.SetBoardState(BoardTileString.One_move_before_in_passing_capture());
 		var player1 = new Player(1, CheckType.NoCheck);
-		var castlingDict = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		var inPassing = Enumerable.Empty<(Position, TileWithPiece)>();
+		var castlingMoves = new Dictionary<Position, CastlingMove>();
+		var inPassingMoves = Enumerable.Empty<InPassingMove>();
 
 		// P2 double-pushes pawn making en passant available for P1.
 		var (movedP2Pawn, _, ts2) = chessboard.MovePiece(
-			(TileWithPiece)tiles[3, 6], new Position(3, 4), castlingDict, inPassing);
+			(TileWithPiece)tiles[3, 6], new Position(3, 4), castlingMoves, inPassingMoves);
 
 		// Confirm: en passant is immediately available.
 		var (movePosImmediate, _, _) = chessboard.FindMoves(
@@ -345,11 +343,11 @@ public class ChessBoardTest
 
 		// P1 does not take en passant — makes a different move.
 		var (_, _, ts3) = chessboard.MovePiece(
-			(TileWithPiece)ts2[0, 1], new Position(0, 2), castlingDict, inPassing);
+			(TileWithPiece)ts2[0, 1], new Position(0, 2), castlingMoves, inPassingMoves);
 
 		// P2's next move is not a pawn double-push — en passant opportunity has expired.
 		var (movedP2Queen, _, ts4) = chessboard.MovePiece(
-			(TileWithPiece)ts3[3, 7], new Position(3, 6), castlingDict, inPassing);
+			(TileWithPiece)ts3[3, 7], new Position(3, 6), castlingMoves, inPassingMoves);
 
 		// The P1 pawn can no longer capture en passant.
 		var (movePosAfterTurn, _, _) = chessboard.FindMoves(
@@ -365,21 +363,21 @@ public class ChessBoardTest
 		chessboard.Create(rules.BoardAtStart);
 		var (tiles, _) = chessboard.SetBoardState(BoardTileString.One_move_before_in_passing_capture());
 		var player = new Player(id: 1, CheckType.NoCheck);
-		var castlingTileByCheckableTilePosition = new Dictionary<Position, (TileWithCastlingPiece, Position)>();
-		IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece = new List<(Position, TileWithPiece)>();
+		var castlingMoves = new Dictionary<Position, CastlingMove>();
+		IEnumerable<InPassingMove> inPassingMoves = new List<InPassingMove>();
 		// P2 moves pawn into position so that P1 can capture it via In Passing rule
-		var (movedTileWithPiece, _, ts2) = chessboard.MovePiece((TileWithPiece)tiles[3, 6], new Position(3, 4), castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
+		var (movedTileWithPiece, _, ts2) = chessboard.MovePiece((TileWithPiece)tiles[3, 6], new Position(3, 4), castlingMoves, inPassingMoves);
 		;
 
 		var lastMoveOfOpponents = new[] { movedTileWithPiece };
 		IEnumerable<Position> movePos = new List<Position>();
-		(movePos, _, pairsOfInPassingCapturePosAndPassedPiece) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player.IsInCheckType, lastMoveOfOpponents);
+		(movePos, _, inPassingMoves) = chessboard.FindMoves((TileWithPiece)ts2[4, 4], player.IsInCheckType, lastMoveOfOpponents);
 
 		var expectedMovePos = new[] { new Position(3, 5), new Position(4, 5) };
 		TestUtil.AssertArraysAreEqual(movePos, expectedMovePos);
 
 
-		var (movedTileWithPiece2, changedTiles, ts3) = chessboard.MovePiece((TileWithPiece)tiles[4, 4], new Position(3, 5), castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
+		var (movedTileWithPiece2, changedTiles, ts3) = chessboard.MovePiece((TileWithPiece)tiles[4, 4], new Position(3, 5), castlingMoves, inPassingMoves);
 
 		Assert.That(ts3[3, 5], Is.EqualTo(movedTileWithPiece2));
 		Assert.That(movedTileWithPiece2.Piece, Is.EqualTo(new Piece(PieceType.Pawn, player.Id)));
