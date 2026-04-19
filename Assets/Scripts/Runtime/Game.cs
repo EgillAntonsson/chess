@@ -129,7 +129,7 @@ namespace Chess
 		{
 			var playerEndResults = new Dictionary<int, Result>();
 			var opponents = players.Where(p => p.Id != playerIdThatIsMoving);
-			if (endConditions.Select(ec => ec.Type).Contains(EndConditionType.CheckMate)
+			if (endConditions.Any(ec => ec.Type == EndConditionType.CheckMate)
 				&& opponents.All(oppInCheck => oppInCheck.IsInCheckType == CheckType.CheckMate))
 			{
 				var ec = endConditions.First(ec => ec.Type == EndConditionType.CheckMate);
@@ -141,7 +141,7 @@ namespace Chess
 				return (true, playerEndResults);
 			}
 			
-			if (endConditions.Select(ec => ec.Type).Contains(EndConditionType.StaleMate))
+			if (endConditions.Any(ec => ec.Type == EndConditionType.StaleMate))
 			{
 				var wouldBeNextPlayer = UpdatePlayerTurn(playerIdThatIsMoving, players);
 				var playerPieces = Board.GetPlayerPieces(tiles, wouldBeNextPlayer);
@@ -151,7 +151,7 @@ namespace Chess
 					movesPositions.AddRange(FindMovePositions(pp));
 				}
 
-				if (movesPositions.Count() == 0)
+				if (!movesPositions.Any())
 				{
 					var ec = endConditions.First(ec => ec.Type == EndConditionType.StaleMate);
 					foreach (var opp in opponents)

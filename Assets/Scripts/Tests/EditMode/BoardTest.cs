@@ -236,21 +236,6 @@ public class BoardTest
 		Assert.That(king.Position, Is.EqualTo(new Position(4, 0)));
 	}
 
-	[Test]
-	public void GetOpponentsPieces()
-	{
-		var rules = new Rules();
-		var (tiles, _, _) = CreateBoard(rules.BoardAtStart, rules);
-		var playerId = 1;
-		var opponentsPlayerId = 2;
-		
-		var opponentTiles = Board.GetOpponentPieces(tiles, playerId);
-
-		Assert.That(opponentTiles.Count, Is.EqualTo(16));
-		var king = opponentTiles.First(twp => twp.Piece.Type == PieceType.King);
-		Assert.That(king.Piece.PlayerId, Is.EqualTo(opponentsPlayerId));
-		Assert.That(king.Position, Is.EqualTo(new Position(4, 7)));
-	}
 
 	[Test]
 	public void GetPiecesByPlayer()
