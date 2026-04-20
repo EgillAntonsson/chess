@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/EgillAntonsson/chess/actions/workflows/test.yml/badge.svg)](https://github.com/EgillAntonsson/chess/actions/workflows/test.yml)
 
-A chess engine built in C# for Unity. The codebase demonstrates testability-first design, clean separation of concerns, and automated test infrastructure using the Unity Test Runner.
+A chess engine built in C# 10 for Unity 6. The codebase demonstrates testability-first design, clean separation of concerns, and automated test infrastructure using the Unity Test Runner.
 
 ![tests pass, not all shown](~Documentation/Images/TestRunner.png)
 
@@ -17,9 +17,9 @@ graph TD
     View -->|depends on| Domain
     Tests -->|depends on| Domain
 
-    style Domain fill:#4a7c59,stroke:#333,color:#fff
-    style View fill:#4a6a8a,stroke:#333,color:#fff
-    style Tests fill:#8a6a4a,stroke:#333,color:#fff
+    style Domain fill:#4a6a8a,stroke:#333,color:#fff
+    style View fill:#8a6a4a,stroke:#333,color:#fff
+    style Tests fill:#4a7c59,stroke:#333,color:#fff
 ```
 
 Each box is a separate [Assembly Definition](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html). `Chess.Runtime` has **zero** assembly references — it contains only pure C# domain logic with no dependency on the View. The View references the Domain but never the other way around, and the compiler enforces this: adding an upward reference is a build error, not a code-review comment.
@@ -50,6 +50,9 @@ The Tile hierarchy (`Tile` -> `TileWithPiece` -> `TileWithCastlingPiece` -> `Til
 ## Testing
 
 ### Test-driven development
+
+![Code Coverage Report: Coverage](~Documentation/Images/tdd-red-green-refactor.svg)
+
 Development followed a TDD cycle: write a failing test, implement just enough to make it pass, then refactor. Exploratory play sessions supplemented the cycle — playing the game surfaced edge cases and missing rules that became the next failing test. Once a feature's tests were green and play sessions no longer revealed issues, the feature was considered complete. The high test coverage is a natural outcome of this workflow, not a target that was chased — the coverage report was generated at the end as confirmation, not as a goal.
 
 ### Three-layer test architecture
@@ -100,12 +103,11 @@ In the web browser, you can click to drill down to a specific method and see the
 In priority order:
 
 1. **Game-over UI** — currently the end state (win/draw) is only logged to the console. A proper UI overlay would complete the gameplay loop visually.
-2. **CI green build** — the GitHub Actions workflow is in place; activating a Unity Personal license and adding the secrets will make tests run automatically on every push.
-3. **2D view with toggle** — implement a 2D board view and let the user switch between 3D and 2D at runtime. Because the domain layer has no dependency on the View (enforced by assembly definitions), this is a new View implementation wired to the same `ChessBoard` — no game logic changes required.
-4. **Visual polish** — flatten the tile highlight cube so it reads as a surface highlight rather than a 3D object, and improve the promotion selection UI.
-5. **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
-6. **Migrate legacy UI.Text to TextMeshPro** — four UI text components still use the deprecated `UnityEngine.UI.Text`. Replacing them with `TextMeshProUGUI` would complete the TMP migration.
-7. **AI opponent** — implement a computer player, starting with a basic evaluation function (material count, piece position) and minimax search, then iterating toward alpha-beta pruning and more sophisticated heuristics. This could mean increasing evaluations to thousands per frame and would include benchmarking performance and evaluating whether to move from the current clone-on-write board design to renting arrays from `ArrayPool<Tile>.Shared` or `Span<T>` over a `stackalloc` buffer. Because the board cloning is an implementation detail behind `Board`'s pure-function API, changing it would not require any test changes.
+2. **2D view with toggle** — implement a 2D board view and let the user switch between 3D and 2D at runtime. Because the domain layer has no dependency on the View (enforced by assembly definitions), this is a new View implementation wired to the same `ChessBoard` — no game logic changes required.
+3. **Visual polish** — flatten the tile highlight cube so it reads as a surface highlight rather than a 3D object, and improve the promotion selection UI.
+4. **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
+5. **Migrate legacy UI.Text to TextMeshPro** — four UI text components still use the deprecated `UnityEngine.UI.Text`. Replacing them with `TextMeshProUGUI` would complete the TMP migration.
+6. **AI opponent** — implement a computer player, starting with a basic evaluation function (material count, piece position) and minimax search, then iterating toward alpha-beta pruning and more sophisticated heuristics. This could mean increasing evaluations to thousands per frame and would include benchmarking performance and evaluating whether to move from the current clone-on-write board design to renting arrays from `ArrayPool<Tile>.Shared` or `Span<T>` over a `stackalloc` buffer. Because the board cloning is an implementation detail behind `Board`'s pure-function API, changing it would not require any test changes.
 
 ## Detailed images
 
