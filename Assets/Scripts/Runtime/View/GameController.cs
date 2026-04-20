@@ -64,16 +64,19 @@ namespace Chess.View
 
 			if (tile is not TileWithPiece twp || twp.Piece.PlayerId != game.PlayerIdToMove)
 			{
+				playerAction = PlayerAction.SelectPiece;
 				return;
 			}
 			
 			selectedTilePiece = twp;
-			
+
 			var vm = game.FindMovePositions(twp);
 			validMoves = vm as Position[] ?? vm.ToArray();
+			chessBoardView.MarkTile(twp.Position, TileMarkType.Selected);
 			chessBoardView.MarkTiles(validMoves, TileMarkType.ValidMove);
 			deSelectFunc = () =>
 			{
+				chessBoardView.MarkTile(twp.Position, TileMarkType.Normal);
 				chessBoardView.MarkTiles(validMoves, TileMarkType.Normal);
 			};
 			
