@@ -22,7 +22,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: .
-          unityVersion: 6000.4.3f1
+          unityVersion: 6000.4.2f1
           testMode: editmode
           artifactsPath: test-results
           githubToken: ${{ secrets.GITHUB_TOKEN }}
