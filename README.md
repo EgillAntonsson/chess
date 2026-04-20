@@ -69,6 +69,16 @@ In the web browser, you can click to drill down to a specific method and see the
 
 ![Code Coverage Report: Tile drilldown](~Documentation/Images/CoverageReport_tile.png)
 
+## Next steps
+
+In priority order:
+
+1. **Game-over UI** — currently the end state (win/draw) is only logged to the console. A proper UI overlay would complete the gameplay loop visually.
+2. **CI green build** — the GitHub Actions workflow is in place but requires a paid Unity license to configure the secrets. Once activated, tests run automatically on every push.
+3. **Visual polish** — flatten the tile highlight cube so it reads as a surface highlight rather than a 3D object, and improve the promotion selection UI.
+4. **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
+5. **Migrate legacy UI.Text to TextMeshPro** — four UI text components still use the deprecated `UnityEngine.UI.Text`. Replacing them with `TextMeshProUGUI` would complete the TMP migration.
+
 ## Detailed images
 
 Full test suite and coverage report detail:
