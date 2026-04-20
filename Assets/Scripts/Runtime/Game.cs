@@ -12,8 +12,8 @@ namespace Chess
 		private ChessBoard ChessBoard { get; }
 		public int PlayerIdToMove { get; private set; }
 		private TileWithPiece foundMovesForTile;
-		private Dictionary<Position, (TileWithCastlingPiece, Position)> castlingTileByCheckableTilePosition;
-		private IEnumerable<(Position, TileWithPiece)> pairsOfInPassingCapturePosAndPassedPiece;
+		private Dictionary<Position, CastlingMove> castlingMoves;
+		private IEnumerable<InPassingMove> inPassingMoves;
 		public bool GameHasEnded { get; private set; }
 		public bool PromotionIsOccuring { get; private set; }
 
@@ -29,7 +29,7 @@ namespace Chess
 				players = players.Append(new Player(i));
 			}
 		}
-		
+
 		public Tile[,] Create()
 		{
 			var (tiles, tbsp, tbp) = ChessBoard.Create(rules.BoardAtStart);
@@ -49,11 +49,11 @@ namespace Chess
 				.Where(twp => twp != null);
 			var foundMoves = ChessBoard.FindMoves(tile, player.IsInCheckType, lastMoveOfOpponents);
 			foundMovesForTile = tile;
-			castlingTileByCheckableTilePosition = foundMoves.castlingTileByCheckableTilePosition;
-			pairsOfInPassingCapturePosAndPassedPiece = foundMoves.pairsOfInPassingCapturePosAndPassedPiece;
+			castlingMoves = foundMoves.castlingMoves;
+			inPassingMoves = foundMoves.inPassingMoves;
 			return foundMoves.movePositions;
 		}
-		
+
 		public async Task<(IEnumerable<Tile> changedTiles, IEnumerable<(Player player, Position checkTilePos)> playersWithCheckTilePos, Dictionary<int, Result> playersEndResult)>
 			MovePiece(TileWithPiece tile, Position position, Func<Task<PieceType>> promoteAsync)
 		{
@@ -77,7 +77,7 @@ namespace Chess
 					return retWhenInvalid;
 				}
 			}
-			
+
 			if (ShouldPromotionOccur(tile, rules))
 			{
 				PromotionIsOccuring = true;
@@ -86,13 +86,12 @@ namespace Chess
 				PromotionIsOccuring = false;
 			}
 
-			var (movedTile, changedTiles, tiles) = ChessBoard.MovePiece(tile, position, castlingTileByCheckableTilePosition, pairsOfInPassingCapturePosAndPassedPiece);
+			var (movedTile, changedTiles, tiles) = ChessBoard.MovePiece(tile, position, castlingMoves, inPassingMoves);
 
-			players.First(p => p.Id == playerIdThatIsMoving).LastMovedTilePiece = movedTile;
-			
 			// Process End Of Move
-			var playersWithCheckTilePos = players.Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType));
-			players = playersWithCheckTilePos.Select(p => p.player);
+			var playersWithCheckTilePos = players.Select(p => ChessBoard.IsPlayerInCheck(p.Id, rules.MoveDefinitionByType)).ToList();
+			players = playersWithCheckTilePos.Select(p => p.player).ToList();
+			players.First(p => p.Id == playerIdThatIsMoving).LastMovedTilePiece = movedTile;
 
 			var endConditionsResult = CheckEndConditions(playerIdThatIsMoving, players, rules.EndConditions, tiles);
 			if (endConditionsResult.gameHasEnded)
@@ -130,7 +129,7 @@ namespace Chess
 		{
 			var playerEndResults = new Dictionary<int, Result>();
 			var opponents = players.Where(p => p.Id != playerIdThatIsMoving);
-			if (endConditions.Select(ec => ec.Type).Contains(EndConditionType.CheckMate)
+			if (endConditions.Any(ec => ec.Type == EndConditionType.CheckMate)
 				&& opponents.All(oppInCheck => oppInCheck.IsInCheckType == CheckType.CheckMate))
 			{
 				var ec = endConditions.First(ec => ec.Type == EndConditionType.CheckMate);
@@ -141,8 +140,8 @@ namespace Chess
 				playerEndResults.Add(playerIdThatIsMoving, ec.PlayerThatMovedResult);
 				return (true, playerEndResults);
 			}
-			
-			if (endConditions.Select(ec => ec.Type).Contains(EndConditionType.StaleMate))
+
+			if (endConditions.Any(ec => ec.Type == EndConditionType.StaleMate))
 			{
 				var wouldBeNextPlayer = UpdatePlayerTurn(playerIdThatIsMoving, players);
 				var playerPieces = Board.GetPlayerPieces(tiles, wouldBeNextPlayer);
@@ -152,7 +151,7 @@ namespace Chess
 					movesPositions.AddRange(FindMovePositions(pp));
 				}
 
-				if (movesPositions.Count() == 0)
+				if (!movesPositions.Any())
 				{
 					var ec = endConditions.First(ec => ec.Type == EndConditionType.StaleMate);
 					foreach (var opp in opponents)

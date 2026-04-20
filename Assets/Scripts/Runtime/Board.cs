@@ -70,27 +70,17 @@ namespace Chess
 
 			return (theTiles, tileByStartPos, tilesByPlayerRet);
 		}
-		
-		// If application code does not use this, then this should be removed.
+
 		public static IEnumerable<TileWithPiece> GetPlayerPieces(Tile[,] tiles, int playerId)
 		{
-			return tiles.Cast<Tile>()
-				.Where(t => t is TileWithPiece twp && twp.Piece.PlayerId == playerId)
-				.Select(t => t as TileWithPiece);
-		}
-
-		// If application code does not use this, then this should be removed.
-		public static IEnumerable<TileWithPiece> GetOpponentPieces(Tile[,] tiles, int playerId)
-		{
-			return tiles.Cast<Tile>()
-				.Where(t => t is TileWithPiece twp && twp.Piece.PlayerId != playerId)
-				.Select(t => t as TileWithPiece);
+			return tiles
+				.OfType<TileWithPiece>()
+				.Where(twp => twp.Piece.PlayerId == playerId);
 		}
 
 		public static Dictionary<int, IEnumerable<TileWithPiece>> GetPiecesByPlayer(Tile[,] tiles)
 		{
 			return tiles
-				.Cast<Tile>()
 				.OfType<TileWithPiece>()
 				.GroupBy(t => t.Piece.PlayerId)
 				.ToDictionary(g => g.Key, g => g.AsEnumerable());
@@ -240,7 +230,7 @@ namespace Chess
 			var isTilePieceInCheck = IsTilePieceInCheck(checkableTilePiece, movesForPieceTypeFunc, oppTiles, boardTiles, tileByStartPos);
 
 			if (!isTilePieceInCheck) return CheckType.NoCheck;
-			
+
 			return (from twp in playerTilePieces let movePoses = FindMovePositions(twp, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos)
 				select movePoses.Where(pos => !IsInCheckAfterMove(checkableTilePiece, twp, pos, boardTiles, playerTilePieces, tileByStartPos, oppTiles, movesForPieceTypeFunc)))
 					.Any(posesNotInCheck => posesNotInCheck.Any()) ? CheckType.Check : CheckType.CheckMate;
@@ -258,7 +248,7 @@ namespace Chess
 			var checkableIsMoved = moveTilePiece is TileWithCheckablePiece;
 			var movedTuple = MovePiece(moveTilePiece, pos, boardTiles, playerTilePieces);
 			var opponentTilesAfterMove = opponentTiles.Where(t => t.Position != pos);
-			
+
 			return IsTilePieceInCheck(checkableIsMoved ? movedTuple.afterMoveTile : checkableTilePiece, movesForPieceTypeFunc, opponentTilesAfterMove, movedTuple.tilesAfterMove, tileByStartPos);
 		}
 	}

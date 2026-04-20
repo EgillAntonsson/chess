@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using Chess;
 using NUnit.Framework;
 
 public static class TestUtil
 {
+	public static TileWithPiece GetMovedTile(IEnumerable<Tile> changedTiles, Position to) =>
+		changedTiles.OfType<TileWithPiece>().First(t => t.Position == to);
+
 	public static (bool areEqual, string failMessage) AreArraysEqual<T>(IEnumerable<T> actual, IEnumerable<T> expected)
 	{
 		var failMessage = "";	
@@ -34,7 +38,7 @@ public static class TestUtil
 	public static void AssertArraysAreEqual<T>(IEnumerable<T> actual, IEnumerable<T> expected)
 	{
 		var (isSuccess, failMessage) = AreArraysEqual(actual, expected);
-		Assert.IsTrue(isSuccess, failMessage);
+		Assert.That(isSuccess, Is.True, failMessage);
 		
 	}
 }

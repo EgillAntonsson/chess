@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoverageReport scope="Summary">
+  <Summary>
+    <Generatedon>4/20/2026 - 9:56:32 AM</Generatedon>
+    <Parser>MultiReportParser (70x OpenCoverParser)</Parser>
+    <Assemblies>1</Assemblies>
+    <Classes>16</Classes>
+    <Files>13</Files>
+    <Coveredlines>470</Coveredlines>
+    <Uncoveredlines>25</Uncoveredlines>
+    <Coverablelines>495</Coverablelines>
+    <Totallines>925</Totallines>
+    <Linecoverage>94.9</Linecoverage>
+    <Coveredbranches>0</Coveredbranches>
+    <Totalbranches>0</Totalbranches>
+    <Coveredmethods>123</Coveredmethods>
+    <Totalmethods>124</Totalmethods>
+    <Methodcoverage>99.1</Methodcoverage>
+  </Summary>
+  <Coverage>
+    <Assembly name="Chess.Runtime" classes="16" coverage="94.9" coveredlines="470" coverablelines="495" totallines="1084" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="123" totalmethods="124" methodcoverage="99.1">
+      <Class name="Chess.Board" coverage="98" coveredlines="149" coverablelines="152" totallines="255" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="15" totalmethods="15" methodcoverage="100" />
+      <Class name="Chess.CastlingMove" coverage="100" coveredlines="1" coverablelines="1" totallines="4" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="5" totalmethods="5" methodcoverage="100" />
+      <Class name="Chess.ChessBoard" coverage="100" coveredlines="115" coverablelines="115" totallines="190" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="11" totalmethods="11" methodcoverage="100" />
+      <Class name="Chess.EndCondition" coverage="80" coveredlines="4" coverablelines="5" totallines="13" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="6" totalmethods="6" methodcoverage="100" />
+      <Class name="Chess.Game" coverage="89.2" coveredlines="108" coverablelines="121" totallines="177" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="14" totalmethods="14" methodcoverage="100" />
+      <Class name="Chess.InPassingMove" coverage="100" coveredlines="1" coverablelines="1" totallines="4" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="5" totalmethods="5" methodcoverage="100" />
+      <Class name="Chess.Move" coverage="100" coveredlines="1" coverablelines="1" totallines="4" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="9" totalmethods="9" methodcoverage="100" />
+      <Class name="Chess.Piece" coverage="100" coveredlines="5" coverablelines="5" totallines="13" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="6" totalmethods="6" methodcoverage="100" />
+      <Class name="Chess.Player" coverage="100" coveredlines="8" coverablelines="8" totallines="15" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="5" totalmethods="5" methodcoverage="100" />
+      <Class name="Chess.Position" coverage="100" coveredlines="15" coverablelines="15" totallines="39" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="11" totalmethods="11" methodcoverage="100" />
+      <Class name="Chess.PromotionAxis" coverage="100" coveredlines="1" coverablelines="1" totallines="4" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="5" totalmethods="5" methodcoverage="100" />
+      <Class name="Chess.Rules" coverage="95.2" coveredlines="40" coverablelines="42" totallines="154" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="16" totalmethods="17" methodcoverage="94.1" />
+      <Class name="Chess.Tile" coverage="100" coveredlines="4" coverablelines="4" totallines="53" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="4" totalmethods="4" methodcoverage="100" />
+      <Class name="Chess.TileWithCastlingPiece" coverage="100" coveredlines="1" coverablelines="1" totallines="53" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="1" totalmethods="1" methodcoverage="100" />
+      <Class name="Chess.TileWithCheckablePiece" coverage="100" coveredlines="1" coverablelines="1" totallines="53" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="1" totalmethods="1" methodcoverage="100" />
+      <Class name="Chess.TileWithPiece" coverage="72.7" coveredlines="16" coverablelines="22" totallines="53" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="9" totalmethods="9" methodcoverage="100" />
+    </Assembly>
+  </Coverage>
+</CoverageReport>

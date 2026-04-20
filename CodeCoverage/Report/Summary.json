@@ -1,0 +1,39 @@
+{
+  "summary": {
+    "generatedon": "2026-04-20T07:56:32Z",
+    "parser": "MultiReportParser (70x OpenCoverParser)",
+    "assemblies": 1,
+    "classes": 16,
+    "files": 13,
+    "coveredlines": 470,
+    "uncoveredlines": 25,
+    "coverablelines": 495,
+    "totallines": 925,
+    "linecoverage": 94.9,
+    "coveredbranches": 0,
+    "totalbranches": 0,
+    "coveredmethods": 123,
+    "totalmethods": 124,
+    "methodcoverage": 99.1
+ },
+  "coverage": {
+    "assemblies": [
+      { "name": "Chess.Runtime", "classes": 16, "coverage": 94.9, "coveredlines": 470, "coverablelines": 495, "totallines": 1084, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 99.1, "coveredmethods": 123, "totalmethods": 124, "classesinassembly": [
+        { "name": "Chess.Board", "coverage": 98, "coveredlines": 149, "coverablelines": 152, "totallines": 255, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 15, "totalmethods": 15 },
+        { "name": "Chess.CastlingMove", "coverage": 100, "coveredlines": 1, "coverablelines": 1, "totallines": 4, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 5, "totalmethods": 5 },
+        { "name": "Chess.ChessBoard", "coverage": 100, "coveredlines": 115, "coverablelines": 115, "totallines": 190, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 11, "totalmethods": 11 },
+        { "name": "Chess.EndCondition", "coverage": 80, "coveredlines": 4, "coverablelines": 5, "totallines": 13, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 6, "totalmethods": 6 },
+        { "name": "Chess.Game", "coverage": 89.2, "coveredlines": 108, "coverablelines": 121, "totallines": 177, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 14, "totalmethods": 14 },
+        { "name": "Chess.InPassingMove", "coverage": 100, "coveredlines": 1, "coverablelines": 1, "totallines": 4, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 5, "totalmethods": 5 },
+        { "name": "Chess.Move", "coverage": 100, "coveredlines": 1, "coverablelines": 1, "totallines": 4, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 9, "totalmethods": 9 },
+        { "name": "Chess.Piece", "coverage": 100, "coveredlines": 5, "coverablelines": 5, "totallines": 13, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 6, "totalmethods": 6 },
+        { "name": "Chess.Player", "coverage": 100, "coveredlines": 8, "coverablelines": 8, "totallines": 15, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 5, "totalmethods": 5 },
+        { "name": "Chess.Position", "coverage": 100, "coveredlines": 15, "coverablelines": 15, "totallines": 39, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 11, "totalmethods": 11 },
+        { "name": "Chess.PromotionAxis", "coverage": 100, "coveredlines": 1, "coverablelines": 1, "totallines": 4, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 5, "totalmethods": 5 },
+        { "name": "Chess.Rules", "coverage": 95.2, "coveredlines": 40, "coverablelines": 42, "totallines": 154, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 94.1, "coveredmethods": 16, "totalmethods": 17 },
+        { "name": "Chess.Tile", "coverage": 100, "coveredlines": 4, "coverablelines": 4, "totallines": 53, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 4, "totalmethods": 4 },
+        { "name": "Chess.TileWithCastlingPiece", "coverage": 100, "coveredlines": 1, "coverablelines": 1, "totallines": 53, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 1, "totalmethods": 1 },
+        { "name": "Chess.TileWithCheckablePiece", "coverage": 100, "coveredlines": 1, "coverablelines": 1, "totallines": 53, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 1, "totalmethods": 1 },
+        { "name": "Chess.TileWithPiece", "coverage": 72.7, "coveredlines": 16, "coverablelines": 22, "totallines": 53, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 9, "totalmethods": 9 } ] } ]
+  }
+}

@@ -1,0 +1,1638 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+<coverage line-rate="0.94949494949495" branch-rate="1" lines-covered="470" lines-valid="495" branches-covered="0" branches-valid="0" complexity="195" version="0" timestamp="1776678992">
+  <sources />
+  <packages>
+    <package name="Chess.Runtime" line-rate="0.94949494949495" branch-rate="1" complexity="195">
+      <classes>
+        <class name="Chess.Board" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Board.cs" line-rate="0.980263157894737" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Create" signature="(System.String, Chess.PieceType, Chess.PieceType)" line-rate="0.98" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="12" hits="76" branch="false" />
+                <line number="13" hits="76" branch="false" />
+                <line number="14" hits="76" branch="false" />
+                <line number="15" hits="76" branch="false" />
+                <line number="16" hits="76" branch="false" />
+                <line number="18" hits="1368" branch="false" />
+                <line number="19" hits="608" branch="false" />
+                <line number="20" hits="608" branch="false" />
+                <line number="21" hits="608" branch="false" />
+                <line number="22" hits="10944" branch="false" />
+                <line number="23" hits="4864" branch="false" />
+                <line number="24" hits="4864" branch="false" />
+                <line number="25" hits="4864" branch="false" />
+                <line number="26" hits="2538" branch="false" />
+                <line number="28" hits="2326" branch="false" />
+                <line number="29" hits="2326" branch="false" />
+                <line number="30" hits="2326" branch="false" />
+                <line number="31" hits="2326" branch="false" />
+                <line number="33" hits="1152" branch="false" />
+                <line number="34" hits="292" branch="false" />
+                <line number="35" hits="290" branch="false" />
+                <line number="36" hits="293" branch="false" />
+                <line number="37" hits="147" branch="false" />
+                <line number="38" hits="152" branch="false" />
+                <line number="39" hits="0" branch="false" />
+                <line number="41" hits="2326" branch="false" />
+                <line number="42" hits="2326" branch="false" />
+                <line number="43" hits="2326" branch="false" />
+                <line number="45" hits="2326" branch="false" />
+                <line number="46" hits="152" branch="false" />
+                <line number="47" hits="152" branch="false" />
+                <line number="48" hits="152" branch="false" />
+                <line number="49" hits="2174" branch="false" />
+                <line number="50" hits="293" branch="false" />
+                <line number="51" hits="293" branch="false" />
+                <line number="52" hits="293" branch="false" />
+                <line number="54" hits="1881" branch="false" />
+                <line number="55" hits="1881" branch="false" />
+                <line number="56" hits="1881" branch="false" />
+                <line number="58" hits="2326" branch="false" />
+                <line number="60" hits="2326" branch="false" />
+                <line number="61" hits="2326" branch="false" />
+                <line number="62" hits="2326" branch="false" />
+                <line number="64" hits="2326" branch="false" />
+                <line number="65" hits="2326" branch="false" />
+                <line number="66" hits="4864" branch="false" />
+                <line number="67" hits="608" branch="false" />
+                <line number="69" hits="380" branch="false" />
+                <line number="71" hits="76" branch="false" />
+                <line number="72" hits="76" branch="false" />
+              </lines>
+            </method>
+            <method name="GetPlayerPieces" signature="(Chess.Tile[,], System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="75" hits="16" branch="false" />
+                <line number="76" hits="16" branch="false" />
+                <line number="78" hits="494" branch="false" />
+                <line number="79" hits="16" branch="false" />
+              </lines>
+            </method>
+            <method name="GetPiecesByPlayer" signature="(Chess.Tile[,])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="82" hits="30" branch="false" />
+                <line number="83" hits="30" branch="false" />
+                <line number="85" hits="941" branch="false" />
+                <line number="86" hits="120" branch="false" />
+                <line number="87" hits="30" branch="false" />
+              </lines>
+            </method>
+            <method name="FindMovePositions" signature="(Chess.TileWithPiece, System.Func[PieceType,Int32,IEnumerable`1], System.Int32, Chess.Tile[,], System.Collections.Generic.Dictionary[Position,TileWithPiece], Chess.MoveCaptureFlag)" line-rate="0.947368421052632" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="95" hits="6913" branch="false" />
+                <line number="96" hits="6913" branch="false" />
+                <line number="97" hits="6913" branch="false" />
+                <line number="98" hits="6913" branch="false" />
+                <line number="99" hits="90443" branch="false" />
+                <line number="100" hits="34852" branch="false" />
+                <line number="101" hits="135584" branch="false" />
+                <line number="102" hits="34852" branch="false" />
+                <line number="104" hits="6913" branch="false" />
+                <line number="106" hits="107629" branch="false" />
+                <line number="107" hits="100716" branch="false" />
+                <line number="108" hits="46722" branch="false" />
+                <line number="110" hits="46119" branch="false" />
+                <line number="111" hits="46119" branch="false" />
+                <line number="113" hits="46119" branch="false" />
+                <line number="115" hits="46119" branch="false" />
+                <line number="116" hits="23943" branch="false" />
+                <line number="117" hits="23943" branch="false" />
+                <line number="120" hits="22176" branch="false" />
+                <line number="121" hits="22176" branch="false" />
+                <line number="122" hits="13776" branch="false" />
+                <line number="123" hits="13776" branch="false" />
+                <line number="126" hits="8400" branch="false" />
+                <line number="127" hits="8400" branch="false" />
+                <line number="128" hits="3216" branch="false" />
+                <line number="129" hits="3216" branch="false" />
+                <line number="132" hits="5184" branch="false" />
+                <line number="133" hits="5184" branch="false" />
+                <line number="136" hits="27159" branch="false" />
+                <line number="137" hits="27159" branch="false" />
+                <line number="139" hits="0" branch="false" />
+                <line number="140" hits="26013" branch="false" />
+                <line number="141" hits="1146" branch="false" />
+                <line number="142" hits="0" branch="false" />
+                <line number="144" hits="27159" branch="false" />
+                <line number="145" hits="46119" branch="false" />
+                <line number="146" hits="1125" branch="false" />
+                <line number="147" hits="6913" branch="false" />
+              </lines>
+            </method>
+            <method name="CapturePredicate" signature="(Chess.Tile, System.Int32, Chess.Move)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="150" hits="26692" branch="false" />
+                <line number="151" hits="26692" branch="false" />
+                <line number="152" hits="26692" branch="false" />
+              </lines>
+            </method>
+            <method name="MovePredicate" signature="(Chess.TileWithPiece, Chess.Tile, Chess.Move, System.Collections.Generic.Dictionary[Position,TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="155" hits="1146" branch="false" />
+                <line number="156" hits="1146" branch="false" />
+                <line number="157" hits="1146" branch="false" />
+                <line number="159" hits="1146" branch="false" />
+                <line number="160" hits="1146" branch="false" />
+              </lines>
+            </method>
+            <method name="GetSize" signature="(Chess.Tile[,])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="167" hits="6913" branch="false" />
+                <line number="168" hits="6913" branch="false" />
+                <line number="169" hits="6913" branch="false" />
+              </lines>
+            </method>
+            <method name="GetTile" signature="(Chess.Position, Chess.Tile[,])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="172" hits="54583" branch="false" />
+                <line number="173" hits="54583" branch="false" />
+                <line number="174" hits="54583" branch="false" />
+              </lines>
+            </method>
+            <method name="IsOnBoard" signature="(Chess.Position, System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="177" hits="100716" branch="false" />
+                <line number="178" hits="100716" branch="false" />
+                <line number="179" hits="100716" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotePiece" signature="(Chess.TileWithPiece, Chess.PieceType, Chess.Tile[,])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="182" hits="2" branch="false" />
+                <line number="183" hits="2" branch="false" />
+                <line number="184" hits="2" branch="false" />
+                <line number="185" hits="2" branch="false" />
+                <line number="186" hits="2" branch="false" />
+                <line number="187" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="MovePiece" signature="(Chess.TileWithPiece, Chess.Position, Chess.Tile[,], System.Collections.Generic.IEnumerable[TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="194" hits="521" branch="false" />
+                <line number="195" hits="521" branch="false" />
+                <line number="196" hits="521" branch="false" />
+                <line number="197" hits="521" branch="false" />
+                <line number="198" hits="521" branch="false" />
+                <line number="200" hits="521" branch="false" />
+                <line number="201" hits="521" branch="false" />
+                <line number="202" hits="521" branch="false" />
+              </lines>
+            </method>
+            <method name="RemovePiece" signature="(Chess.TileWithPiece, Chess.Tile[,])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="205" hits="522" branch="false" />
+                <line number="206" hits="522" branch="false" />
+                <line number="207" hits="522" branch="false" />
+                <line number="208" hits="522" branch="false" />
+                <line number="209" hits="522" branch="false" />
+              </lines>
+            </method>
+            <method name="IsTilePieceInCheck" signature="(Chess.TileWithPiece, System.Func[PieceType,Int32,IEnumerable`1], System.Collections.Generic.IEnumerable[TileWithPiece], Chess.Tile[,], System.Collections.Generic.Dictionary[Position,TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="216" hits="521" branch="false" />
+                <line number="217" hits="7111" branch="false" />
+                <line number="218" hits="7111" branch="false" />
+                <line number="219" hits="1163" branch="false" />
+                <line number="220" hits="521" branch="false" />
+              </lines>
+            </method>
+            <method name="IsInCheck" signature="(Chess.TileWithPiece, System.Func[PieceType,Int32,IEnumerable`1], System.Collections.Generic.IEnumerable[TileWithPiece], Chess.Tile[,], System.Collections.Generic.Dictionary[Position,TileWithPiece], System.Collections.Generic.IEnumerable[TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="228" hits="32" branch="false" />
+                <line number="229" hits="32" branch="false" />
+                <line number="230" hits="32" branch="false" />
+                <line number="232" hits="59" branch="false" />
+                <line number="234" hits="54" branch="false" />
+                <line number="235" hits="109" branch="false" />
+                <line number="236" hits="49" branch="false" />
+                <line number="237" hits="32" branch="false" />
+              </lines>
+            </method>
+            <method name="IsInCheckAfterMove" signature="(Chess.TileWithPiece, Chess.TileWithPiece, Chess.Position, Chess.Tile[,], System.Collections.Generic.IEnumerable[TileWithPiece], System.Collections.Generic.Dictionary[Position,TileWithPiece], System.Collections.Generic.IEnumerable[TileWithPiece], System.Func[PieceType,Int32,IEnumerable`1])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="247" hits="489" branch="false" />
+                <line number="248" hits="489" branch="false" />
+                <line number="249" hits="489" branch="false" />
+                <line number="250" hits="6654" branch="false" />
+                <line number="252" hits="489" branch="false" />
+                <line number="253" hits="489" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="12" hits="76" branch="false" />
+            <line number="13" hits="76" branch="false" />
+            <line number="14" hits="76" branch="false" />
+            <line number="15" hits="76" branch="false" />
+            <line number="16" hits="76" branch="false" />
+            <line number="18" hits="1368" branch="false" />
+            <line number="19" hits="608" branch="false" />
+            <line number="20" hits="608" branch="false" />
+            <line number="21" hits="608" branch="false" />
+            <line number="22" hits="10944" branch="false" />
+            <line number="23" hits="4864" branch="false" />
+            <line number="24" hits="4864" branch="false" />
+            <line number="25" hits="4864" branch="false" />
+            <line number="26" hits="2538" branch="false" />
+            <line number="28" hits="2326" branch="false" />
+            <line number="29" hits="2326" branch="false" />
+            <line number="30" hits="2326" branch="false" />
+            <line number="31" hits="2326" branch="false" />
+            <line number="33" hits="1152" branch="false" />
+            <line number="34" hits="292" branch="false" />
+            <line number="35" hits="290" branch="false" />
+            <line number="36" hits="293" branch="false" />
+            <line number="37" hits="147" branch="false" />
+            <line number="38" hits="152" branch="false" />
+            <line number="39" hits="0" branch="false" />
+            <line number="41" hits="2326" branch="false" />
+            <line number="42" hits="2326" branch="false" />
+            <line number="43" hits="2326" branch="false" />
+            <line number="45" hits="2326" branch="false" />
+            <line number="46" hits="152" branch="false" />
+            <line number="47" hits="152" branch="false" />
+            <line number="48" hits="152" branch="false" />
+            <line number="49" hits="2174" branch="false" />
+            <line number="50" hits="293" branch="false" />
+            <line number="51" hits="293" branch="false" />
+            <line number="52" hits="293" branch="false" />
+            <line number="54" hits="1881" branch="false" />
+            <line number="55" hits="1881" branch="false" />
+            <line number="56" hits="1881" branch="false" />
+            <line number="58" hits="2326" branch="false" />
+            <line number="60" hits="2326" branch="false" />
+            <line number="61" hits="2326" branch="false" />
+            <line number="62" hits="2326" branch="false" />
+            <line number="64" hits="2326" branch="false" />
+            <line number="65" hits="2326" branch="false" />
+            <line number="66" hits="4864" branch="false" />
+            <line number="67" hits="608" branch="false" />
+            <line number="69" hits="380" branch="false" />
+            <line number="71" hits="76" branch="false" />
+            <line number="72" hits="76" branch="false" />
+            <line number="75" hits="16" branch="false" />
+            <line number="76" hits="16" branch="false" />
+            <line number="78" hits="494" branch="false" />
+            <line number="79" hits="16" branch="false" />
+            <line number="82" hits="30" branch="false" />
+            <line number="83" hits="30" branch="false" />
+            <line number="85" hits="941" branch="false" />
+            <line number="86" hits="120" branch="false" />
+            <line number="87" hits="30" branch="false" />
+            <line number="95" hits="6913" branch="false" />
+            <line number="96" hits="6913" branch="false" />
+            <line number="97" hits="6913" branch="false" />
+            <line number="98" hits="6913" branch="false" />
+            <line number="99" hits="90443" branch="false" />
+            <line number="100" hits="34852" branch="false" />
+            <line number="101" hits="135584" branch="false" />
+            <line number="102" hits="34852" branch="false" />
+            <line number="104" hits="6913" branch="false" />
+            <line number="106" hits="107629" branch="false" />
+            <line number="107" hits="100716" branch="false" />
+            <line number="108" hits="46722" branch="false" />
+            <line number="110" hits="46119" branch="false" />
+            <line number="111" hits="46119" branch="false" />
+            <line number="113" hits="46119" branch="false" />
+            <line number="115" hits="46119" branch="false" />
+            <line number="116" hits="23943" branch="false" />
+            <line number="117" hits="23943" branch="false" />
+            <line number="120" hits="22176" branch="false" />
+            <line number="121" hits="22176" branch="false" />
+            <line number="122" hits="13776" branch="false" />
+            <line number="123" hits="13776" branch="false" />
+            <line number="126" hits="8400" branch="false" />
+            <line number="127" hits="8400" branch="false" />
+            <line number="128" hits="3216" branch="false" />
+            <line number="129" hits="3216" branch="false" />
+            <line number="132" hits="5184" branch="false" />
+            <line number="133" hits="5184" branch="false" />
+            <line number="136" hits="27159" branch="false" />
+            <line number="137" hits="27159" branch="false" />
+            <line number="139" hits="0" branch="false" />
+            <line number="140" hits="26013" branch="false" />
+            <line number="141" hits="1146" branch="false" />
+            <line number="142" hits="0" branch="false" />
+            <line number="144" hits="27159" branch="false" />
+            <line number="145" hits="46119" branch="false" />
+            <line number="146" hits="1125" branch="false" />
+            <line number="147" hits="6913" branch="false" />
+            <line number="150" hits="26692" branch="false" />
+            <line number="151" hits="26692" branch="false" />
+            <line number="152" hits="26692" branch="false" />
+            <line number="155" hits="1146" branch="false" />
+            <line number="156" hits="1146" branch="false" />
+            <line number="157" hits="1146" branch="false" />
+            <line number="159" hits="1146" branch="false" />
+            <line number="160" hits="1146" branch="false" />
+            <line number="167" hits="6913" branch="false" />
+            <line number="168" hits="6913" branch="false" />
+            <line number="169" hits="6913" branch="false" />
+            <line number="172" hits="54583" branch="false" />
+            <line number="173" hits="54583" branch="false" />
+            <line number="174" hits="54583" branch="false" />
+            <line number="177" hits="100716" branch="false" />
+            <line number="178" hits="100716" branch="false" />
+            <line number="179" hits="100716" branch="false" />
+            <line number="182" hits="2" branch="false" />
+            <line number="183" hits="2" branch="false" />
+            <line number="184" hits="2" branch="false" />
+            <line number="185" hits="2" branch="false" />
+            <line number="186" hits="2" branch="false" />
+            <line number="187" hits="2" branch="false" />
+            <line number="194" hits="521" branch="false" />
+            <line number="195" hits="521" branch="false" />
+            <line number="196" hits="521" branch="false" />
+            <line number="197" hits="521" branch="false" />
+            <line number="198" hits="521" branch="false" />
+            <line number="200" hits="521" branch="false" />
+            <line number="201" hits="521" branch="false" />
+            <line number="202" hits="521" branch="false" />
+            <line number="205" hits="522" branch="false" />
+            <line number="206" hits="522" branch="false" />
+            <line number="207" hits="522" branch="false" />
+            <line number="208" hits="522" branch="false" />
+            <line number="209" hits="522" branch="false" />
+            <line number="216" hits="521" branch="false" />
+            <line number="217" hits="7111" branch="false" />
+            <line number="218" hits="7111" branch="false" />
+            <line number="219" hits="1163" branch="false" />
+            <line number="220" hits="521" branch="false" />
+            <line number="228" hits="32" branch="false" />
+            <line number="229" hits="32" branch="false" />
+            <line number="230" hits="32" branch="false" />
+            <line number="232" hits="59" branch="false" />
+            <line number="234" hits="54" branch="false" />
+            <line number="235" hits="109" branch="false" />
+            <line number="236" hits="49" branch="false" />
+            <line number="237" hits="32" branch="false" />
+            <line number="247" hits="489" branch="false" />
+            <line number="248" hits="489" branch="false" />
+            <line number="249" hits="489" branch="false" />
+            <line number="250" hits="6654" branch="false" />
+            <line number="252" hits="489" branch="false" />
+            <line number="253" hits="489" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.CastlingMove" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Move/CastlingMove.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Tile" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="25" branch="false" />
+              </lines>
+            </method>
+            <method name="Tile" signature="(Chess.TileWithCastlingPiece)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="25" branch="false" />
+              </lines>
+            </method>
+            <method name="Destination" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="25" branch="false" />
+              </lines>
+            </method>
+            <method name="Destination" signature="(Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="25" branch="false" />
+              </lines>
+            </method>
+            <method name="CastlingMove" signature="(Chess.TileWithCastlingPiece, Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="25" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="25" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.ChessBoard" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/ChessBoard.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Create" signature="(System.String)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="23" hits="35" branch="false" />
+                <line number="24" hits="35" branch="false" />
+                <line number="25" hits="35" branch="false" />
+                <line number="26" hits="35" branch="false" />
+              </lines>
+            </method>
+            <method name="SetBoardState" signature="(System.String)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="30" hits="16" branch="false" />
+                <line number="31" hits="16" branch="false" />
+                <line number="32" hits="16" branch="false" />
+                <line number="33" hits="16" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotePiece" signature="(Chess.TileWithPiece, Chess.PieceType)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="36" hits="1" branch="false" />
+                <line number="37" hits="1" branch="false" />
+                <line number="38" hits="1" branch="false" />
+                <line number="39" hits="1" branch="false" />
+                <line number="40" hits="1" branch="false" />
+              </lines>
+            </method>
+            <method name="FindMoves" signature="(Chess.TileWithPiece, Chess.CheckType, System.Collections.Generic.IEnumerable[TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="44" hits="263" branch="false" />
+                <line number="45" hits="263" branch="false" />
+                <line number="46" hits="263" branch="false" />
+                <line number="47" hits="263" branch="false" />
+                <line number="49" hits="263" branch="false" />
+                <line number="53" hits="263" branch="false" />
+                <line number="54" hits="266" branch="false" />
+                <line number="56" hits="263" branch="false" />
+                <line number="58" hits="263" branch="false" />
+                <line number="61" hits="263" branch="false" />
+                <line number="62" hits="674" branch="false" />
+                <line number="63" hits="263" branch="false" />
+                <line number="64" hits="263" branch="false" />
+              </lines>
+            </method>
+            <method name="FindInPassingMove" signature="(Chess.TileWithPiece, System.Collections.Generic.IEnumerable[TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="67" hits="263" branch="false" />
+                <line number="68" hits="263" branch="false" />
+                <line number="69" hits="263" branch="false" />
+                <line number="70" hits="129" branch="false" />
+                <line number="71" hits="129" branch="false" />
+                <line number="74" hits="134" branch="false" />
+                <line number="75" hits="402" branch="false" />
+                <line number="76" hits="134" branch="false" />
+                <line number="78" hits="134" branch="false" />
+                <line number="79" hits="17" branch="false" />
+                <line number="80" hits="12" branch="false" />
+                <line number="81" hits="5" branch="false" />
+                <line number="82" hits="263" branch="false" />
+              </lines>
+            </method>
+            <method name="FindCastlingMoves" signature="(Chess.TileWithPiece, System.Boolean, System.Collections.Generic.IEnumerable[TileWithPiece], System.Collections.Generic.IEnumerable[TileWithPiece])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="87" hits="263" branch="false" />
+                <line number="88" hits="263" branch="false" />
+                <line number="89" hits="263" branch="false" />
+                <line number="90" hits="238" branch="false" />
+                <line number="91" hits="238" branch="false" />
+                <line number="93" hits="25" branch="false" />
+                <line number="94" hits="3" branch="false" />
+                <line number="95" hits="3" branch="false" />
+                <line number="97" hits="22" branch="false" />
+                <line number="98" hits="304" branch="false" />
+                <line number="99" hits="304" branch="false" />
+                <line number="100" hits="59" branch="false" />
+                <line number="101" hits="39" branch="false" />
+                <line number="102" hits="140" branch="false" />
+                <line number="103" hits="38" branch="false" />
+                <line number="104" hits="38" branch="false" />
+                <line number="105" hits="38" branch="false" />
+                <line number="106" hits="38" branch="false" />
+                <line number="107" hits="38" branch="false" />
+                <line number="108" hits="122" branch="false" />
+                <line number="109" hits="52" branch="false" />
+                <line number="110" hits="52" branch="false" />
+                <line number="111" hits="81" branch="false" />
+                <line number="112" hits="23" branch="false" />
+                <line number="114" hits="67" branch="false" />
+                <line number="116" hits="9" branch="false" />
+                <line number="117" hits="26" branch="false" />
+                <line number="125" hits="17" branch="false" />
+                <line number="126" hits="2" branch="false" />
+                <line number="127" hits="2" branch="false" />
+                <line number="130" hits="7" branch="false" />
+                <line number="131" hits="7" branch="false" />
+                <line number="132" hits="7" branch="false" />
+                <line number="133" hits="7" branch="false" />
+                <line number="135" hits="20" branch="false" />
+                <line number="136" hits="263" branch="false" />
+              </lines>
+            </method>
+            <method name="GetOpponentTiles" signature="(System.Collections.Generic.Dictionary[Int32,IEnumerable`1], System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="139" hits="296" branch="false" />
+                <line number="140" hits="1676" branch="false" />
+                <line number="141" hits="296" branch="false" />
+              </lines>
+            </method>
+            <method name="MovePiece" signature="(Chess.TileWithPiece, Chess.Position, System.Collections.Generic.Dictionary[Position,CastlingMove], System.Collections.Generic.IEnumerable[InPassingMove])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="145" hits="29" branch="false" />
+                <line number="146" hits="29" branch="false" />
+                <line number="147" hits="29" branch="false" />
+                <line number="148" hits="29" branch="false" />
+                <line number="149" hits="29" branch="false" />
+                <line number="151" hits="31" branch="false" />
+                <line number="152" hits="2" branch="false" />
+                <line number="153" hits="2" branch="false" />
+                <line number="154" hits="2" branch="false" />
+                <line number="155" hits="2" branch="false" />
+                <line number="156" hits="2" branch="false" />
+                <line number="157" hits="2" branch="false" />
+                <line number="159" hits="30" branch="false" />
+                <line number="160" hits="1" branch="false" />
+                <line number="161" hits="2" branch="false" />
+                <line number="162" hits="1" branch="false" />
+                <line number="163" hits="1" branch="false" />
+                <line number="164" hits="1" branch="false" />
+                <line number="166" hits="29" branch="false" />
+                <line number="167" hits="29" branch="false" />
+                <line number="168" hits="29" branch="false" />
+                <line number="171" hits="29" branch="false" />
+                <line number="173" hits="29" branch="false" />
+                <line number="174" hits="29" branch="false" />
+              </lines>
+            </method>
+            <method name="IsPlayerInCheck" signature="(System.Int32, System.Func[PieceType,Int32,IEnumerable`1])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="178" hits="26" branch="false" />
+                <line number="179" hits="26" branch="false" />
+                <line number="180" hits="26" branch="false" />
+                <line number="181" hits="26" branch="false" />
+                <line number="182" hits="26" branch="false" />
+                <line number="183" hits="26" branch="false" />
+              </lines>
+            </method>
+            <method name="GetCheckableTileWithPiece" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="186" hits="437" branch="false" />
+                <line number="187" hits="3907" branch="false" />
+                <line number="188" hits="437" branch="false" />
+              </lines>
+            </method>
+            <method name="ChessBoard" signature="(Chess.Rules)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="17" hits="19" branch="false" />
+                <line number="18" hits="19" branch="false" />
+                <line number="19" hits="19" branch="false" />
+                <line number="20" hits="19" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="17" hits="19" branch="false" />
+            <line number="18" hits="19" branch="false" />
+            <line number="19" hits="19" branch="false" />
+            <line number="20" hits="19" branch="false" />
+            <line number="23" hits="35" branch="false" />
+            <line number="24" hits="35" branch="false" />
+            <line number="25" hits="35" branch="false" />
+            <line number="26" hits="35" branch="false" />
+            <line number="30" hits="16" branch="false" />
+            <line number="31" hits="16" branch="false" />
+            <line number="32" hits="16" branch="false" />
+            <line number="33" hits="16" branch="false" />
+            <line number="36" hits="1" branch="false" />
+            <line number="37" hits="1" branch="false" />
+            <line number="38" hits="1" branch="false" />
+            <line number="39" hits="1" branch="false" />
+            <line number="40" hits="1" branch="false" />
+            <line number="44" hits="263" branch="false" />
+            <line number="45" hits="263" branch="false" />
+            <line number="46" hits="263" branch="false" />
+            <line number="47" hits="263" branch="false" />
+            <line number="49" hits="263" branch="false" />
+            <line number="53" hits="263" branch="false" />
+            <line number="54" hits="266" branch="false" />
+            <line number="56" hits="263" branch="false" />
+            <line number="58" hits="263" branch="false" />
+            <line number="61" hits="263" branch="false" />
+            <line number="62" hits="674" branch="false" />
+            <line number="63" hits="263" branch="false" />
+            <line number="64" hits="263" branch="false" />
+            <line number="67" hits="263" branch="false" />
+            <line number="68" hits="263" branch="false" />
+            <line number="69" hits="263" branch="false" />
+            <line number="70" hits="129" branch="false" />
+            <line number="71" hits="129" branch="false" />
+            <line number="74" hits="134" branch="false" />
+            <line number="75" hits="402" branch="false" />
+            <line number="76" hits="134" branch="false" />
+            <line number="78" hits="134" branch="false" />
+            <line number="79" hits="17" branch="false" />
+            <line number="80" hits="12" branch="false" />
+            <line number="81" hits="5" branch="false" />
+            <line number="82" hits="263" branch="false" />
+            <line number="87" hits="263" branch="false" />
+            <line number="88" hits="263" branch="false" />
+            <line number="89" hits="263" branch="false" />
+            <line number="90" hits="238" branch="false" />
+            <line number="91" hits="238" branch="false" />
+            <line number="93" hits="25" branch="false" />
+            <line number="94" hits="3" branch="false" />
+            <line number="95" hits="3" branch="false" />
+            <line number="97" hits="22" branch="false" />
+            <line number="98" hits="304" branch="false" />
+            <line number="99" hits="304" branch="false" />
+            <line number="100" hits="59" branch="false" />
+            <line number="101" hits="39" branch="false" />
+            <line number="102" hits="140" branch="false" />
+            <line number="103" hits="38" branch="false" />
+            <line number="104" hits="38" branch="false" />
+            <line number="105" hits="38" branch="false" />
+            <line number="106" hits="38" branch="false" />
+            <line number="107" hits="38" branch="false" />
+            <line number="108" hits="122" branch="false" />
+            <line number="109" hits="52" branch="false" />
+            <line number="110" hits="52" branch="false" />
+            <line number="111" hits="81" branch="false" />
+            <line number="112" hits="23" branch="false" />
+            <line number="114" hits="67" branch="false" />
+            <line number="116" hits="9" branch="false" />
+            <line number="117" hits="26" branch="false" />
+            <line number="125" hits="17" branch="false" />
+            <line number="126" hits="2" branch="false" />
+            <line number="127" hits="2" branch="false" />
+            <line number="130" hits="7" branch="false" />
+            <line number="131" hits="7" branch="false" />
+            <line number="132" hits="7" branch="false" />
+            <line number="133" hits="7" branch="false" />
+            <line number="135" hits="20" branch="false" />
+            <line number="136" hits="263" branch="false" />
+            <line number="139" hits="296" branch="false" />
+            <line number="140" hits="1676" branch="false" />
+            <line number="141" hits="296" branch="false" />
+            <line number="145" hits="29" branch="false" />
+            <line number="146" hits="29" branch="false" />
+            <line number="147" hits="29" branch="false" />
+            <line number="148" hits="29" branch="false" />
+            <line number="149" hits="29" branch="false" />
+            <line number="151" hits="31" branch="false" />
+            <line number="152" hits="2" branch="false" />
+            <line number="153" hits="2" branch="false" />
+            <line number="154" hits="2" branch="false" />
+            <line number="155" hits="2" branch="false" />
+            <line number="156" hits="2" branch="false" />
+            <line number="157" hits="2" branch="false" />
+            <line number="159" hits="30" branch="false" />
+            <line number="160" hits="1" branch="false" />
+            <line number="161" hits="2" branch="false" />
+            <line number="162" hits="1" branch="false" />
+            <line number="163" hits="1" branch="false" />
+            <line number="164" hits="1" branch="false" />
+            <line number="166" hits="29" branch="false" />
+            <line number="167" hits="29" branch="false" />
+            <line number="168" hits="29" branch="false" />
+            <line number="171" hits="29" branch="false" />
+            <line number="173" hits="29" branch="false" />
+            <line number="174" hits="29" branch="false" />
+            <line number="178" hits="26" branch="false" />
+            <line number="179" hits="26" branch="false" />
+            <line number="180" hits="26" branch="false" />
+            <line number="181" hits="26" branch="false" />
+            <line number="182" hits="26" branch="false" />
+            <line number="183" hits="26" branch="false" />
+            <line number="186" hits="437" branch="false" />
+            <line number="187" hits="3907" branch="false" />
+            <line number="188" hits="437" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.EndCondition" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Rules/EndCondition.cs" line-rate="0.8" branch-rate="1" complexity="5">
+          <methods>
+            <method name="Type" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="110" branch="false" />
+              </lines>
+            </method>
+            <method name="Type" signature="(Chess.EndConditionType)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="110" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerThatMovedResult" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="110" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerThatMovedResult" signature="(Chess.Result)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="110" branch="false" />
+              </lines>
+            </method>
+            <method name="GetOpponentsResult" signature="()" line-rate="0.75" branch-rate="1" complexity="5">
+              <lines>
+                <line number="6" hits="2" branch="false" />
+                <line number="8" hits="1" branch="false" />
+                <line number="9" hits="1" branch="false" />
+                <line number="10" hits="0" branch="false" />
+              </lines>
+            </method>
+            <method name="EndCondition" signature="(Chess.EndConditionType, Chess.Result)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="110" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="110" branch="false" />
+            <line number="6" hits="2" branch="false" />
+            <line number="8" hits="1" branch="false" />
+            <line number="9" hits="1" branch="false" />
+            <line number="10" hits="0" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Game" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Game.cs" line-rate="0.892561983471074" branch-rate="1" complexity="12">
+          <methods>
+            <method name="ChessBoard" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="12" hits="262" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerIdToMove" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="275" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerIdToMove" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="275" branch="false" />
+              </lines>
+            </method>
+            <method name="GameHasEnded" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="17" hits="233" branch="false" />
+              </lines>
+            </method>
+            <method name="GameHasEnded" signature="(System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="17" hits="233" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotionIsOccuring" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="18" hits="235" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotionIsOccuring" signature="(System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="18" hits="235" branch="false" />
+              </lines>
+            </method>
+            <method name="Create" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="34" hits="2" branch="false" />
+                <line number="35" hits="2" branch="false" />
+                <line number="36" hits="2" branch="false" />
+                <line number="37" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="FindMovePositions" signature="(Chess.TileWithPiece)" line-rate="0.866666666666667" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="40" hits="220" branch="false" />
+                <line number="41" hits="220" branch="false" />
+                <line number="42" hits="0" branch="false" />
+                <line number="43" hits="0" branch="false" />
+                <line number="45" hits="556" branch="false" />
+                <line number="46" hits="220" branch="false" />
+                <line number="47" hits="232" branch="false" />
+                <line number="48" hits="116" branch="false" />
+                <line number="49" hits="116" branch="false" />
+                <line number="50" hits="220" branch="false" />
+                <line number="51" hits="220" branch="false" />
+                <line number="52" hits="220" branch="false" />
+                <line number="53" hits="220" branch="false" />
+                <line number="54" hits="220" branch="false" />
+                <line number="55" hits="220" branch="false" />
+              </lines>
+            </method>
+            <method name="ShouldPromotionOccur" signature="(Chess.TileWithPiece, Chess.Rules)" line-rate="0.8" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="110" hits="19" branch="false" />
+                <line number="111" hits="19" branch="false" />
+                <line number="112" hits="1" branch="false" />
+                <line number="113" hits="1" branch="false" />
+                <line number="116" hits="18" branch="false" />
+                <line number="117" hits="18" branch="false" />
+                <line number="119" hits="0" branch="false" />
+                <line number="120" hits="18" branch="false" />
+                <line number="121" hits="0" branch="false" />
+                <line number="123" hits="19" branch="false" />
+              </lines>
+            </method>
+            <method name="CheckEndConditions" signature="(System.Int32, System.Collections.Generic.IEnumerable[Player], System.Collections.Generic.HashSet[EndCondition], Chess.Tile[,])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="129" hits="15" branch="false" />
+                <line number="130" hits="15" branch="false" />
+                <line number="131" hits="39" branch="false" />
+                <line number="132" hits="30" branch="false" />
+                <line number="133" hits="15" branch="false" />
+                <line number="134" hits="1" branch="false" />
+                <line number="135" hits="2" branch="false" />
+                <line number="136" hits="5" branch="false" />
+                <line number="137" hits="1" branch="false" />
+                <line number="138" hits="1" branch="false" />
+                <line number="139" hits="1" branch="false" />
+                <line number="140" hits="1" branch="false" />
+                <line number="141" hits="1" branch="false" />
+                <line number="144" hits="42" branch="false" />
+                <line number="145" hits="14" branch="false" />
+                <line number="146" hits="14" branch="false" />
+                <line number="147" hits="14" branch="false" />
+                <line number="148" hits="14" branch="false" />
+                <line number="149" hits="454" branch="false" />
+                <line number="150" hits="206" branch="false" />
+                <line number="151" hits="206" branch="false" />
+                <line number="152" hits="206" branch="false" />
+                <line number="154" hits="14" branch="false" />
+                <line number="155" hits="1" branch="false" />
+                <line number="156" hits="3" branch="false" />
+                <line number="157" hits="5" branch="false" />
+                <line number="158" hits="1" branch="false" />
+                <line number="159" hits="1" branch="false" />
+                <line number="160" hits="1" branch="false" />
+                <line number="161" hits="1" branch="false" />
+                <line number="162" hits="1" branch="false" />
+                <line number="164" hits="13" branch="false" />
+                <line number="166" hits="13" branch="false" />
+                <line number="167" hits="15" branch="false" />
+              </lines>
+            </method>
+            <method name="UpdatePlayerTurn" signature="(System.Int32, System.Collections.Generic.IEnumerable[Player])" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="170" hits="33" branch="false" />
+                <line number="171" hits="102" branch="false" />
+                <line number="172" hits="82" branch="false" />
+                <line number="173" hits="33" branch="false" />
+                <line number="174" hits="33" branch="false" />
+                <line number="175" hits="33" branch="false" />
+              </lines>
+            </method>
+            <method name="Game" signature="(Chess.Rules, Chess.ChessBoard)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="20" hits="4" branch="false" />
+                <line number="21" hits="4" branch="false" />
+                <line number="22" hits="4" branch="false" />
+                <line number="23" hits="4" branch="false" />
+                <line number="24" hits="4" branch="false" />
+                <line number="26" hits="4" branch="false" />
+                <line number="27" hits="24" branch="false" />
+                <line number="28" hits="8" branch="false" />
+                <line number="29" hits="8" branch="false" />
+                <line number="30" hits="8" branch="false" />
+                <line number="31" hits="4" branch="false" />
+              </lines>
+            </method>
+            <method name="MovePiece" signature="()" line-rate="0.756756756756757" branch-rate="1" complexity="11">
+              <lines>
+                <line number="59" hits="13" branch="false" />
+                <line number="60" hits="13" branch="false" />
+                <line number="61" hits="13" branch="false" />
+                <line number="62" hits="0" branch="false" />
+                <line number="63" hits="0" branch="false" />
+                <line number="65" hits="13" branch="false" />
+                <line number="66" hits="13" branch="false" />
+                <line number="67" hits="0" branch="false" />
+                <line number="69" hits="0" branch="false" />
+                <line number="71" hits="13" branch="false" />
+                <line number="72" hits="13" branch="false" />
+                <line number="73" hits="13" branch="false" />
+                <line number="74" hits="30" branch="false" />
+                <line number="75" hits="0" branch="false" />
+                <line number="77" hits="0" branch="false" />
+                <line number="79" hits="13" branch="false" />
+                <line number="81" hits="13" branch="false" />
+                <line number="82" hits="1" branch="false" />
+                <line number="83" hits="1" branch="false" />
+                <line number="84" hits="1" branch="false" />
+                <line number="85" hits="1" branch="false" />
+                <line number="86" hits="1" branch="false" />
+                <line number="87" hits="1" branch="false" />
+                <line number="89" hits="13" branch="false" />
+                <line number="92" hits="39" branch="false" />
+                <line number="93" hits="39" branch="false" />
+                <line number="94" hits="32" branch="false" />
+                <line number="96" hits="13" branch="false" />
+                <line number="97" hits="13" branch="false" />
+                <line number="98" hits="0" branch="false" />
+                <line number="99" hits="0" branch="false" />
+                <line number="100" hits="0" branch="false" />
+                <line number="102" hits="13" branch="false" />
+                <line number="103" hits="13" branch="false" />
+                <line number="104" hits="13" branch="false" />
+                <line number="106" hits="13" branch="false" />
+                <line number="107" hits="13" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="12" hits="262" branch="false" />
+            <line number="13" hits="275" branch="false" />
+            <line number="17" hits="233" branch="false" />
+            <line number="18" hits="235" branch="false" />
+            <line number="20" hits="4" branch="false" />
+            <line number="21" hits="4" branch="false" />
+            <line number="22" hits="4" branch="false" />
+            <line number="23" hits="4" branch="false" />
+            <line number="24" hits="4" branch="false" />
+            <line number="26" hits="4" branch="false" />
+            <line number="27" hits="24" branch="false" />
+            <line number="28" hits="8" branch="false" />
+            <line number="29" hits="8" branch="false" />
+            <line number="30" hits="8" branch="false" />
+            <line number="31" hits="4" branch="false" />
+            <line number="34" hits="2" branch="false" />
+            <line number="35" hits="2" branch="false" />
+            <line number="36" hits="2" branch="false" />
+            <line number="37" hits="2" branch="false" />
+            <line number="40" hits="220" branch="false" />
+            <line number="41" hits="220" branch="false" />
+            <line number="42" hits="0" branch="false" />
+            <line number="43" hits="0" branch="false" />
+            <line number="45" hits="556" branch="false" />
+            <line number="46" hits="220" branch="false" />
+            <line number="47" hits="232" branch="false" />
+            <line number="48" hits="116" branch="false" />
+            <line number="49" hits="116" branch="false" />
+            <line number="50" hits="220" branch="false" />
+            <line number="51" hits="220" branch="false" />
+            <line number="52" hits="220" branch="false" />
+            <line number="53" hits="220" branch="false" />
+            <line number="54" hits="220" branch="false" />
+            <line number="55" hits="220" branch="false" />
+            <line number="59" hits="13" branch="false" />
+            <line number="60" hits="13" branch="false" />
+            <line number="61" hits="13" branch="false" />
+            <line number="62" hits="0" branch="false" />
+            <line number="63" hits="0" branch="false" />
+            <line number="65" hits="13" branch="false" />
+            <line number="66" hits="13" branch="false" />
+            <line number="67" hits="0" branch="false" />
+            <line number="69" hits="0" branch="false" />
+            <line number="71" hits="13" branch="false" />
+            <line number="72" hits="13" branch="false" />
+            <line number="73" hits="13" branch="false" />
+            <line number="74" hits="30" branch="false" />
+            <line number="75" hits="0" branch="false" />
+            <line number="77" hits="0" branch="false" />
+            <line number="79" hits="13" branch="false" />
+            <line number="81" hits="13" branch="false" />
+            <line number="82" hits="1" branch="false" />
+            <line number="83" hits="1" branch="false" />
+            <line number="84" hits="1" branch="false" />
+            <line number="85" hits="1" branch="false" />
+            <line number="86" hits="1" branch="false" />
+            <line number="87" hits="1" branch="false" />
+            <line number="89" hits="13" branch="false" />
+            <line number="92" hits="39" branch="false" />
+            <line number="93" hits="39" branch="false" />
+            <line number="94" hits="32" branch="false" />
+            <line number="96" hits="13" branch="false" />
+            <line number="97" hits="13" branch="false" />
+            <line number="98" hits="0" branch="false" />
+            <line number="99" hits="0" branch="false" />
+            <line number="100" hits="0" branch="false" />
+            <line number="102" hits="13" branch="false" />
+            <line number="103" hits="13" branch="false" />
+            <line number="104" hits="13" branch="false" />
+            <line number="106" hits="13" branch="false" />
+            <line number="107" hits="13" branch="false" />
+            <line number="110" hits="19" branch="false" />
+            <line number="111" hits="19" branch="false" />
+            <line number="112" hits="1" branch="false" />
+            <line number="113" hits="1" branch="false" />
+            <line number="116" hits="18" branch="false" />
+            <line number="117" hits="18" branch="false" />
+            <line number="119" hits="0" branch="false" />
+            <line number="120" hits="18" branch="false" />
+            <line number="121" hits="0" branch="false" />
+            <line number="123" hits="19" branch="false" />
+            <line number="129" hits="15" branch="false" />
+            <line number="130" hits="15" branch="false" />
+            <line number="131" hits="39" branch="false" />
+            <line number="132" hits="30" branch="false" />
+            <line number="133" hits="15" branch="false" />
+            <line number="134" hits="1" branch="false" />
+            <line number="135" hits="2" branch="false" />
+            <line number="136" hits="5" branch="false" />
+            <line number="137" hits="1" branch="false" />
+            <line number="138" hits="1" branch="false" />
+            <line number="139" hits="1" branch="false" />
+            <line number="140" hits="1" branch="false" />
+            <line number="141" hits="1" branch="false" />
+            <line number="144" hits="42" branch="false" />
+            <line number="145" hits="14" branch="false" />
+            <line number="146" hits="14" branch="false" />
+            <line number="147" hits="14" branch="false" />
+            <line number="148" hits="14" branch="false" />
+            <line number="149" hits="454" branch="false" />
+            <line number="150" hits="206" branch="false" />
+            <line number="151" hits="206" branch="false" />
+            <line number="152" hits="206" branch="false" />
+            <line number="154" hits="14" branch="false" />
+            <line number="155" hits="1" branch="false" />
+            <line number="156" hits="3" branch="false" />
+            <line number="157" hits="5" branch="false" />
+            <line number="158" hits="1" branch="false" />
+            <line number="159" hits="1" branch="false" />
+            <line number="160" hits="1" branch="false" />
+            <line number="161" hits="1" branch="false" />
+            <line number="162" hits="1" branch="false" />
+            <line number="164" hits="13" branch="false" />
+            <line number="166" hits="13" branch="false" />
+            <line number="167" hits="15" branch="false" />
+            <line number="170" hits="33" branch="false" />
+            <line number="171" hits="102" branch="false" />
+            <line number="172" hits="82" branch="false" />
+            <line number="173" hits="33" branch="false" />
+            <line number="174" hits="33" branch="false" />
+            <line number="175" hits="33" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.InPassingMove" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Move/InPassingMove.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="CapturePos" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="21" branch="false" />
+              </lines>
+            </method>
+            <method name="CapturePos" signature="(Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="21" branch="false" />
+              </lines>
+            </method>
+            <method name="PassedPiece" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="21" branch="false" />
+              </lines>
+            </method>
+            <method name="PassedPiece" signature="(Chess.TileWithPiece)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="21" branch="false" />
+              </lines>
+            </method>
+            <method name="InPassingMove" signature="(Chess.Position, Chess.TileWithPiece)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="21" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="21" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Move" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Move/Move.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Position" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="Position" signature="(Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveType" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveType" signature="(Chess.MoveType)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveCaptureFlag" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveCaptureFlag" signature="(Chess.MoveCaptureFlag)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveConstraint" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveConstraint" signature="(Chess.MoveConstraint)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+            <method name="Move" signature="(Chess.Position, Chess.MoveType, Chess.MoveCaptureFlag, Chess.MoveConstraint)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="936158" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="936158" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Piece" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Pieces/Piece.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Type" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="35052" branch="false" />
+              </lines>
+            </method>
+            <method name="Type" signature="(Chess.PieceType)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="35052" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerId" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="35052" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerId" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="35052" branch="false" />
+              </lines>
+            </method>
+            <method name="CompareTo" signature="(Chess.Piece)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="8" hits="2" branch="false" />
+                <line number="9" hits="2" branch="false" />
+                <line number="10" hits="2" branch="false" />
+                <line number="11" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="Piece" signature="(Chess.PieceType, System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="35052" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="35052" branch="false" />
+            <line number="8" hits="2" branch="false" />
+            <line number="9" hits="2" branch="false" />
+            <line number="10" hits="2" branch="false" />
+            <line number="11" hits="2" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Player" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Player.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Id" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="723" branch="false" />
+              </lines>
+            </method>
+            <method name="IsInCheckType" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="6" hits="347" branch="false" />
+              </lines>
+            </method>
+            <method name="LastMovedTilePiece" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="7" hits="129" branch="false" />
+              </lines>
+            </method>
+            <method name="LastMovedTilePiece" signature="(Chess.TileWithPiece)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="7" hits="129" branch="false" />
+              </lines>
+            </method>
+            <method name="Player" signature="(System.Int32, Chess.CheckType)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="9" hits="56" branch="false" />
+                <line number="10" hits="56" branch="false" />
+                <line number="11" hits="56" branch="false" />
+                <line number="12" hits="56" branch="false" />
+                <line number="13" hits="56" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="723" branch="false" />
+            <line number="6" hits="347" branch="false" />
+            <line number="7" hits="129" branch="false" />
+            <line number="9" hits="56" branch="false" />
+            <line number="10" hits="56" branch="false" />
+            <line number="11" hits="56" branch="false" />
+            <line number="12" hits="56" branch="false" />
+            <line number="13" hits="56" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Position" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Position.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Column" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="2074877" branch="false" />
+              </lines>
+            </method>
+            <method name="Column" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="2074877" branch="false" />
+              </lines>
+            </method>
+            <method name="Row" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="2074877" branch="false" />
+              </lines>
+            </method>
+            <method name="Row" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="2074877" branch="false" />
+              </lines>
+            </method>
+            <method name="CompareTo" signature="(Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="14" hits="126" branch="false" />
+                <line number="15" hits="126" branch="false" />
+                <line number="16" hits="126" branch="false" />
+                <line number="17" hits="126" branch="false" />
+              </lines>
+            </method>
+            <method name="operator+" signature="(Chess.Position, Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="20" hits="109118" branch="false" />
+              </lines>
+            </method>
+            <method name="operator-" signature="(Chess.Position, Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="23" hits="1" branch="false" />
+              </lines>
+            </method>
+            <method name="operator*" signature="(Chess.Position, System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="26" hits="100734" branch="false" />
+              </lines>
+            </method>
+            <method name="GridDistance" signature="(Chess.Position, Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="29" hits="92858" branch="false" />
+              </lines>
+            </method>
+            <method name="GridNormal" signature="(Chess.Position, Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="32" hits="22179" branch="false" />
+                <line number="33" hits="22179" branch="false" />
+                <line number="34" hits="22179" branch="false" />
+                <line number="35" hits="22179" branch="false" />
+                <line number="36" hits="22179" branch="false" />
+                <line number="37" hits="22179" branch="false" />
+              </lines>
+            </method>
+            <method name="Position" signature="(System.Int32, System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="2074877" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="2074877" branch="false" />
+            <line number="14" hits="126" branch="false" />
+            <line number="15" hits="126" branch="false" />
+            <line number="16" hits="126" branch="false" />
+            <line number="17" hits="126" branch="false" />
+            <line number="20" hits="109118" branch="false" />
+            <line number="23" hits="1" branch="false" />
+            <line number="26" hits="100734" branch="false" />
+            <line number="29" hits="92858" branch="false" />
+            <line number="32" hits="22179" branch="false" />
+            <line number="33" hits="22179" branch="false" />
+            <line number="34" hits="22179" branch="false" />
+            <line number="35" hits="22179" branch="false" />
+            <line number="36" hits="22179" branch="false" />
+            <line number="37" hits="22179" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.PromotionAxis" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Rules/PromotionAxis.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="AxisPositionToTravel" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="72" branch="false" />
+              </lines>
+            </method>
+            <method name="AxisPositionToTravel" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="72" branch="false" />
+              </lines>
+            </method>
+            <method name="Axis" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="72" branch="false" />
+              </lines>
+            </method>
+            <method name="Axis" signature="(Chess.Position/Axis)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="72" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotionAxis" signature="(System.Int32, Chess.Position/Axis)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="3" hits="72" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="72" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Rules" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Rules/Rules.cs" line-rate="0.952380952380952" branch-rate="1" complexity="5">
+          <methods>
+            <method name="BoardAtStart" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="8" hits="41" branch="false" />
+              </lines>
+            </method>
+            <method name="EndConditions" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="19" hits="15" branch="false" />
+              </lines>
+            </method>
+            <method name="NumberOfPlayers" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="26" hits="12" branch="false" />
+              </lines>
+            </method>
+            <method name="PlayerIdToStart" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="27" hits="4" branch="false" />
+              </lines>
+            </method>
+            <method name="CheckablePieceType" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="30" hits="76" branch="false" />
+              </lines>
+            </method>
+            <method name="CastlingPieceType" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="33" hits="76" branch="false" />
+              </lines>
+            </method>
+            <method name="InPassingPieceType" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="36" hits="263" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotionPieceType" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="39" hits="19" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotionChoices" signature="()" line-rate="0" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="41" hits="0" branch="false" />
+              </lines>
+            </method>
+            <method name="PromotionPosition" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="45" hits="18" branch="false" />
+                <line number="46" hits="18" branch="false" />
+                <line number="47" hits="18" branch="false" />
+                <line number="48" hits="18" branch="false" />
+              </lines>
+            </method>
+            <method name="MoveDefinitionByType" signature="(Chess.PieceType, System.Int32)" line-rate="0.9" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="51" hits="7047" branch="false" />
+                <line number="52" hits="7047" branch="false" />
+                <line number="54" hits="814" branch="false" />
+                <line number="55" hits="3616" branch="false" />
+                <line number="56" hits="812" branch="false" />
+                <line number="57" hits="819" branch="false" />
+                <line number="58" hits="557" branch="false" />
+                <line number="59" hits="429" branch="false" />
+                <line number="60" hits="0" branch="false" />
+                <line number="62" hits="7047" branch="false" />
+              </lines>
+            </method>
+            <method name="KnightMoves" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="65" hits="814" branch="false" />
+                <line number="68" hits="814" branch="false" />
+                <line number="79" hits="814" branch="false" />
+              </lines>
+            </method>
+            <method name="PawnMoves" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="82" hits="3616" branch="false" />
+                <line number="83" hits="3616" branch="false" />
+                <line number="85" hits="3616" branch="false" />
+                <line number="92" hits="3616" branch="false" />
+              </lines>
+            </method>
+            <method name="QueenMoves" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="95" hits="557" branch="false" />
+                <line number="98" hits="557" branch="false" />
+                <line number="109" hits="557" branch="false" />
+              </lines>
+            </method>
+            <method name="KingMoves" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="112" hits="429" branch="false" />
+                <line number="115" hits="429" branch="false" />
+                <line number="126" hits="429" branch="false" />
+              </lines>
+            </method>
+            <method name="BishopMoves" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="129" hits="812" branch="false" />
+                <line number="132" hits="812" branch="false" />
+                <line number="139" hits="812" branch="false" />
+              </lines>
+            </method>
+            <method name="RookMoves" signature="()" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="142" hits="819" branch="false" />
+                <line number="145" hits="819" branch="false" />
+                <line number="152" hits="819" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="8" hits="41" branch="false" />
+            <line number="19" hits="15" branch="false" />
+            <line number="26" hits="12" branch="false" />
+            <line number="27" hits="4" branch="false" />
+            <line number="30" hits="76" branch="false" />
+            <line number="33" hits="76" branch="false" />
+            <line number="36" hits="263" branch="false" />
+            <line number="39" hits="19" branch="false" />
+            <line number="41" hits="0" branch="false" />
+            <line number="45" hits="18" branch="false" />
+            <line number="46" hits="18" branch="false" />
+            <line number="47" hits="18" branch="false" />
+            <line number="48" hits="18" branch="false" />
+            <line number="51" hits="7047" branch="false" />
+            <line number="52" hits="7047" branch="false" />
+            <line number="54" hits="814" branch="false" />
+            <line number="55" hits="3616" branch="false" />
+            <line number="56" hits="812" branch="false" />
+            <line number="57" hits="819" branch="false" />
+            <line number="58" hits="557" branch="false" />
+            <line number="59" hits="429" branch="false" />
+            <line number="60" hits="0" branch="false" />
+            <line number="62" hits="7047" branch="false" />
+            <line number="65" hits="814" branch="false" />
+            <line number="68" hits="814" branch="false" />
+            <line number="79" hits="814" branch="false" />
+            <line number="82" hits="3616" branch="false" />
+            <line number="83" hits="3616" branch="false" />
+            <line number="85" hits="3616" branch="false" />
+            <line number="92" hits="3616" branch="false" />
+            <line number="95" hits="557" branch="false" />
+            <line number="98" hits="557" branch="false" />
+            <line number="109" hits="557" branch="false" />
+            <line number="112" hits="429" branch="false" />
+            <line number="115" hits="429" branch="false" />
+            <line number="126" hits="429" branch="false" />
+            <line number="129" hits="812" branch="false" />
+            <line number="132" hits="812" branch="false" />
+            <line number="139" hits="812" branch="false" />
+            <line number="142" hits="819" branch="false" />
+            <line number="145" hits="819" branch="false" />
+            <line number="152" hits="819" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.Tile" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Pieces/Tile.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Position" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="236166" branch="false" />
+              </lines>
+            </method>
+            <method name="Position" signature="(Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="236166" branch="false" />
+              </lines>
+            </method>
+            <method name="CompareTo" signature="(Chess.Tile)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="8" hits="31" branch="false" />
+                <line number="9" hits="31" branch="false" />
+                <line number="10" hits="31" branch="false" />
+              </lines>
+            </method>
+            <method name="Tile" signature="(Chess.Position)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="5" hits="236166" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="236166" branch="false" />
+            <line number="8" hits="31" branch="false" />
+            <line number="9" hits="31" branch="false" />
+            <line number="10" hits="31" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.TileWithCastlingPiece" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Pieces/Tile.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="TileWithCastlingPiece" signature="(Chess.Position, Chess.Piece, System.Boolean, System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="49" hits="451" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="49" hits="451" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.TileWithCheckablePiece" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Pieces/Tile.cs" line-rate="1" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="TileWithCheckablePiece" signature="(Chess.Position, Chess.Piece, System.Boolean, System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="52" hits="155" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="52" hits="155" branch="false" />
+          </lines>
+        </class>
+        <class name="Chess.TileWithPiece" filename="/Users/egill/code/unity_projects/chess/Assets/Scripts/Runtime/Pieces/Tile.cs" line-rate="0.727272727272727" branch-rate="1" complexity="NaN">
+          <methods>
+            <method name="Piece" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+              </lines>
+            </method>
+            <method name="Piece" signature="(Chess.Piece)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+              </lines>
+            </method>
+            <method name="HasMoved" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+              </lines>
+            </method>
+            <method name="HasMoved" signature="(System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+              </lines>
+            </method>
+            <method name="FirstMove" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+              </lines>
+            </method>
+            <method name="FirstMove" signature="(System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+              </lines>
+            </method>
+            <method name="StartPosition" signature="()" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="16" hits="2399" branch="false" />
+              </lines>
+            </method>
+            <method name="CompareTo" signature="(Chess.TileWithPiece)" line-rate="0.684210526315789" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="19" hits="2" branch="false" />
+                <line number="20" hits="2" branch="false" />
+                <line number="21" hits="2" branch="false" />
+                <line number="22" hits="0" branch="false" />
+                <line number="23" hits="0" branch="false" />
+                <line number="26" hits="2" branch="false" />
+                <line number="27" hits="2" branch="false" />
+                <line number="28" hits="1" branch="false" />
+                <line number="29" hits="1" branch="false" />
+                <line number="32" hits="1" branch="false" />
+                <line number="33" hits="1" branch="false" />
+                <line number="34" hits="0" branch="false" />
+                <line number="35" hits="0" branch="false" />
+                <line number="38" hits="1" branch="false" />
+                <line number="39" hits="1" branch="false" />
+                <line number="40" hits="0" branch="false" />
+                <line number="41" hits="0" branch="false" />
+                <line number="44" hits="1" branch="false" />
+                <line number="45" hits="2" branch="false" />
+              </lines>
+            </method>
+            <method name="TileWithPiece" signature="(Chess.Position, Chess.Piece, System.Boolean, System.Boolean)" line-rate="1" branch-rate="1" complexity="NaN">
+              <lines>
+                <line number="13" hits="34576" branch="false" />
+                <line number="14" hits="2347" branch="false" />
+                <line number="16" hits="2399" branch="false" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="13" hits="34576" branch="false" />
+            <line number="14" hits="2347" branch="false" />
+            <line number="16" hits="2399" branch="false" />
+            <line number="19" hits="2" branch="false" />
+            <line number="20" hits="2" branch="false" />
+            <line number="21" hits="2" branch="false" />
+            <line number="22" hits="0" branch="false" />
+            <line number="23" hits="0" branch="false" />
+            <line number="26" hits="2" branch="false" />
+            <line number="27" hits="2" branch="false" />
+            <line number="28" hits="1" branch="false" />
+            <line number="29" hits="1" branch="false" />
+            <line number="32" hits="1" branch="false" />
+            <line number="33" hits="1" branch="false" />
+            <line number="34" hits="0" branch="false" />
+            <line number="35" hits="0" branch="false" />
+            <line number="38" hits="1" branch="false" />
+            <line number="39" hits="1" branch="false" />
+            <line number="40" hits="0" branch="false" />
+            <line number="41" hits="0" branch="false" />
+            <line number="44" hits="1" branch="false" />
+            <line number="45" hits="2" branch="false" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
