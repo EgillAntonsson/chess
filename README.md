@@ -1,5 +1,7 @@
 # Chess
 
+[![Tests](https://github.com/EgillAntonsson/chess/actions/workflows/test.yml/badge.svg)](https://github.com/EgillAntonsson/chess/actions/workflows/test.yml)
+
 A chess engine built in C# for Unity. The codebase demonstrates testability-first design, clean separation of concerns, and automated test infrastructure using the Unity Test Runner.
 
 ![tests pass, not all shown](~Documentation/Images/TestRunner.png)
