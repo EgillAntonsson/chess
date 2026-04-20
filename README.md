@@ -6,43 +6,67 @@ A chess engine built in C# for Unity. The codebase demonstrates testability-firs
 
 ## Architecture
 
+```mermaid
+graph TD
+    View["Chess.Runtime.View<br/><i>MonoBehaviours, UI, 3D scene</i>"]
+    Domain["Chess.Runtime<br/><i>Board, ChessBoard, Rules, domain types</i>"]
+    Tests["Chess.Test.EditMode<br/><i>BoardTest, ChessBoardTest, GameTest</i>"]
+
+    View -->|depends on| Domain
+    Tests -->|depends on| Domain
+
+    style Domain fill:#4a7c59,stroke:#333,color:#fff
+    style View fill:#4a6a8a,stroke:#333,color:#fff
+    style Tests fill:#8a6a4a,stroke:#333,color:#fff
+```
+
+Each box is a separate [Assembly Definition](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html). `Chess.Runtime` has **zero** assembly references — it contains only pure C# domain logic with no dependency on the View. The View references the Domain but never the other way around, and the compiler enforces this: adding an upward reference is a build error, not a code-review comment.
+
 ### Board / ChessBoard layering
-Testability was the primary motivation for this separation. `Board` is a pure static class: every method takes its inputs and returns its outputs with no side effects, so it can be unit-tested directly — no Unity runtime required, no setup cost, and no state leaking between tests. `ChessBoard` owns the mutable game state (`Tile[,]`, player dictionaries) and delegates all logic to `Board`, keeping state mutations explicit and centralised.
+Testability was the primary motivation for this separation. `Board` is a pure static class: every method takes its inputs and returns its outputs with no side effects, so it can be unit-tested directly — no Unity runtime required, no setup cost, and no state leaking between tests. `ChessBoard` owns the mutable game state (`Tile[,]`, player dictionaries) and delegates all logic to `Board`, keeping state mutations explicit and centralised. If the architecture makes testing natural, the tests get written and maintained; if testing requires workarounds or mocking frameworks, it won't happen consistently.
 
 ### Null-free domain model
-The domain types are designed so that `null` does not arise in normal use. Value types (`readonly record struct`) cannot be null, record class hierarchies are constructed with required parameters, empty board positions are represented by a `Tile` (not `null`), and empty collections return an empty array instead of `null`. This eliminates null-checks from game logic and makes invalid states unrepresentable.
+The domain types are designed so that `null` does not arise in normal use. Value types (`readonly record struct`) cannot be null, record class hierarchies are constructed with required parameters, empty board positions are represented by a `Tile` (not `null`), and empty collections return an empty array instead of `null`. Instead of defensive `if (tile != null)` guards throughout game logic, the type system guarantees that every `Tile[,]` slot contains a valid `Tile` — an empty square is a domain concept, not an absence of data.
+
+### Functional over imperative
+The domain logic favours functional programming over imperative code. `Board` methods are pure functions — inputs in, outputs out, no shared mutable state. Collections are transformed with LINQ rather than mutated with loops, and board state is cloned rather than modified in place (`Tile[,]` is cloned on every move, capture, or promotion). OOP is used where it fits — the `Rules` class hierarchy, the `Tile` record inheritance — but the default is functional composition. This produces code that is more testable, composable, and less error-prone.
 
 ### Clone-on-write immutability
-`Tile[,]` is cloned on every mutation (move, capture, promotion). Methods return the new board array rather than modifying one in place. This eliminates shared-state bugs and makes it straightforward to reason about each game transition independently. The trade-off is garbage-collection pressure (due to new board array creations), which is acceptable given the small board size.
+The board clone on every mutation means methods return the new board array rather than modifying one in place. This eliminates shared-state bugs and makes it straightforward to reason about each game transition independently. The trade-off is garbage-collection pressure (due to new board array creations), which is acceptable given the small board size. Because the cloning is an implementation detail behind `Board`'s pure-function API, it could be replaced with pooled arrays without changing any tests.
 
 ### Variant configurability via Rules
 `Rules` is an open class with virtual properties and methods: `BoardAtStart`, `MoveDefinitionByType`, `PromotionPosition`, `EndConditions`, and others. A chess variant is a subclass that overrides only what differs — piece movement, board layout, promotion rules, or win conditions — without touching core logic. The engine is agnostic to standard vs. variant chess.
 
 ### Value types for domain primitives
-`Position`, `Piece`, `EndCondition`, and `PromotionAxis` are `readonly record struct`. They get structural equality, immutability, and stack allocation for free, removing boilerplate and making comparisons and collection lookups correct by default.
+`Position`, `Piece`, `EndCondition`, and `PromotionAxis` are `readonly record struct`. They get structural equality, immutability, and stack allocation for free, removing boilerplate and making comparisons and collection lookups correct by default. Primary constructors and `with` expressions keep the syntax concise — creating a moved position is `position with { Row = 3 }` rather than a manual copy.
+
+The Tile hierarchy (`Tile` -> `TileWithPiece` -> `TileWithCastlingPiece` -> `TileWithCheckablePiece`) uses `record` (reference type) instead, because it requires inheritance for type discrimination and some fields are reference types. Both forms are immutable — `record` properties are `init`-only, so instances are created once and never mutated.
 
 ### Named records for move concepts
 `InPassingMove` and `CastlingMove` replace anonymous tuples in method signatures. Naming these concepts makes the signatures self-documenting and ties the code to the chess domain rather than to implementation structure.
 
 ## Testing
 
-### Test-focused development
-Tests are written and confirmed failing before fixes, refactors, and in most cases the implementation.
+### Test-driven development
+Development followed a TDD cycle: write a failing test, implement just enough to make it pass, then refactor. Exploratory play sessions supplemented the cycle — playing the game surfaced edge cases and missing rules that became the next failing test. Once a feature's tests were green and play sessions no longer revealed issues, the feature was considered complete. The high test coverage is a natural outcome of this workflow, not a target that was chased — the coverage report was generated at the end as confirmation, not as a goal.
 
 ### Three-layer test architecture
+
+<img src="~Documentation/Images/the-test-pyramid.png" alt="The test pyramid" width="50%">
+
 The test suite follows the testing pyramid, with each layer isolated to what it owns:
 
 - **`BoardTest`** — pure unit tests against `Board`, a static class with no side effects. Board state is constructed from a [string fixture](#board-state-fixtures) and passed in directly; no Unity runtime is needed, and no state leaks between tests.
 - **`ChessBoardTest`** — integration tests against `ChessBoard`, verifying that mutable state is managed correctly across move sequences: castling eligibility after the king or rook has moved, en passant expiry after one turn, pinned pieces with no legal moves.
 - **`GameTest`** — end-to-end tests through `Game.MovePiece`, covering the full move pipeline: multi-turn promotion sequences, en passant offered and taken, checkmate and stalemate resolution.
 
-Keeping the layers separate means board logic can be verified without game state, and game-level behaviour can be verified without reimplementing board rules in the test.
+Keeping the layers separate means board logic can be verified without game state, and game-level behaviour can be verified without reimplementing board rules in the test. All domain logic lives outside the Unity runtime, so every test runs in EditMode — no scene loading, no frame ticking, no MonoBehaviour lifecycle overhead. This design paves the way for tests that are easy and natural to write; if a test is hard to write, that's a design signal, not a testing problem.
 
 ### Unity Test Runner / NUnit
 All tests run in EditMode via the Unity Test Runner and are executed automatically on every push via GitHub Actions CI. Parameterised cases use `[TestCaseSource]` with generated names, and individual test methods follow a behaviour-driven naming style (e.g. `Pinned_piece_has_no_legal_moves`), so the intent of any failing test is readable without opening the test body.
 
 ### Board state fixtures
-`BoardTileString` is a library of named board positions encoded as compact strings. Each fixture describes a precise game state — castling available, en passant ready, king in check — and is shared across test classes. New scenarios can be added without touching test logic.
+`BoardTileString` is a lightweight DSL (domain-specific language) for board state: named static methods that return compact string representations of board positions. Each method name describes the scenario — `Can_castle_king_side()`, `Bishop_pinned_by_rook()`, `Stalemate_player_2_can_not_move()` — so the string is readable at a glance as an 8x8 grid, the method name doubles as documentation, and TestRunner output reads like a specification. Fixtures are shared across all three test layers, and adding a new scenario is adding a new method — no test code changes required.
 
 ```csharp
 public static string Can_castle_king_side()
@@ -74,10 +98,12 @@ In the web browser, you can click to drill down to a specific method and see the
 In priority order:
 
 1. **Game-over UI** — currently the end state (win/draw) is only logged to the console. A proper UI overlay would complete the gameplay loop visually.
-2. **CI green build** — the GitHub Actions workflow is in place but requires a paid Unity license to configure the secrets. Once activated, tests run automatically on every push.
-3. **Visual polish** — flatten the tile highlight cube so it reads as a surface highlight rather than a 3D object, and improve the promotion selection UI.
-4. **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
-5. **Migrate legacy UI.Text to TextMeshPro** — four UI text components still use the deprecated `UnityEngine.UI.Text`. Replacing them with `TextMeshProUGUI` would complete the TMP migration.
+2. **CI green build** — the GitHub Actions workflow is in place; activating a Unity Personal license and adding the secrets will make tests run automatically on every push.
+3. **2D view with toggle** — implement a 2D board view and let the user switch between 3D and 2D at runtime. Because the domain layer has no dependency on the View (enforced by assembly definitions), this is a new View implementation wired to the same `ChessBoard` — no game logic changes required.
+4. **Visual polish** — flatten the tile highlight cube so it reads as a surface highlight rather than a 3D object, and improve the promotion selection UI.
+5. **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
+6. **Migrate legacy UI.Text to TextMeshPro** — four UI text components still use the deprecated `UnityEngine.UI.Text`. Replacing them with `TextMeshProUGUI` would complete the TMP migration.
+7. **AI opponent** — implement a computer player, starting with a basic evaluation function (material count, piece position) and minimax search, then iterating toward alpha-beta pruning and more sophisticated heuristics. This could mean increasing evaluations to thousands per frame and would include benchmarking performance and evaluating whether to move from the current clone-on-write board design to renting arrays from `ArrayPool<Tile>.Shared` or `Span<T>` over a `stackalloc` buffer. Because the board cloning is an implementation detail behind `Board`'s pure-function API, changing it would not require any test changes.
 
 ## Detailed images
 
