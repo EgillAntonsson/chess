@@ -9,6 +9,9 @@ A chess engine built in C# for Unity. The codebase demonstrates testability-firs
 ### Board / ChessBoard layering
 Testability was the primary motivation for this separation. `Board` is a pure static class: every method takes its inputs and returns its outputs with no side effects, so it can be unit-tested directly — no Unity runtime required, no setup cost, and no state leaking between tests. `ChessBoard` owns the mutable game state (`Tile[,]`, player dictionaries) and delegates all logic to `Board`, keeping state mutations explicit and centralised.
 
+### Null-free domain model
+The domain types are designed so that `null` does not arise in normal use. Value types (`readonly record struct`) cannot be null, record class hierarchies are constructed with required parameters, empty board positions are represented by a `Tile` (not `null`), and empty collections return an empty array instead of `null`. This eliminates null-checks from game logic and makes invalid states unrepresentable.
+
 ### Clone-on-write immutability
 `Tile[,]` is cloned on every mutation (move, capture, promotion). Methods return the new board array rather than modifying one in place. This eliminates shared-state bugs and makes it straightforward to reason about each game transition independently. The trade-off is garbage-collection pressure (due to new board array creations), which is acceptable given the small board size.
 
