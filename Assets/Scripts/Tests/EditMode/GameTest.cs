@@ -123,23 +123,23 @@ public class GameTest
 	}
 
 	[Test]
-	public void CheckEndConditions_results_in_checkmate()
+	public async Task CheckEndConditions_results_in_checkmate()
 	{
 		var rules = new Rules();
 		var chessBoard = new ChessBoard(rules);
+		chessBoard.Create(rules.BoardAtStart);
 		var game = new Game(rules, chessBoard);
-		var tiles = game.Create();
-		// the board state is not relevant to this test, so we can just use the board at start.
-		var opponentsInCheck = new List<Player>
-		{
-			new(2, CheckType.CheckMate)
-		};
-		var playerIdThatIsMoving = 1;
+		var (tiles, _) = chessBoard.SetBoardState(BoardTileString.Player1_can_CheckMate());
 
-		var (gameHasEnded, resultByPlayerId) = game.CheckEndConditions(playerIdThatIsMoving, opponentsInCheck, rules.EndConditions, tiles);
+		// Promotion is not relevant to this test, so we can just return some valid piece type.
+		Task<PieceType> noPromotion() => Task.FromResult(PieceType.Queen);
 
-		Assert.That(gameHasEnded, Is.True);
-		Assert.That(resultByPlayerId[playerIdThatIsMoving], Is.EqualTo(Result.Win));
+		Assert.That(game.GameHasEnded, Is.False);
+
+		var (_, _, playersEndResult) = await game.MovePiece((TileWithPiece)tiles[3, 0], new Position(7, 4), noPromotion);
+
+		Assert.That(game.GameHasEnded, Is.True);
+		Assert.That(playersEndResult[game.PlayerIdToMove], Is.EqualTo(Result.Win));
 	}
 
 	[Test]

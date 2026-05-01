@@ -231,7 +231,7 @@ namespace Chess
 
 			if (!isTilePieceInCheck) return CheckType.NoCheck;
 
-			return (from twp in playerTilePieces let movePoses = FindMovePositions(twp, movesForPieceTypeFunc, 1, boardTiles, tileByStartPos)
+			return (from twp in playerTilePieces let movePoses = FindMovePositions(twp, movesForPieceTypeFunc, twp.Piece.PlayerId, boardTiles, tileByStartPos)
 				select movePoses.Where(pos => !IsInCheckAfterMove(checkableTilePiece, twp, pos, boardTiles, playerTilePieces, tileByStartPos, oppTiles, movesForPieceTypeFunc)))
 					.Any(posesNotInCheck => posesNotInCheck.Any()) ? CheckType.Check : CheckType.CheckMate;
 		}
