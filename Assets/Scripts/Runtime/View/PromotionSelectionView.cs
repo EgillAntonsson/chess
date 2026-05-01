@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Button = UnityEngine.UI.Button;
 
 namespace Chess.View
 {
@@ -25,7 +22,7 @@ namespace Chess.View
                 var textComponent = btn.GetComponentInChildren<TextMeshProUGUI>();
                 textComponent.text = pieceType.ToString();
                 btn.pieceType = pieceType;
-                
+
                 btn.onClick.AddListener(() =>
                 {
                     selectedPromotionType = btn.pieceType;
@@ -35,7 +32,7 @@ namespace Chess.View
 
             gameObject.SetActive(false);
         }
-        
+
         public async Task<PieceType> PromoteAsync()
         {
             gameObject.SetActive(true);
