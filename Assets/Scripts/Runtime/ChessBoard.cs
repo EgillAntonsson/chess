@@ -19,16 +19,15 @@ namespace Chess
 			this.rules = rules;
 		}
 
-		public (Tile[,], Dictionary<Position, TileWithPiece>, Dictionary<int, IEnumerable<TileWithPiece>>) Create(string tiles)
+		public Tile[,] Create(string tiles)
 		{
 			(boardTiles, tileByStartPos, tilesByPlayer) = Board.Create(tiles, rules.CheckablePieceType, rules.CastlingPieceType);
-			return (boardTiles, tileByStartPos, tilesByPlayer);
+			return boardTiles;
 		}
 
-		internal (Tile[,],
-			Dictionary<int, IEnumerable<TileWithPiece>>) SetBoardState(string tiles)
+		internal (Tile[,], Dictionary<int, IEnumerable<TileWithPiece>>) SetBoardState(string tiles)
 		{
-			(boardTiles, _, tilesByPlayer) = Create(tiles);
+			Create(tiles);
 			return (boardTiles, tilesByPlayer);
 		}
 

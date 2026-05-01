@@ -32,8 +32,7 @@ namespace Chess
 
 		public Tile[,] Create()
 		{
-			var (tiles, _, _) = ChessBoard.Create(rules.BoardAtStart);
-			return tiles;
+			return ChessBoard.Create(rules.BoardAtStart);
 		}
 
 		public IEnumerable<Position> FindMovePositions(TileWithPiece tile)
