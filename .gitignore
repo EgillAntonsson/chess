@@ -74,3 +74,6 @@ crashlytics-build.properties
 # End of Github's Unity.gitignore
 
 .idea/
+
+# macOS Finder metadata
+**/.DS_Store
