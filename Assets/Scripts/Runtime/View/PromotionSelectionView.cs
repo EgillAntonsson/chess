@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -21,7 +22,7 @@ namespace Chess.View
                 var btn = buttons[i];
                 var pieceType = promotionChoices[i];
 
-                var textComponent = btn.GetComponentInChildren<Text>();
+                var textComponent = btn.GetComponentInChildren<TextMeshProUGUI>();
                 textComponent.text = pieceType.ToString();
                 btn.pieceType = pieceType;
                 
