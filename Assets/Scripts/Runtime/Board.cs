@@ -4,10 +4,9 @@ using System.Linq;
 
 namespace Chess
 {
-	//TODO: Aim to remove passed in and returned playerPieces and opponentPieces into these methods, and instead use the proper functions to get these when needed.
 	public static class Board
 	{
-		public static (Tile[,] boardTiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
+		public static (Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
 			Create(string tiles, PieceType checkablePieceType, PieceType castlingPieceType)
 		{
 			var tilesByPlayer = new Dictionary<int, List<TileWithPiece>>();
@@ -61,7 +60,7 @@ namespace Chess
 						tilesByPlayer[playerId] = tileByType ?? new List<TileWithPiece>();
 						tilesByPlayer[playerId].Add(twp);
 
-						tileByStartPos.Add(new Position(c, r), twp);
+						tileByStartPos.Add(pos, twp);
 					}
 				}
 			}
