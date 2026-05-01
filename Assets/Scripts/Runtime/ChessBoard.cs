@@ -25,9 +25,9 @@ namespace Chess
 			return boardTiles;
 		}
 
-		internal (Tile[,], Dictionary<int, IEnumerable<TileWithPiece>>) SetBoardState(string tiles)
+		internal (Tile[,] tiles, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer) SetBoardState(string tiles)
 		{
-			Create(tiles);
+			(boardTiles, _, tilesByPlayer) = Board.Create(tiles, rules.CheckablePieceType, rules.CastlingPieceType);
 			return (boardTiles, tilesByPlayer);
 		}
 

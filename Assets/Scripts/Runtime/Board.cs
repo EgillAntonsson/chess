@@ -6,8 +6,7 @@ namespace Chess
 {
 	public static class Board
 	{
-		public static (Tile[,] tiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
-			Create(string tiles, PieceType checkablePieceType, PieceType castlingPieceType)
+		public static BoardSetup Create(string tiles, PieceType checkablePieceType, PieceType castlingPieceType)
 		{
 			var tilesByPlayer = new Dictionary<int, List<TileWithPiece>>();
 			var tileByStartPos = new Dictionary<Position, TileWithPiece>();
@@ -67,7 +66,7 @@ namespace Chess
 
 			var tilesByPlayerRet = tilesByPlayer.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<TileWithPiece>)kvp.Value);
 
-			return (theTiles, tileByStartPos, tilesByPlayerRet);
+			return new BoardSetup(theTiles, tileByStartPos, tilesByPlayerRet);
 		}
 
 		public static IEnumerable<TileWithPiece> GetPlayerPieces(Tile[,] tiles, int playerId)

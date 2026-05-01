@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Chess
 {
@@ -50,4 +51,6 @@ namespace Chess
 
 	public record TileWithCheckablePiece(Position Position, Piece Piece, bool HasMoved = false, bool FirstMove = false)
 		: TileWithCastlingPiece(Position, Piece, HasMoved, FirstMove);
+
+	public record BoardSetup(Tile[,] BoardTiles, Dictionary<Position, TileWithPiece> TileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> TilesByPlayer);
 }

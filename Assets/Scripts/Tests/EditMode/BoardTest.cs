@@ -6,8 +6,7 @@ using NUnit.Framework;
 
 public class BoardTest
 {
-	private static (Tile[,] boardTiles, Dictionary<Position, TileWithPiece> tileByStartPos, Dictionary<int, IEnumerable<TileWithPiece>> tilesByPlayer)
-		CreateBoard(string boardTiles, Rules rules)
+	private static BoardSetup CreateBoard(string boardTiles, Rules rules)
 	{
 		return Board.Create(boardTiles, rules.CheckablePieceType, rules.CastlingPieceType);
 	}
