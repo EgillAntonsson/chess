@@ -31,17 +31,16 @@ namespace Chess.View
 				return;
 			}
 			var tile = tileView.Tile;
-			
 			deSelectFunc?.Invoke();
 
 			if (playerAction == PlayerAction.MovePiece && validMoves.Any(pos => pos == tile.Position))
 			{
 				var (changedTiles, playersWithCheckTile, playersEndResult) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
 				chessBoardView.InjectTiles(changedTiles);
-				
-				foreach (var t in playersWithCheckTile)
+
+				foreach (var (player, checkTilePos) in playersWithCheckTile)
 				{
-					chessBoardView.MarkTile(t.checkTilePos, TileMarkTypeUtil.ConvertFromCheckType(t.player.IsInCheckType));
+					chessBoardView.MarkTile(checkTilePos, TileMarkTypeUtil.ConvertFromCheckType(player.IsInCheckType));
 				}
 
 				if (game.GameHasEnded)
@@ -57,7 +56,6 @@ namespace Chess.View
 						Debug.Log("IT'S A DRAW.");
 					}
 				}
-
 				playerAction = PlayerAction.SelectPiece;
 				return;
 			}
@@ -67,9 +65,8 @@ namespace Chess.View
 				playerAction = PlayerAction.SelectPiece;
 				return;
 			}
-			
-			selectedTilePiece = twp;
 
+			selectedTilePiece = twp;
 			var vm = game.FindMovePositions(twp);
 			validMoves = vm as Position[] ?? vm.ToArray();
 			chessBoardView.MarkTile(twp.Position, TileMarkType.Selected);
@@ -79,7 +76,7 @@ namespace Chess.View
 				chessBoardView.MarkTile(twp.Position, TileMarkType.Normal);
 				chessBoardView.MarkTiles(validMoves, TileMarkType.Normal);
 			};
-			
+
 			playerAction = PlayerAction.MovePiece;
 		}
 	}

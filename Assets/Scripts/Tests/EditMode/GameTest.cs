@@ -24,11 +24,11 @@ public class GameTest
 
 		var playerIdToMove = Game.UpdatePlayerTurn(1, players);
 		Assert.That(playerIdToMove, Is.EqualTo(2));
-		
+
 		playerIdToMove = Game.UpdatePlayerTurn(2, players);
 		Assert.That(playerIdToMove, Is.EqualTo(1));
 	}
-	
+
 	[Test]
 	public void UpdatePlayersTurn_3_player_chess()
 	{
@@ -36,15 +36,15 @@ public class GameTest
 
 		var playerIdToMove = Game.UpdatePlayerTurn(1, players);
 		Assert.That(playerIdToMove, Is.EqualTo(2));
-		
+
 		playerIdToMove = Game.UpdatePlayerTurn(2, players);
 		Assert.That(playerIdToMove, Is.EqualTo(3));
-		
+
 		playerIdToMove = Game.UpdatePlayerTurn(3, players);
 		Assert.That(playerIdToMove, Is.EqualTo(1));
 
 		players[1] = new Player(players[1].Id, CheckType.CheckMate);
-		
+
 		playerIdToMove = Game.UpdatePlayerTurn(1, players);
 		Assert.That(playerIdToMove, Is.EqualTo(3));
 	}
@@ -127,33 +127,38 @@ public class GameTest
 	{
 		var rules = new Rules();
 		var chessBoard = new ChessBoard(rules);
-		var retCreate = chessBoard.Create(rules.BoardAtStart);
 		var game = new Game(rules, chessBoard);
-		var opponentsInCheck = new List<Player>();
-		opponentsInCheck.Add(new Player(2, CheckType.CheckMate));
+		var tiles = game.Create();
+		// the board state is not relevant to this test, so we can just use the board at start.
+		var opponentsInCheck = new List<Player>
+		{
+			new(2, CheckType.CheckMate)
+		};
 		var playerIdThatIsMoving = 1;
-		
-		var ret = game.CheckEndConditions(playerIdThatIsMoving, opponentsInCheck, new Rules().EndConditions, retCreate.Item1);
-		
-		Assert.That(ret.gameHasEnded, Is.True);
-		Assert.That(ret.resultByPlayerId[playerIdThatIsMoving], Is.EqualTo(Result.Win));
+
+		var (gameHasEnded, resultByPlayerId) = game.CheckEndConditions(playerIdThatIsMoving, opponentsInCheck, rules.EndConditions, tiles);
+
+		Assert.That(gameHasEnded, Is.True);
+		Assert.That(resultByPlayerId[playerIdThatIsMoving], Is.EqualTo(Result.Win));
 	}
-	
+
 	[Test]
 	public void CheckEndConditions_results_in_stalemate()
 	{
 		var rules = new Rules();
 		var chessBoard = new ChessBoard(rules);
 		chessBoard.Create(rules.BoardAtStart);
-		var retCreate = chessBoard.SetBoardState(BoardTileString.Stalemate_player_2_can_not_move());
+		var (tiles, _) = chessBoard.SetBoardState(BoardTileString.Stalemate_player_2_can_not_move());
 		var game = new Game(rules, chessBoard);
-		var opponentsInCheck = new List<Player>();
-		opponentsInCheck.Add(new Player(2));
+		var opponentsInCheck = new List<Player>
+		{
+			new(2)
+		};
 		var playerIdThatIsMoving = 1;
-		
-		var ret = game.CheckEndConditions(playerIdThatIsMoving, opponentsInCheck, new Rules().EndConditions, retCreate.Item1);
-		
-		Assert.That(ret.gameHasEnded, Is.True);
-		Assert.That(ret.resultByPlayerId[playerIdThatIsMoving], Is.EqualTo(Result.Draw));
+
+		var (gameHasEnded, resultByPlayerId) = game.CheckEndConditions(playerIdThatIsMoving, opponentsInCheck, rules.EndConditions, tiles);
+
+		Assert.That(gameHasEnded, Is.True);
+		Assert.That(resultByPlayerId[playerIdThatIsMoving], Is.EqualTo(Result.Draw));
 	}
 }

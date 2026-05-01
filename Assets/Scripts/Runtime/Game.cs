@@ -32,7 +32,7 @@ namespace Chess
 
 		public Tile[,] Create()
 		{
-			var (tiles, tbsp, tbp) = ChessBoard.Create(rules.BoardAtStart);
+			var (tiles, _, _) = ChessBoard.Create(rules.BoardAtStart);
 			return tiles;
 		}
 
