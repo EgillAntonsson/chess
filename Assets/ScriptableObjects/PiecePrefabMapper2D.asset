@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fdcca2b9ab4d54fa7f3a42577cfbdb, type: 3}
+  m_Name: PiecePrefabMapper2D
+  m_EditorClassIdentifier: Chess.Runtime.View::Chess.View.PiecePrefabMapper
+  pieceTypes: 000000000100000002000000030000000400000005000000
+  piecePrefabsPlayer1:
+  - {fileID: 5415598190232043002, guid: 1ee93af57dde4453da8f0b8238582489, type: 3}
+  - {fileID: 3405471596438066795, guid: f9fecd2bd8fa34d12a1229dca1be635a, type: 3}
+  - {fileID: 7631461484733627056, guid: 32691c6aec4824a209f3ef8b598411e9, type: 3}
+  - {fileID: 92996990883811274, guid: faace26228c044a3bb8b7d3141be7e2d, type: 3}
+  - {fileID: 4272962807628116495, guid: df24ff44aa45d4a769254c7ab786773e, type: 3}
+  - {fileID: 67101227103068990, guid: df83d19ae9c714332a6ea5031be7267c, type: 3}
+  piecePrefabsPlayer2:
+  - {fileID: 3037205473303669855, guid: 1594d71fe70424b66a98ef62517eca70, type: 3}
+  - {fileID: 2389017860935459469, guid: cf198ec315cab4436b5499b3401cc6ea, type: 3}
+  - {fileID: 6276610529375569755, guid: ce2e0ae08a8bb4ee9aaa90d1467af9f2, type: 3}
+  - {fileID: 6377578018701418449, guid: 8906496cb3d69468f83c5bd29111ba63, type: 3}
+  - {fileID: 7114327873111219348, guid: 064805ffbe53746f796ae507149e3326, type: 3}
+  - {fileID: 2499301129917782218, guid: 8780ff56790784aa8928f473c7e752c4, type: 3}
