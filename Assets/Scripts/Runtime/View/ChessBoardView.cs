@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Chess.View
@@ -46,6 +45,15 @@ namespace Chess.View
 		public void MarkTile(Position tilePosition, TileMarkType tileMarkType)
 		{
 			MarkTiles(new [] {tilePosition}, tileMarkType);
+		}
+
+		public void Reskin(PiecePrefabMapper newMapper)
+		{
+			piecePrefabMapper = newMapper;
+			foreach (var tv in tileViewByPosition.Values)
+			{
+				tv.Reskin(newMapper);
+			}
 		}
 	}
 }

@@ -30,7 +30,18 @@ namespace Chess.View
 			Draw(tile, mapper);
 		}
 
+		public void Reskin(PiecePrefabMapper mapper)
+		{
+			DrawPiece(Tile, mapper);
+		}
+
 		private void Draw(Tile tile, PiecePrefabMapper mapper)
+		{
+			DrawPiece(tile, mapper);
+			MarkTile(TileMarkType.Normal);
+		}
+
+		private void DrawPiece(Tile tile, PiecePrefabMapper mapper)
 		{
 			if (piece != null)
 			{
@@ -41,8 +52,6 @@ namespace Chess.View
 			{
 				piece = Instantiate(prefab, transform);
 			}
-			
-			MarkTile(TileMarkType.Normal);
 		}
 
 		private void OnMouseDown()
