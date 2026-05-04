@@ -19,7 +19,7 @@ namespace Chess.View
                 var btn = buttons[i];
                 var pieceType = promotionChoices[i];
 
-                var textComponent = btn.GetComponentInChildren<TextMeshProUGUI>();
+                var textComponent = btn.GetComponentInChildren<TextMeshProUGUI>(true);
                 textComponent.text = pieceType.ToString();
                 btn.pieceType = pieceType;
 
