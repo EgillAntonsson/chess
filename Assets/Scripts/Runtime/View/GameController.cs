@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace Chess.View
 		private Position[] validMoves;
 		private TileWithPiece selectedTilePiece;
 		private PlayerAction playerAction = PlayerAction.SelectPiece;
+		private List<(Position position, TileMarkType mark)> persistentMarks = new();
 
 		private void Start()
 		{
@@ -38,9 +40,15 @@ namespace Chess.View
 				var (changedTiles, playersWithCheckTile, playersEndResult) = await game.MovePiece(selectedTilePiece, tile.Position, promotionSelectionView.PromoteAsync);
 				chessBoardView.InjectTiles(changedTiles);
 
+				persistentMarks.Clear();
 				foreach (var (player, checkTilePos) in playersWithCheckTile)
 				{
-					chessBoardView.MarkTile(checkTilePos, TileMarkTypeUtil.ConvertFromCheckType(player.IsInCheckType));
+					var mark = TileMarkTypeUtil.ConvertFromCheckType(player.IsInCheckType);
+					chessBoardView.MarkTile(checkTilePos, mark);
+					if (mark != TileMarkType.Normal)
+					{
+						persistentMarks.Add((checkTilePos, mark));
+					}
 				}
 
 				if (game.GameHasEnded)
@@ -75,6 +83,10 @@ namespace Chess.View
 			{
 				chessBoardView.MarkTile(twp.Position, TileMarkType.Normal);
 				chessBoardView.MarkTiles(validMoves, TileMarkType.Normal);
+				foreach (var (pos, mark) in persistentMarks)
+				{
+					chessBoardView.MarkTile(pos, mark);
+				}
 			};
 
 			playerAction = PlayerAction.MovePiece;
