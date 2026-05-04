@@ -1,0 +1,20 @@
+{
+    "name": "Chess.EditorTools",
+    "rootNamespace": "",
+    "references": [
+        "GUID:453908e39747538489f60956436c32b8",
+        "GUID:f74b894335af7a64b83b6737c26e3b0c",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
