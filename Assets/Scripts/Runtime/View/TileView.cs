@@ -6,11 +6,13 @@ namespace Chess.View
 {
 	public class TileView : MonoBehaviour
 	{
+		[SerializeField] private Renderer highlightRenderer;
+
 		public Tile Tile { get; private set; }
 		private Action<TileView> onTileClicked;
 		private readonly Dictionary<TileMarkType, Color> colorByTileMarkType = new()
 		{
-			{TileMarkType.Normal, new Color(0f, 0f, 1f, 0.1f)},
+			{TileMarkType.Normal, new Color(0f, 0f, 0f, 0f)},
 			{TileMarkType.Selected, new Color(0f, 1f, 0f, 0.5f)},
 			{TileMarkType.ValidMove, new Color(0f, 0.5f, 1f, 0.5f)},
 			{TileMarkType.Check, new Color(1f, 0f, 0f, 0.5f)}
@@ -61,7 +63,7 @@ namespace Chess.View
 		
 		public void MarkTile(TileMarkType tileMarkType)
 		{
-			GetComponent<Renderer>().material.color = colorByTileMarkType[tileMarkType];
+			highlightRenderer.material.color = colorByTileMarkType[tileMarkType];
 		}
 	}
 }
