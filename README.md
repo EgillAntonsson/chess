@@ -6,11 +6,21 @@ A chess engine built in C# 10 for Unity 6. The codebase demonstrates testability
 
 ![tests pass, not all shown](~Documentation/Images/TestRunner.png)
 
+## 2D / 3D view toggle
+
+<video src="~Documentation/Images/View_Toggle.mp4" controls width="800"></video>
+
+A runtime button toggles between the 3D and 2D view: the camera swaps pose and every tile re-skins its piece GameObject via a different `PiecePrefabMapper`. Game state is untouched — a selected piece stays selected, the king-in-check highlight persists across the swap, the next move continues seamlessly.
+
+The toggle component (`ViewModeController`) holds no reference to `Game`, `ChessBoard`, or `Player`. It cannot — the View assembly references the Domain, not the other way around, and the compiler enforces that. Adding a third view (isometric, VR, an entirely different rendering style) follows the same pattern: a new mapper, a new camera pose, zero domain changes.
+
+The 2D pieces are placeholder colored letters (K/Q/R/B/N/P) generated procedurally by an editor menu (`Tools > Chess > Generate 2D Piece Prefabs`); replacing them with real sprite assets is a per-prefab inspector change, no code changes required.
+
 ## Architecture
 
 ```mermaid
 graph TD
-    View["Chess.Runtime.View<br/><i>MonoBehaviours, UI, 3D scene</i>"]
+    View["Chess.Runtime.View<br/><i>MonoBehaviours, UI, 3D and 2D views</i>"]
     Domain["Chess.Runtime<br/><i>Board, ChessBoard, Rules, domain types</i>"]
     Tests["Chess.Test.EditMode<br/><i>BoardTest, ChessBoardTest, GameTest</i>"]
 
@@ -101,8 +111,7 @@ In the web browser, you can click to drill down to a specific method and see the
 ## Next steps
 
 - **Game-over UI** — currently the end state (win/draw) is only logged to the console. A proper UI overlay would complete the gameplay loop visually.
-- **2D view with toggle** — implement a 2D board view and let the user switch between 3D and 2D at runtime. Because the domain layer has no dependency on the View (enforced by assembly definitions), this is a new View implementation wired to the same `ChessBoard` — no game logic changes required.
-- **Visual polish** — flatten the tile highlight cube so it reads as a surface highlight rather than a 3D object, and improve the promotion selection UI.
+- **Visual polish** — improve the promotion selection UI, and replace the placeholder 2D piece letters with proper sprite assets.
 - **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
 - **AI opponent** — implement a computer player, starting with a basic evaluation function (material count, piece position) and minimax search, then iterating toward alpha-beta pruning and more sophisticated heuristics. This could mean increasing evaluations to thousands per frame and would include benchmarking performance and evaluating whether to move from the current clone-on-write board design to renting arrays from `ArrayPool<Tile>.Shared` or `Span<T>` over a `stackalloc` buffer. Because the board cloning is an implementation detail behind `Board`'s pure-function API, changing it would not require any test changes.
 
