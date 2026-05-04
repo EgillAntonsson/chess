@@ -59,7 +59,7 @@ namespace Chess.EditorTools
 		private static GameObject CreatePiecePrefab(PieceType type, string letter, int playerId, Color color)
 		{
 			var go = new GameObject($"{type}{playerId}");
-			go.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+			go.transform.SetPositionAndRotation(new Vector3(0f, 0.05f, 0f), Quaternion.Euler(90f, 0f, 0f));
 
 			var tmp = go.AddComponent<TextMeshPro>();
 			tmp.text = letter;
