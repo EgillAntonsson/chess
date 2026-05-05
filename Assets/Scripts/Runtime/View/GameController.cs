@@ -9,6 +9,8 @@ namespace Chess.View
 	{
 		[SerializeField] private ChessBoardView chessBoardView;
 		[SerializeField] private PromotionSelectionView promotionSelectionView;
+		[SerializeField] private GameOverView gameOverView;
+		[SerializeField] private string[] playerLabels = { "White", "Black" };
 
 		private Game game;
 		private Action deSelectFunc;
@@ -24,6 +26,7 @@ namespace Chess.View
 			game = new Game(rules, chessboard);
 			chessBoardView.Create(game.Create(), OnTileClicked);
 			promotionSelectionView.Create(rules.PromotionChoices);
+			gameOverView.Create();
 		}
 
 		private async void OnTileClicked(TileView tileView)
@@ -53,16 +56,10 @@ namespace Chess.View
 
 				if (game.GameHasEnded)
 				{
-					Debug.Log("GAME HAS ENDED:");
-					foreach (var kvp in playersEndResult.Where(kvp => kvp.Value == Result.Win))
-					{
-						Debug.Log($"'{kvp.Key}' WON.");
-						return;
-					}
-					foreach (var kvp in playersEndResult.Where(kvp => kvp.Value == Result.Draw))
-					{
-						Debug.Log("IT'S A DRAW.");
-					}
+					var winner = playersEndResult.FirstOrDefault(kvp => kvp.Value == Result.Win);
+					var outcome = winner.Key != 0 ? $"{playerLabels[winner.Key - 1]} won!" : "Draw!";
+					gameOverView.Show($"Game Over:\n{outcome}");
+					return;
 				}
 				playerAction = PlayerAction.SelectPiece;
 				return;
