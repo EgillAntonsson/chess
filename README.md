@@ -8,13 +8,13 @@ A chess engine built in C# 10 for Unity 6. The codebase demonstrates testability
 
 ## 2D / 3D view toggle
 
-<video src="~Documentation/Images/View_Toggle.mp4" controls width="800"></video>
+<video src="https://github.com/user-attachments/assets/dc937969-c663-4cfe-8407-ecf761a1d5c7" controls width="800"></video>
 
 A runtime button toggles between the 3D and 2D view: the camera swaps pose and every tile re-skins its piece GameObject via a different `PiecePrefabMapper`. Game state is untouched — a selected piece stays selected, the king-in-check highlight persists across the swap, the next move continues seamlessly.
 
 The toggle component (`ViewModeController`) holds no reference to `Game`, `ChessBoard`, or `Player`. It cannot — the View assembly references the Domain, not the other way around, and the compiler enforces that. Adding a third view (isometric, VR, an entirely different rendering style) follows the same pattern: a new mapper, a new camera pose, zero domain changes.
 
-The 2D pieces are placeholder colored letters (K/Q/R/B/N/P) generated procedurally by an editor menu (`Tools > Chess > Generate 2D Piece Prefabs`); replacing them with real sprite assets is a per-prefab inspector change, no code changes required.
+The 2D pieces are placeholder colored letters (K/Q/R/B/N/P) generated procedurally by a small editor menu (`Tools > Chess > Generate 2D Piece Prefabs`) — twelve prefabs and the mapper asset authored by code in a single click instead of twelve trips through the inspector. The same script regenerates them, which keeps placeholder iteration cheap. Replacing the placeholders with real sprite assets is then a per-prefab inspector change, no code changes required.
 
 ## Architecture
 
@@ -56,6 +56,9 @@ The Tile hierarchy (`Tile` -> `TileWithPiece` -> `TileWithCastlingPiece` -> `Til
 
 ### Named records for move concepts
 `InPassingMove` and `CastlingMove` replace anonymous tuples in method signatures. Naming these concepts makes the signatures self-documenting and ties the code to the chess domain rather than to implementation structure.
+
+### Refactoring discipline
+The commit history is intentionally many small, single-concern commits rather than few large ones. Each refactor is behaviour-preserving with the test suite as the safety net, and each message names exactly one concern. Recent examples: `Replace Board.Create tuple with BoardSetup record` (a named domain concept replacing a positional output), `Reduce ChessBoard.Create return to Tile[,]` (narrowing a public surface to what callers actually use), `Add Reskin path that preserves tile highlights` (splitting one method that conflated two responsibilities into two methods with explicit semantics). This style keeps each diff readable in isolation, localises rationale to where it belongs, and makes `git bisect` trivial when something does break later.
 
 ## Testing
 
@@ -110,7 +113,6 @@ In the web browser, you can click to drill down to a specific method and see the
 
 ## Next steps
 
-- **Game-over UI** — currently the end state (win/draw) is only logged to the console. A proper UI overlay would complete the gameplay loop visually.
 - **Visual polish** — improve the promotion selection UI, and replace the placeholder 2D piece letters with proper sprite assets.
 - **Migrate to Input System** — the project uses the legacy Input Manager, which Unity 6 has marked for deprecation. Migrating to the new Input System package would future-proof the input handling.
 - **AI opponent** — implement a computer player, starting with a basic evaluation function (material count, piece position) and minimax search, then iterating toward alpha-beta pruning and more sophisticated heuristics. This could mean increasing evaluations to thousands per frame and would include benchmarking performance and evaluating whether to move from the current clone-on-write board design to renting arrays from `ArrayPool<Tile>.Shared` or `Span<T>` over a `stackalloc` buffer. Because the board cloning is an implementation detail behind `Board`'s pure-function API, changing it would not require any test changes.
