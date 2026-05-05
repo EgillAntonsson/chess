@@ -20,19 +20,23 @@ The 2D pieces are placeholder colored letters (K/Q/R/B/N/P) generated procedural
 
 ```mermaid
 graph TD
+    EditorTools["Chess.EditorTools<br/><i>editor-only menus and tooling</i>"]
     View["Chess.Runtime.View<br/><i>MonoBehaviours, UI, 3D and 2D views</i>"]
     Domain["Chess.Runtime<br/><i>Board, ChessBoard, Rules, domain types</i>"]
     Tests["Chess.Test.EditMode<br/><i>BoardTest, ChessBoardTest, GameTest</i>"]
 
     View -->|depends on| Domain
     Tests -->|depends on| Domain
+    EditorTools -->|depends on| View
+    EditorTools -->|depends on| Domain
 
     style Domain fill:#4a6a8a,stroke:#333,color:#fff
     style View fill:#8a6a4a,stroke:#333,color:#fff
     style Tests fill:#4a7c59,stroke:#333,color:#fff
+    style EditorTools fill:#666,stroke:#333,color:#fff,stroke-dasharray: 5 5
 ```
 
-Each box is a separate [Assembly Definition](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html). `Chess.Runtime` has **zero** assembly references — it contains only pure C# domain logic with no dependency on the View. The View references the Domain but never the other way around, and the compiler enforces this: adding an upward reference is a build error, not a code-review comment.
+Each box is a separate [Assembly Definition](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html). `Chess.Runtime` has **zero** assembly references — it contains only pure C# domain logic with no dependency on the View. The View references the Domain but never the other way around, and the compiler enforces this: adding an upward reference is a build error, not a code-review comment. `Chess.EditorTools` is an Editor-only assembly that ships nothing at runtime — it hosts menu items and asset-generation tooling (e.g. the procedural 2D piece prefab generator).
 
 ### Board / ChessBoard layering
 Testability was the primary motivation for this separation. `Board` is a pure static class: every method takes its inputs and returns its outputs with no side effects, so it can be unit-tested directly — no Unity runtime required, no setup cost, and no state leaking between tests. `ChessBoard` owns the mutable game state (`Tile[,]`, player dictionaries) and delegates all logic to `Board`, keeping state mutations explicit and centralised. If the architecture makes testing natural, the tests get written and maintained; if testing requires workarounds or mocking frameworks, it won't happen consistently.
